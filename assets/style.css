@@ -278,9 +278,19 @@ address .social {
     margin-top: 10px;
 }
 
-a.twitter,
-a.github,
-a.soundcloud {
+.social a {
+    display: block;
+}
+
+a .vim_icon {
+    width: 18px;
+    vertical-align: middle;
+}
+
+a.vim .vim_icon,
+a.twitter .fa,
+a.github .fa,
+a.soundcloud .fa {
     -webkit-transition: all 1s ease;
     -moz-transition: all 1s ease;
     -o-transition: all 1s ease;
@@ -316,6 +326,7 @@ a.twitter i.fa {
     left: 0;
 }
 
+a.vim:hover .vim_icon,
 a.twitter:hover i.fa {
     -webkit-animation: fly 1s ease 0s 1;
     -moz-animation: fly 1s ease 0s 1;
@@ -328,6 +339,7 @@ a.twitter:hover i.fa {
 @-o-keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
 @keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
 
+a.vim:hover .vim_icon,
 a.soundcloud:hover i.fa {
     -webkit-animation: rain 1s linear 0s 1;
     -moz-animation: rain 1s linear 0s 1;
