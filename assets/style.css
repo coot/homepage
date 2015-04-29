@@ -43,7 +43,7 @@ header img.me {
 @-o-keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
 @keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
 
-header .name {
+header #name {
     color: #222;
     text-align: center;
     position: relative;
@@ -59,14 +59,14 @@ header .name {
     transform-origin: 50% -140px;
 }
 
-header .img_container:hover .name {
+#name.animate {
     -webkit-animation: rotate 6s ease 0s 1;
     -moz-animation: rotate 6s ease 0s 1;
     -o-animation: rotate 6s ease 0s 1;
     animation: rotate 6s ease 0s 1;
 }
 
-.name span {
+#name span {
     position: absolute;
     font: 20px Monaco, Monospace;
     -webkit-transform-origin: 0px -140px;
@@ -76,126 +76,126 @@ header .img_container:hover .name {
     width: 20px;
 }
 
-.name span.char_1 {
+#name span.char_1 {
     -webkit-transform: rotate(54deg);
     -moz-transform: rotate(54deg);
     -o-transform: rotate(54deg);
     transform: rotate(54deg);
 }
 
-.name span.char_2 {
+#name span.char_2 {
     -webkit-transform: rotate(48deg);
     -moz-transform: rotate(48deg);
     -o-transform: rotate(48deg);
     transform: rotate(48deg);
 }
 
-.name span.char_3 {
+#name span.char_3 {
     -webkit-transform: rotate(42deg);
     -moz-transform: rotate(42deg);
     -o-transform: rotate(42deg);
     transform: rotate(42deg);
 }
 
-.name span.char_4 {
+#name span.char_4 {
     -webkit-transform: rotate(36deg);
     -moz-transform: rotate(36deg);
     -o-transform: rotate(36deg);
     transform: rotate(36deg);
 }
 
-.name span.char_5 {
+#name span.char_5 {
     -webkit-transform: rotate(30deg);
     -moz-transform: rotate(30deg);
     -o-transform: rotate(30deg);
     transform: rotate(30deg);
 }
 
-.name span.char_6 {
+#name span.char_6 {
     -webkit-transform: rotate(24deg);
     -moz-transform: rotate(24deg);
     -o-transform: rotate(24deg);
     transform: rotate(24deg);
 }
 
-.name span.char_7 {
+#name span.char_7 {
     -webkit-transform: rotate(18deg);
     -moz-transform: rotate(18deg);
     -o-transform: rotate(18deg);
     transform: rotate(18deg);
 }
 
-.name span.char_8 {
+#name span.char_8 {
     -webkit-transform: rotate(12deg);
     -moz-transform: rotate(12deg);
     -o-transform: rotate(12deg);
     transform: rotate(12deg);
 }
 
-.name span.char_9 {
+#name span.char_9 {
     -webkit-transform: rotate(6deg);
     -moz-transform: rotate(6deg);
     -o-transform: rotate(6deg);
     transform: rotate(6deg);
 }
 
-.name span.char_10 {
+#name span.char_10 {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     transform: rotate(0deg);
 }
 
-.name span.char_11 {
+#name span.char_11 {
     -webkit-transform: rotate(-6deg);
     -moz-transform: rotate(-6deg);
     -o-transform: rotate(-6deg);
     transform: rotate(-6deg);
 }
 
-.name span.char_12 {
+#name span.char_12 {
     -webkit-transform: rotate(-12deg);
     -moz-transform: rotate(-12deg);
     -o-transform: rotate(-12deg);
     transform: rotate(-12deg);
 }
 
-.name span.char_13 {
+#name span.char_13 {
     -webkit-transform: rotate(-18deg);
     -moz-transform: rotate(-18deg);
     -o-transform: rotate(-18deg);
     transform: rotate(-18deg);
 }
 
-.name span.char_14 {
+#name span.char_14 {
     -webkit-transform: rotate(-24deg);
     -moz-transform: rotate(-24deg);
     -o-transform: rotate(-24deg);
     transform: rotate(-24deg);
 }
 
-.name span.char_15 {
+#name span.char_15 {
     -webkit-transform: rotate(-30deg);
     -moz-transform: rotate(-30deg);
     -o-transform: rotate(-30deg);
     transform: rotate(-30deg);
 }
 
-.name span.char_16 {
+#name span.char_16 {
     -webkit-transform: rotate(-36deg);
     -moz-transform: rotate(-36deg);
     -o-transform: rotate(-36deg);
     transform: rotate(-36deg);
 }
 
-.name span.char_17 {
+#name span.char_17 {
     -webkit-transform: rotate(-42deg);
     -moz-transform: rotate(-42deg);
     -o-transform: rotate(-42deg);
     transform: rotate(-42deg);
 }
 
-.name span.char_18 {
+#name span.char_18 {
     -webkit-transform: rotate(-48deg);
     -moz-transform: rotate(-48deg);
     -o-transform: rotate(-48deg);
@@ -287,10 +287,10 @@ a .vim_icon {
     vertical-align: middle;
 }
 
-a.vim .vim_icon,
-a.twitter .fa,
-a.github .fa,
-a.soundcloud .fa {
+#vim .vim_icon,
+#twitter .fa,
+#github .fa,
+#soundcloud .fa {
     -webkit-transition: all 1s ease;
     -moz-transition: all 1s ease;
     -o-transition: all 1s ease;
@@ -302,7 +302,7 @@ a.soundcloud .fa {
 @-o-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: (0deg); -moz-transform: (0deg); -o-transform: (0deg); transform: rotateZ(0deg);}}
 @keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
 
-a.github:hover i.fa {
+#github i.fa.animate {
     -webkit-animation: shake 1s ease 0s 1;
     -moz-animation: shake 1s ease 0s 1;
     -o-animation: shake 1s ease 0s 1;
@@ -314,20 +314,20 @@ a.github:hover i.fa {
 @-o-keyframes fly {0% {top: 0; left: 0; opacity: 1;} 50% {top: -10px; left: 15px; opacity: 0.6;} 80% {top: -20px; left: 40px; opacity: 0;} 81% {top: 0px; left: 0px; opacity: 0;} 100% {top: 0px; left: 0px; opacity: 1;}}
 @keyframes fly {0% {top: 0; left: 0; opacity: 1;} 50% {top: -10px; left: 15px; opacity: 0.6;} 80% {top: -20px; left: 40px; opacity: 0;} 81% {top: 0px; left: 0px; opacity: 0;} 100% {top: 0px; left: 0px; opacity: 1;}}
 
-a.twitter {
+#twitter {
     position: relative;
     display: inline-block;
     padding-left: 20px;
 }
 
-a.twitter i.fa {
+#twitter i.fa {
     position: absolute;
     top: 0;
     left: 0;
 }
 
-a.vim:hover .vim_icon,
-a.twitter:hover i.fa {
+#vim .vim_icon.animate,
+#twitter i.fa.animate {
     -webkit-animation: fly 1s ease 0s 1;
     -moz-animation: fly 1s ease 0s 1;
     -o-animation: fly 1s ease 0s 1;
@@ -339,8 +339,8 @@ a.twitter:hover i.fa {
 @-o-keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
 @keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
 
-a.vim:hover .vim_icon,
-a.soundcloud:hover i.fa {
+#vim .vim_icon.animate,
+#soundcloud i.fa.animate {
     -webkit-animation: rain 1s linear 0s 1;
     -moz-animation: rain 1s linear 0s 1;
     -o-animation: rain 1s linear 0s 1;
