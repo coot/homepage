@@ -219,7 +219,6 @@ header a i.fa {
 	padding: 10px;
     }
 
-    footer,
     main {
 	max-width: 440px;
 	margin-left: auto;
@@ -238,7 +237,6 @@ header a i.fa {
 	width: 380px;
     }
 
-    footer,
     main {
 	float: right;
 	width: 440px;
@@ -251,6 +249,7 @@ footer {
     margin-bottom: 60px;
     margin-left: auto;
     margin-right: auto;
+    width: 300px;
 }
 
 .btn {
@@ -359,11 +358,22 @@ a .vim_icon {
     padding: 3px 6px;
     margin: 2px;
     border-radius: 5px;
+    color: #aaa;
+    background-color: #222;
+    box-shadow: 1px 1px 3px #777;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.badge.fr {
     color: #222;
     background-color: #aaa;
     box-shadow: 1px 1px 3px black;
-    font-size: 13px;
-    font-weight: bold;
+}
+
+.section_h {
+    width: 40%;
+    border-bottom: 1px solid #aaa;
 }
 
 .portfolio h3 {
