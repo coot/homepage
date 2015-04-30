@@ -1,4 +1,4 @@
-var initAnimation = function(animEl, triggerEl) {
+var initAnimation = function(animEl, triggerEl, touch) {
     var hoverCallback = function() {
         var classes = (animEl.getAttribute('class') || "").split(/\s+/);
         if (classes.indexOf('animate') == -1) {
@@ -6,10 +6,15 @@ var initAnimation = function(animEl, triggerEl) {
             animEl.setAttribute('class', classes.join(' '));
         }
     };
-    if (triggerEl.addEventListener)
+    if (triggerEl.addEventListener) {
         triggerEl.addEventListener('mouseover', hoverCallback);
-    else
+        if (touch)
+            triggerEl.addEventListener('touchstart', hoverCallback);
+    } else {
         triggerEl.attachEvent('mouseover', hoverCallback);
+        if (touch)
+            triggerEl.attachEvent('touchstart', hoverCallback);
+    }
     var animationEndCallback = function(event) {
         var target = event.target,
             classes = (target.getAttribute('class') || "").split(/\s+/),
@@ -30,26 +35,31 @@ var initAnimation = function(animEl, triggerEl) {
 window.addEventListener('load', function() {
     initAnimation(
         document.getElementById('name'),
-        document.getElementById('img_container')
+        document.getElementById('img_container'),
+        true
     );
 
     initAnimation(
         document.getElementById('twitter_i'),
-        document.getElementById('twitter')
+        document.getElementById('twitter'),
+        false
     );
 
     initAnimation(
         document.getElementById('github_i'),
-        document.getElementById('github')
+        document.getElementById('github'),
+        false
     );
 
     initAnimation(
         document.getElementById('soundcloud_i'),
-        document.getElementById('soundcloud')
+        document.getElementById('soundcloud'),
+        false
     );
 
     initAnimation(
         document.getElementById('vim_i'),
-        document.getElementById('vim')
+        document.getElementById('vim'),
+        false
     );
 });
