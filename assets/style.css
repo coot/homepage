@@ -211,12 +211,15 @@ header a i.fa {
     .wrapper {
 	width: 100%;
     }
+
     header {
 	max-width: 380px;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 10px;
     }
+
+    footer,
     main {
 	max-width: 440px;
 	margin-left: auto;
@@ -235,6 +238,7 @@ header a i.fa {
 	width: 380px;
     }
 
+    footer,
     main {
 	float: right;
 	width: 440px;
@@ -245,6 +249,8 @@ header a i.fa {
 footer {
     margin-top: 20px;
     margin-bottom: 60px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .btn {
@@ -372,7 +378,7 @@ a .vim_icon {
 }
 
 .portfolio h3 a:visited span {
-    color: inherit;
+    color: #444;
 }
 
 .indie-link {
