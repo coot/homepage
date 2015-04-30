@@ -375,11 +375,15 @@ a .vim_icon {
 }
 
 .portfolio h3 a:visited {
-    color: #aaa;
+    color: #444;
 }
 
-.portfolio h3 a:visited span {
-    color: #444;
+.portfolio h3 a i.fa {
+    color: #888;
+}
+
+.portfolio h3 a:visited i.fa {
+    color: #ccc;
 }
 
 .indie-link {
