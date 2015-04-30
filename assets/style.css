@@ -356,12 +356,13 @@ a .vim_icon {
 
 .badge {
     display: inline-block;
-    padding: 5px 8px;
+    padding: 3px 6px;
     margin: 2px;
     border-radius: 5px;
-    color: white;
-    background-color: #666;
-    font-size: 14px;
+    color: #222;
+    background-color: #aaa;
+    box-shadow: 1px 1px 3px black;
+    font-size: 13px;
     font-weight: bold;
 }
 
