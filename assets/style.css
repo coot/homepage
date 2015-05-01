@@ -316,7 +316,7 @@ a {
 
 address {
     margin-top: 10px;
-    font-size: 12px;
+    font-size: 0.85em;
 }
 
 address .social {
@@ -407,7 +407,7 @@ a .vim_icon {
     -moz-box-shadow: 1px 1px 3px #777;
     -ms-box-shadow: 1px 1px 3px #777;
     box-shadow: 1px 1px 3px #777;
-    font-size: 13px;
+    font-size: 0.9em;
     font-weight: bold;
 }
 
