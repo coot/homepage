@@ -415,8 +415,18 @@ a .vim_icon {
     box-shadow: 1px 1px 3px black;
 }
 
+.cv {
+    margin-top: 10px;
+    cursor: pointer;
+}
+
 section {
     padding-right: 10px;
+}
+
+section.career_chronology,
+section.education {
+    display: none;
 }
 
 .section_h {
