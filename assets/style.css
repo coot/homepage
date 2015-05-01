@@ -29,6 +29,11 @@ main {
     clear: both;
 }
 
+img {
+    /* ie10 fix */
+    border: 0;
+}
+
 header img.me {
     display: block;
     width: 250px;

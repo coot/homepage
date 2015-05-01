@@ -1,0 +1,7 @@
+{
+    "name": "MarcinSzamotuskiHomePage",
+    "version": "1.0",
+    "dependencies": {
+	"html5shiv": "~3.7.2"
+    }
+}
