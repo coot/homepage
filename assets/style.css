@@ -423,6 +423,12 @@ a .vim_icon {
 .cv {
     margin-top: 10px;
     cursor: pointer;
+    font-size: 0.8em;
+    font-variant: small-caps;
+}
+
+.cv:hover {
+    box-shadow: 1px 1px 1px #666;
 }
 
 section {
