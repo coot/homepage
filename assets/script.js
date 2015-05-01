@@ -63,3 +63,16 @@ window.addEventListener('load', function() {
         false
     );
 });
+
+function Print() {
+    // stop animations and print
+    var anims = document.getElementsByClassName('animate');
+    for (var i=0; i < anims.length; i++) {
+        var anim = anims[0],
+            cls = anim.getAttribute('class').split(/\s+/),
+            idx = cls.indexOf('animate');
+        cls.splice(idx, 1);
+        anim.setAttribute('class', cls.join(' '));
+    }
+    window.print();
+}
