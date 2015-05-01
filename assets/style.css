@@ -32,20 +32,25 @@ main {
 header img.me {
     display: block;
     width: 250px;
-    border-radius: 50%;
     -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    border-radius: 50%;
     margin-bottom: 20px;
     margin-left: auto;
     margin-right: auto;
     -webkit-box-shadow: 0px 0px 10px #444;
     -moz-box-shadow: 0px 0px 10px #444;
+    -ms-box-shadow: 0px 0px 10px #444;
+    -o-box-shadow: 0px 0px 10px #444;
     box-shadow: 0px 0px 10px #444;
 }
 
-@-webkit-keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
-@-moz-keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
-@-o-keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
-@keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
+@-webkit-keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -ms-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
+@-moz-keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -ms-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
+@-o-keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -ms-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
+@keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -ms-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
 
 header #name {
     color: #222;
@@ -55,10 +60,12 @@ header #name {
     margin-bottom: 50px;
     -webkit-transition: all;
     -moz-transition: all;
+    -ms-transition: all;
     -o-transition: all;
     transition: all;
     -webkit-transform-origin: 50% -140px;
     -moz-transform-origin: 50% -140px;
+    -ms-transform-origin: 50% -140px;
     -o-transform-origin: 50% -140px;
     transform-origin: 50% -140px;
 }
@@ -66,15 +73,18 @@ header #name {
 #name.animate {
     -webkit-animation: rotate 6s ease 0s 1;
     -moz-animation: rotate 6s ease 0s 1;
+    -ms-animation: rotate 6s ease 0s 1;
     -o-animation: rotate 6s ease 0s 1;
     animation: rotate 6s ease 0s 1;
 }
 
 #name span {
     position: absolute;
+    right: 45%;
     font: 20px Monaco, Monospace;
     -webkit-transform-origin: 0px -140px;
     -moz-transform-origin: 0px -140px;
+    -ms-transform-origin: 0px -140px;
     -o-transform-origin: 0px -140px;
     transform-origin: 0px -140px;
     width: 20px;
@@ -83,6 +93,7 @@ header #name {
 #name span.char_1 {
     -webkit-transform: rotate(54deg);
     -moz-transform: rotate(54deg);
+    -ms-transform: rotate(54deg);
     -o-transform: rotate(54deg);
     transform: rotate(54deg);
 }
@@ -90,6 +101,7 @@ header #name {
 #name span.char_2 {
     -webkit-transform: rotate(48deg);
     -moz-transform: rotate(48deg);
+    -ms-transform: rotate(48deg);
     -o-transform: rotate(48deg);
     transform: rotate(48deg);
 }
@@ -97,6 +109,7 @@ header #name {
 #name span.char_3 {
     -webkit-transform: rotate(42deg);
     -moz-transform: rotate(42deg);
+    -ms-transform: rotate(42deg);
     -o-transform: rotate(42deg);
     transform: rotate(42deg);
 }
@@ -104,6 +117,7 @@ header #name {
 #name span.char_4 {
     -webkit-transform: rotate(36deg);
     -moz-transform: rotate(36deg);
+    -ms-transform: rotate(36deg);
     -o-transform: rotate(36deg);
     transform: rotate(36deg);
 }
@@ -111,6 +125,7 @@ header #name {
 #name span.char_5 {
     -webkit-transform: rotate(30deg);
     -moz-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
     -o-transform: rotate(30deg);
     transform: rotate(30deg);
 }
@@ -118,6 +133,7 @@ header #name {
 #name span.char_6 {
     -webkit-transform: rotate(24deg);
     -moz-transform: rotate(24deg);
+    -ms-transform: rotate(24deg);
     -o-transform: rotate(24deg);
     transform: rotate(24deg);
 }
@@ -125,6 +141,7 @@ header #name {
 #name span.char_7 {
     -webkit-transform: rotate(18deg);
     -moz-transform: rotate(18deg);
+    -ms-transform: rotate(18deg);
     -o-transform: rotate(18deg);
     transform: rotate(18deg);
 }
@@ -132,6 +149,7 @@ header #name {
 #name span.char_8 {
     -webkit-transform: rotate(12deg);
     -moz-transform: rotate(12deg);
+    -ms-transform: rotate(12deg);
     -o-transform: rotate(12deg);
     transform: rotate(12deg);
 }
@@ -139,6 +157,7 @@ header #name {
 #name span.char_9 {
     -webkit-transform: rotate(6deg);
     -moz-transform: rotate(6deg);
+    -ms-transform: rotate(6deg);
     -o-transform: rotate(6deg);
     transform: rotate(6deg);
 }
@@ -146,6 +165,7 @@ header #name {
 #name span.char_10 {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     transform: rotate(0deg);
 }
@@ -153,6 +173,7 @@ header #name {
 #name span.char_11 {
     -webkit-transform: rotate(-6deg);
     -moz-transform: rotate(-6deg);
+    -ms-transform: rotate(-6deg);
     -o-transform: rotate(-6deg);
     transform: rotate(-6deg);
 }
@@ -160,6 +181,7 @@ header #name {
 #name span.char_12 {
     -webkit-transform: rotate(-12deg);
     -moz-transform: rotate(-12deg);
+    -ms-transform: rotate(-12deg);
     -o-transform: rotate(-12deg);
     transform: rotate(-12deg);
 }
@@ -167,6 +189,7 @@ header #name {
 #name span.char_13 {
     -webkit-transform: rotate(-18deg);
     -moz-transform: rotate(-18deg);
+    -ms-transform: rotate(-18deg);
     -o-transform: rotate(-18deg);
     transform: rotate(-18deg);
 }
@@ -174,6 +197,7 @@ header #name {
 #name span.char_14 {
     -webkit-transform: rotate(-24deg);
     -moz-transform: rotate(-24deg);
+    -ms-transform: rotate(-24deg);
     -o-transform: rotate(-24deg);
     transform: rotate(-24deg);
 }
@@ -181,6 +205,7 @@ header #name {
 #name span.char_15 {
     -webkit-transform: rotate(-30deg);
     -moz-transform: rotate(-30deg);
+    -ms-transform: rotate(-30deg);
     -o-transform: rotate(-30deg);
     transform: rotate(-30deg);
 }
@@ -188,6 +213,7 @@ header #name {
 #name span.char_16 {
     -webkit-transform: rotate(-36deg);
     -moz-transform: rotate(-36deg);
+    -ms-transform: rotate(-36deg);
     -o-transform: rotate(-36deg);
     transform: rotate(-36deg);
 }
@@ -195,6 +221,7 @@ header #name {
 #name span.char_17 {
     -webkit-transform: rotate(-42deg);
     -moz-transform: rotate(-42deg);
+    -ms-transform: rotate(-42deg);
     -o-transform: rotate(-42deg);
     transform: rotate(-42deg);
 }
@@ -202,6 +229,7 @@ header #name {
 #name span.char_18 {
     -webkit-transform: rotate(-48deg);
     -moz-transform: rotate(-48deg);
+    -ms-transform: rotate(-48deg);
     -o-transform: rotate(-48deg);
     transform: rotate(-48deg);
 }
@@ -264,8 +292,11 @@ footer {
     text-decoration: none;
     text-align: center;
     user-select: none;
-    -moz-user-select: none;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 
 .btn:visited {
@@ -302,18 +333,20 @@ a .vim_icon {
 #soundcloud .fa {
     -webkit-transition: all 1s ease;
     -moz-transition: all 1s ease;
+    -ms-transition: all 1s ease;
     -o-transition: all 1s ease;
     transition: all 1s ease;
 }
 
-@-webkit-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
-@-moz-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
-@-o-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: (0deg); -moz-transform: (0deg); -o-transform: (0deg); transform: rotateZ(0deg);}}
-@keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
+@-webkit-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -ms-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -ms-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
+@-moz-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -ms-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -ms-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
+@-o-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -ms-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -ms-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: (0deg); -moz-transform: (0deg); -ms-transform: (0deg); -o-transform: (0deg); transform: rotateZ(0deg);}}
+@keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -ms-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -ms-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
 
 #github i.fa.animate {
     -webkit-animation: shake 1s ease 0s 1;
     -moz-animation: shake 1s ease 0s 1;
+    -ms-animation: shake 1s ease 0s 1;
     -o-animation: shake 1s ease 0s 1;
     animation: shake 1s ease 0s 1;
 }
@@ -339,6 +372,7 @@ a .vim_icon {
 #twitter i.fa.animate {
     -webkit-animation: fly 1s ease 0s 1;
     -moz-animation: fly 1s ease 0s 1;
+    -ms-animation: fly 1s ease 0s 1;
     -o-animation: fly 1s ease 0s 1;
     animation: fly 1s ease 0s 1;
 }
@@ -352,6 +386,7 @@ a .vim_icon {
 #soundcloud i.fa.animate {
     -webkit-animation: rain 1s linear 0s 1;
     -moz-animation: rain 1s linear 0s 1;
+    -ms-animation: rain 1s linear 0s 1;
     -o-animation: rain 1s linear 0s 1;
     animation: rain 1s linear 0s 1;
 }
@@ -365,6 +400,7 @@ a .vim_icon {
     background-color: #222;
     -webkit-box-shadow: 1px 1px 3px #777;
     -moz-box-shadow: 1px 1px 3px #777;
+    -ms-box-shadow: 1px 1px 3px #777;
     box-shadow: 1px 1px 3px #777;
     font-size: 13px;
     font-weight: bold;
@@ -375,6 +411,7 @@ a .vim_icon {
     background-color: #aaa;
     -webkit-box-shadow: 1px 1px 3px black;
     -moz-box-shadow: 1px 1px 3px black;
+    -ms-box-shadow: 1px 1px 3px black;
     box-shadow: 1px 1px 3px black;
 }
 
@@ -418,6 +455,7 @@ section {
     top: -15px;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
