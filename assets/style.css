@@ -429,8 +429,7 @@ section {
     padding-right: 10px;
 }
 
-section.career_chronology,
-section.education {
+.print_only {
     display: none;
 }
 

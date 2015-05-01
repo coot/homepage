@@ -142,17 +142,25 @@ header #name {
     transform: rotate(0deg);
 }
 
-.social a {
-    display: inline-block;
+address .personal {
+    float: left;
 }
 
-.social a:not(:first-child) {
-    margin-left: 10px;
+address .social {
+    float: right;
+    margin-right: 50px;
 }
 
-section.career_chronology,
-section.education {
+.print_only {
     display: block;
+}
+
+.print_only.inline {
+    display: inline;
+}
+
+article.personal_data {
+    margin-top: 10px;
 }
 
 .row:not(:last-child) {
