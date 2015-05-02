@@ -3,6 +3,7 @@ body {
     color: #444;
     overflow-x: hidden;
     font-size: 14px;
+    margin: 0px;
 }
 
 .wrapper {
@@ -319,8 +320,13 @@ address {
     font-size: 0.85em;
 }
 
+address .personal {
+    float: left;
+}
+
 address .social {
-    margin-top: 10px;
+    margin-right: 20px;
+    float: right;
 }
 
 .social a {

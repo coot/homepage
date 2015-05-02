@@ -1,9 +1,39 @@
+main,
+footer {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#img_container {
+    float: left;
+    margin-right: 10px;
+    max-width: 300px;
+}
+
+#img_container p {
+    padding-left: 30px;
+    margin-top: 0;
+}
+
+#img_container .personal_data {
+    padding-left: 45px;
+}
+
 header img.me {
-    display: none;
+    -webkit-filter: grayscale(100%);
+    -moz-filter: grayscale(100%);
+    -ms-filter: grayscale(100%);
+    -o-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
+header img.me {
+    width: 150px;
 }
 
 header #name {
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
 #name span {
@@ -148,7 +178,7 @@ address .personal {
 
 address .social {
     float: right;
-    margin-right: 50px;
+    margin-right: 20px;
 }
 
 .print_only {
@@ -157,10 +187,6 @@ address .social {
 
 .print_only.inline {
     display: inline;
-}
-
-article.personal_data {
-    margin-top: 10px;
 }
 
 .row:not(:last-child) {
