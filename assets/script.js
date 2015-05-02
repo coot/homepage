@@ -62,10 +62,19 @@ window.addEventListener('load', function() {
         document.getElementById('vim'),
         false
     );
+
+    // age
+    var ageEl = document.getElementById('age'),
+        date = new Date();
+    if (ageEl.textContent !== undefined)
+        ageEl.textContent = date.getFullYear() - 1979;
+    else
+        ageEl.innerText = date.getFullYear() - 1979;
+
 });
 
 function Print() {
-    // stop animations and print
+    // stop animations
     var anims = document.getElementsByClassName('animate');
     for (var i=0; i < anims.length; i++) {
         var anim = anims[0],
