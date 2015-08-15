@@ -26,6 +26,10 @@ main {
     box-sizing: border-box;
 }
 
+.langs {
+    margin-top: 10px;
+}
+
 .clearfix {
     clear: both;
 }
