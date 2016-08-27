@@ -337,12 +337,12 @@ address .social {
     display: block;
 }
 
-a .vim_icon {
+a .icon {
     width: 18px;
     vertical-align: middle;
 }
 
-#vim .vim_icon,
+#vim .icon,
 #twitter .fa,
 #github .fa,
 #soundcloud .fa {
@@ -371,19 +371,18 @@ a .vim_icon {
 @-o-keyframes fly {0% {top: 0; left: 0; opacity: 1;} 50% {top: -10px; left: 15px; opacity: 0.6;} 80% {top: -20px; left: 40px; opacity: 0;} 81% {top: 0px; left: 0px; opacity: 0;} 100% {top: 0px; left: 0px; opacity: 1;}}
 @keyframes fly {0% {top: 0; left: 0; opacity: 1;} 50% {top: -10px; left: 15px; opacity: 0.6;} 80% {top: -20px; left: 40px; opacity: 0;} 81% {top: 0px; left: 0px; opacity: 0;} 100% {top: 0px; left: 0px; opacity: 1;}}
 
-#twitter {
-    position: relative;
-    display: inline-block;
-    padding-left: 20px;
+.social > a {
+  position: relative;
+  padding-left: 20px;
 }
 
-#twitter i.fa {
-    position: absolute;
-    top: 0;
-    left: 0;
+.social > a .icon {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-#vim .vim_icon.animate,
+#vim .icon.animate,
 #twitter i.fa.animate {
     -webkit-animation: fly 1s ease 0s 1;
     -moz-animation: fly 1s ease 0s 1;
@@ -397,7 +396,7 @@ a .vim_icon {
 @-o-keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
 @keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
 
-#vim .vim_icon.animate,
+#vim .icon.animate,
 #soundcloud i.fa.animate {
     -webkit-animation: rain 1s linear 0s 1;
     -moz-animation: rain 1s linear 0s 1;
