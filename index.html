@@ -2,10 +2,12 @@
 <html lang="en">
     <head>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
 	<title>Marcin Szamotulski Homepage</title>
 	<meta name="description" content="I am a mathematician (PhD) and a software engineer delivering solutions using JavaScript, Haskell, Purescript and Python." /> 
-	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="author" content="Marcin Szamotulski" />
+	<meta name="keywords" content="JavaScript React Angular Python Haskell PureScript programming  web applications PWA" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:site" content="@coot_" />
 	<meta name="twitter:title" content="Marcin Szamotulski - freelance full-stack developer and data scientist" />
@@ -20,10 +22,11 @@
 	<meta prefix="og: http://ogp.me/ns#" property="og:url" content="http:/marcinszamotulski.me" />
 	<meta prefix="og: http://ogp.me/ns#" property="og:image" content="http://marcinszamotulski.me/images/marcinszamotulski-large.jpg" />
 	<meta property="fb:admins" content="100001888925907" />
-	<link href="assets/normalize.css" type="text/css" rel="stylesheet" />
-	<link href="assets/style.css" type="text/css" rel="stylesheet" />
-	<link href="assets/print_style.css" type="text/css" rel="stylesheet" media="print" />
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+	<!-- <link type="text/css" rel="stylesheet" href="assets/normalize.css" /> -->
+	<!-- <link type="text/css" rel="stylesheet" href="assets/style.css" /> -->
+	<!-- <link type="text/css" rel="stylesheet" href="assets/print_style.css" media="print" /> -->
+	<!-- <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"> -->
 	<script type="text/javascript" async src="bower_components/html5shiv/dist/html5shiv.min.js"></script>
 	<script type="text/javascript" async src="bower_components/html5shiv/dist/html5shiv-printshiv.min.js"></script>
     </head>
@@ -318,5 +321,25 @@
 	    </footer>
 	</div>
     </body>
-    <script type="text/javascript" src="assets/script.js"></script>
+    <script async type="text/javascript" src="assets/script.js"></script>
+    <script>
+      // load css
+      var df = ["assets/style.css", "assets/normalize.css", "assets/print_style.css"].reduce(
+	  function(df, path, idx) {
+	    var link = document.createElement('link')
+	    link.setAttribute('rel', 'stylesheet')
+	    link.setAttribute('type', 'text/css')
+	    link.setAttribute('href', path)
+	    if (path === "assets/print_style.css")
+	      link.setAttribute('media', 'print')
+	    df.append(link)
+	    return df
+	  }, document.createDocumentFragment())
+      document.body.append(df)
+    </script>
+    <noscript>
+      <link rel="stylesheet" type="text/css" href="assets/normalize.css" />
+      <link rel="stylesheet" type="text/css" href="assets/style.css" />
+      <link rel="stylesheet" type="text/css" href="assets/print_style.css" media="print" />
+    </noscript>
 </html>
