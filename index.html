@@ -23,10 +23,6 @@
 	<meta prefix="og: http://ogp.me/ns#" property="og:image" content="http://marcinszamotulski.me/images/marcinszamotulski-large.jpg" />
 	<meta property="fb:admins" content="100001888925907" />
 
-	<!-- <link type="text/css" rel="stylesheet" href="assets/normalize.css" /> -->
-	<!-- <link type="text/css" rel="stylesheet" href="assets/style.css" /> -->
-	<!-- <link type="text/css" rel="stylesheet" href="assets/print_style.css" media="print" /> -->
-	<!-- <link type="text/css" rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"> -->
 	<script type="text/javascript" async src="bower_components/html5shiv/dist/html5shiv.min.js"></script>
 	<script type="text/javascript" async src="bower_components/html5shiv/dist/html5shiv-printshiv.min.js"></script>
     </head>
@@ -324,7 +320,7 @@
     <script async type="text/javascript" src="assets/script.js"></script>
     <script>
       // load css
-      var df = ["assets/style.css", "assets/normalize.css", "assets/print_style.css"].reduce(
+      var df = ["assets/style.css", "assets/normalize.css", "//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css", "assets/print_style.css"].reduce(
 	  function(df, path, idx) {
 	    var link = document.createElement('link')
 	    link.setAttribute('rel', 'stylesheet')
