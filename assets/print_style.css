@@ -1,4 +1,5 @@
 main,
+header,
 footer {
     max-width: 600px;
     margin-left: auto;
@@ -6,9 +7,10 @@ footer {
 }
 
 #img_container {
-    float: left;
-    margin-right: 10px;
-    max-width: 300px;
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 400px;
 }
 
 #img_container p {
@@ -30,6 +32,7 @@ header img.me {
 
 header img.me {
     width: 150px;
+    height: 150px;
 }
 
 header #name {
