@@ -85,6 +85,14 @@ header p {
   font-size: 1.2em;
 }
 
+section {
+  margin-bottom: 40px;
+}
+
+article {
+  margin-bottom: 40px;
+}
+
 @media screen and (max-width: 920px), screen and (max-height: 500px) {
     .wrapper {
 	width: 100%;
@@ -119,7 +127,6 @@ header p {
     main {
 	float: right;
 	width: 540px;
-	margin-bottom: 50px;
     }
 }
 
@@ -260,7 +267,14 @@ section {
 }
 
 .portfolio h3 {
+    font-weight: 300;
     margin-bottom: 0.2em;
+}
+
+.portfolio h3 .title:before {
+  font-weight: 300;
+  margin-right: 2px;
+  content: "•••";
 }
 
 .portfolio h3 a {
