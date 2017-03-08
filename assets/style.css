@@ -122,11 +122,21 @@ article {
     header {
 	float: left;
 	width: 380px;
+	height: 100vh;
+	position: fixed;
     }
 
     main {
 	float: right;
 	width: 540px;
+    }
+
+    @supports (display: flex) {
+      header.info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+      }
     }
 }
 
@@ -244,12 +254,14 @@ a .icon {
 
 .badge.cv {
     margin-top: 10px;
+    width: 100px;
+    text-align: center;
     cursor: pointer;
     font-weight: 300;
 }
 
 .cv:hover {
-    box-shadow: 1px 1px 1px #666;
+    box-shadow: 1px 1px 1px #aaa;
 }
 
 section {
