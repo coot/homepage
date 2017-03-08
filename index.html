@@ -23,6 +23,12 @@
 	<meta prefix="og: http://ogp.me/ns#" property="og:image" content="http://marcinszamotulski.me/images/marcinszamotulski-large.jpg" />
 	<meta property="fb:admins" content="100001888925907" />
 
+	<link rel="stylesheet" href="assets/style.css" />
+	<link rel="stylesheet" href="assets/normalize.css" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="assets/print_style.css" media="print"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" />
+
 	<script type="text/javascript" async src="bower_components/html5shiv/dist/html5shiv.min.js"></script>
 	<script type="text/javascript" async src="bower_components/html5shiv/dist/html5shiv-printshiv.min.js"></script>
     </head>
@@ -39,7 +45,7 @@
 			alt="my photo"
 		      />
 		    <h1 id="name">
-			<span class="char_1">M</span><span class="char_2">a</span><span class="char_3">r</span><span class="char_4">c</span><span class="char_5">i</span><span class="char_6">n</span><span class="char_7"> </span><span class="char_8">S</span><span class="char_9">z</span><span class="char_10">a</span><span class="char_11">m</span><span class="char_12">o</span><span class="char_13">t</span><span class="char_14">u</span><span class="char_15">l</span><span class="char_16">s</span><span class="char_17">k</span><span class="char_18">i</span>
+		      Marcin Szamotulski
 		    </h1>
 		    <p>
 		      I am a full stack developer and PhD mathematician who understands data.
@@ -64,9 +70,6 @@
 			<div>
 			    <a href="skype:m.szamotulski">m.szamotulski</a> <small>(Skype)</small>
 			</div>
-			<div>
-			    <a href="http://pycorner.herokuapp.com"><i class="fa fa-terminal"></i> pycorner</a> <small>(blog)</small>
-			</div>
 		    </div>
 		    <div class="social">
 			<a id="twitter" href="https://twitter.com/coot_" target="_blank">
@@ -77,19 +80,10 @@
 			  Medium
 			</a>
 			<a id="github" href="https://github.com/coot" target="_blank">
-			    <i id="github_i" class="icon fa fa-github"></i>
 			    GitHub
 			</a>
 			<a id="npm" href="https://www.npmjs.com/~coot" target="_blank">
 			  npmjs
-			</a>
-			<a id="soundcloud" href="https://soundcloud.com/marcin-szamotulski" target="_blank">
-			    <i id="soundcloud_i" class="icon fa fa-soundcloud"></i>
-			    SoundCloud
-			</a>
-			<a id="vim" href="http://www.vim.org/account/profile.php?user_id=18896">
-			    <img id="vim_i" class="icon" src="images/vim_icon_20.png" alt="vim icon">
-			    vim
 			</a>
 		    </div>
 		    <div class="clearfix"></div>
@@ -264,7 +258,7 @@
 			    <span class="badge">Apache</span>
 			    <span class="badge">Stripe</span>
 			    <span class="badge">Github API</span>
-			    <span class="badge fr">React.js</span>
+			    <span class="badge fr">React</span>
 			    <span class="badge fr">jQuery</span>
 			    <span class="badge fr">Gulp</span>
 			    <span class="badge fr">Require.js</span>
@@ -303,9 +297,11 @@
 			<p>
 			  This was an exiting time for me to work on a small
 			  Angular application backed by a github data on open
-			  source community.  I worked as a full stack web
-			  developer and I delivered a proof of concept in
-			  almost no time. 
+			  source community and using the <a
+			    href="https://github.com/libgit2/pygit2"
+			    target="_blank">pygit2 (libgit2)</a> library.
+			  I worked as a full stack web developer and
+			  I delivered a proof of concept in almost no time. 
 			</p>
 			<div class="badges">
 			    <span class="badge">Flask <small>(Python)</small></span>
@@ -316,7 +312,7 @@
 			    <span class="badge">PyGit2 (<small>libgit2</small>)</span>
 			    <span class="badge">Github API</span>
 			    <span class="badge">Google Maps API</span>
-			    <span class="badge fr">Angular.js</span>
+			    <span class="badge fr">Angular</span>
 			    <span class="badge fr">jQuery</span>
 			    <span class="badge fr">Gulp</span>
 			    <span class="badge fr">HTML5/CSS3</span>
@@ -339,7 +335,7 @@
 			    <span class="badge">Nginx <small>(hosted on AWS)</small></span>
 			    <span class="badge">RabbitMQ</span>
 			    <span class="badge">Rest Framework</span>
-			    <span class="badge fr">Angular.js</span>
+			    <span class="badge fr">Angular</span>
 			    <span class="badge fr">jQuery</span>
 			    <span class="badge fr">HTML5/CSS3</span>
 			</div>
@@ -362,7 +358,7 @@
 			    <span class="badge">PostgreSQL</span>
 			    <span class="badge">Heroku</span>
 			    <span class="badge fr">HTML5/CSS3</span>
-			    <span class="badge fr">Angular.js</span>
+			    <span class="badge fr">Angular</span>
 			    <span class="badge fr">jQuery</span>
 			    <span class="badge fr">Twitter Bootstrap</span>
 			</div>
@@ -398,25 +394,4 @@
 	    </footer>
 	</div>
     </body>
-    <script async type="text/javascript" src="assets/script.js"></script>
-    <script>
-      // load css
-      var df = ["assets/style.css", "assets/normalize.css", "//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css", "assets/print_style.css"].reduce(
-	  function(df, path, idx) {
-	    var link = document.createElement('link')
-	    link.setAttribute('rel', 'stylesheet')
-	    link.setAttribute('type', 'text/css')
-	    link.setAttribute('href', path)
-	    if (path === "assets/print_style.css")
-	      link.setAttribute('media', 'print')
-	    df.append(link)
-	    return df
-	  }, document.createDocumentFragment())
-      document.body.append(df)
-    </script>
-    <noscript>
-      <link rel="stylesheet" type="text/css" href="assets/normalize.css" />
-      <link rel="stylesheet" type="text/css" href="assets/style.css" />
-      <link rel="stylesheet" type="text/css" href="assets/print_style.css" media="print" />
-    </noscript>
 </html>

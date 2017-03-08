@@ -1,8 +1,15 @@
+html, body {
+  font-family: 'Open Sans', sans-serif;
+  font-display: swap;
+  font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
+  text-rendering: optimizeLegibility;
+  font-size: 16px;
+}
+
 body {
     width: 100%;
     color: #444;
     overflow-x: hidden;
-    font-size: 14px;
     margin: 0px;
 }
 
@@ -64,193 +71,24 @@ header img.me {
 
 header #name {
     color: #222;
+    font-weight: 300;
+    font-size: 1.8em;
     text-align: center;
-    position: relative;
-    top: -10px;
-    margin-bottom: 50px;
-    -webkit-transition: all;
-    -moz-transition: all;
-    -ms-transition: all;
-    -o-transition: all;
-    transition: all;
-    -webkit-transform-origin: 50% -140px;
-    -moz-transform-origin: 50% -140px;
-    -ms-transform-origin: 50% -140px;
-    -o-transform-origin: 50% -140px;
-    transform-origin: 50% -140px;
-}
-
-#name.animate {
-    -webkit-animation: rotate 6s ease 0s 1;
-    -moz-animation: rotate 6s ease 0s 1;
-    -ms-animation: rotate 6s ease 0s 1;
-    -o-animation: rotate 6s ease 0s 1;
-    animation: rotate 6s ease 0s 1;
-}
-
-#name span {
-    position: absolute;
-    right: 45%;
-    font: 20px Monaco, Monospace;
-    -webkit-transform-origin: 0px -140px;
-    -moz-transform-origin: 0px -140px;
-    -ms-transform-origin: 0px -140px;
-    -o-transform-origin: 0px -140px;
-    transform-origin: 0px -140px;
-    width: 20px;
-}
-
-#name span.char_1 {
-    -webkit-transform: rotate(54deg);
-    -moz-transform: rotate(54deg);
-    -ms-transform: rotate(54deg);
-    -o-transform: rotate(54deg);
-    transform: rotate(54deg);
-}
-
-#name span.char_2 {
-    -webkit-transform: rotate(48deg);
-    -moz-transform: rotate(48deg);
-    -ms-transform: rotate(48deg);
-    -o-transform: rotate(48deg);
-    transform: rotate(48deg);
-}
-
-#name span.char_3 {
-    -webkit-transform: rotate(42deg);
-    -moz-transform: rotate(42deg);
-    -ms-transform: rotate(42deg);
-    -o-transform: rotate(42deg);
-    transform: rotate(42deg);
-}
-
-#name span.char_4 {
-    -webkit-transform: rotate(36deg);
-    -moz-transform: rotate(36deg);
-    -ms-transform: rotate(36deg);
-    -o-transform: rotate(36deg);
-    transform: rotate(36deg);
-}
-
-#name span.char_5 {
-    -webkit-transform: rotate(30deg);
-    -moz-transform: rotate(30deg);
-    -ms-transform: rotate(30deg);
-    -o-transform: rotate(30deg);
-    transform: rotate(30deg);
-}
-
-#name span.char_6 {
-    -webkit-transform: rotate(24deg);
-    -moz-transform: rotate(24deg);
-    -ms-transform: rotate(24deg);
-    -o-transform: rotate(24deg);
-    transform: rotate(24deg);
-}
-
-#name span.char_7 {
-    -webkit-transform: rotate(18deg);
-    -moz-transform: rotate(18deg);
-    -ms-transform: rotate(18deg);
-    -o-transform: rotate(18deg);
-    transform: rotate(18deg);
-}
-
-#name span.char_8 {
-    -webkit-transform: rotate(12deg);
-    -moz-transform: rotate(12deg);
-    -ms-transform: rotate(12deg);
-    -o-transform: rotate(12deg);
-    transform: rotate(12deg);
-}
-
-#name span.char_9 {
-    -webkit-transform: rotate(6deg);
-    -moz-transform: rotate(6deg);
-    -ms-transform: rotate(6deg);
-    -o-transform: rotate(6deg);
-    transform: rotate(6deg);
-}
-
-#name span.char_10 {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    transform: rotate(0deg);
-}
-
-#name span.char_11 {
-    -webkit-transform: rotate(-6deg);
-    -moz-transform: rotate(-6deg);
-    -ms-transform: rotate(-6deg);
-    -o-transform: rotate(-6deg);
-    transform: rotate(-6deg);
-}
-
-#name span.char_12 {
-    -webkit-transform: rotate(-12deg);
-    -moz-transform: rotate(-12deg);
-    -ms-transform: rotate(-12deg);
-    -o-transform: rotate(-12deg);
-    transform: rotate(-12deg);
-}
-
-#name span.char_13 {
-    -webkit-transform: rotate(-18deg);
-    -moz-transform: rotate(-18deg);
-    -ms-transform: rotate(-18deg);
-    -o-transform: rotate(-18deg);
-    transform: rotate(-18deg);
-}
-
-#name span.char_14 {
-    -webkit-transform: rotate(-24deg);
-    -moz-transform: rotate(-24deg);
-    -ms-transform: rotate(-24deg);
-    -o-transform: rotate(-24deg);
-    transform: rotate(-24deg);
-}
-
-#name span.char_15 {
-    -webkit-transform: rotate(-30deg);
-    -moz-transform: rotate(-30deg);
-    -ms-transform: rotate(-30deg);
-    -o-transform: rotate(-30deg);
-    transform: rotate(-30deg);
-}
-
-#name span.char_16 {
-    -webkit-transform: rotate(-36deg);
-    -moz-transform: rotate(-36deg);
-    -ms-transform: rotate(-36deg);
-    -o-transform: rotate(-36deg);
-    transform: rotate(-36deg);
-}
-
-#name span.char_17 {
-    -webkit-transform: rotate(-42deg);
-    -moz-transform: rotate(-42deg);
-    -ms-transform: rotate(-42deg);
-    -o-transform: rotate(-42deg);
-    transform: rotate(-42deg);
-}
-
-#name span.char_18 {
-    -webkit-transform: rotate(-48deg);
-    -moz-transform: rotate(-48deg);
-    -ms-transform: rotate(-48deg);
-    -o-transform: rotate(-48deg);
-    transform: rotate(-48deg);
 }
 
 header a i.fa {
     color: #333;
 }
 
-@media screen and (max-width: 820px), screen and (max-height: 500px) {
+header p {
+  font-weight: 300;
+  font-size: 1.2em;
+}
+
+@media screen and (max-width: 920px), screen and (max-height: 500px) {
     .wrapper {
 	width: 100%;
+	min-width: 300px;
     }
 
     header {
@@ -261,16 +99,16 @@ header a i.fa {
     }
 
     main {
-	max-width: 440px;
+	max-width: 540px;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 10px;
     }
 }
 
-@media screen and (min-width: 821px) and (min-height: 500px) {
+@media screen and (min-width: 921px) and (min-height: 500px) {
     .wrapper {
-	width: 820px;
+	width: 920px;
     }
 
     header {
@@ -280,7 +118,7 @@ header a i.fa {
 
     main {
 	float: right;
-	width: 440px;
+	width: 540px;
 	margin-bottom: 50px;
     }
 }
@@ -315,7 +153,7 @@ footer {
 }
 
 a {
-    color: rgb(70, 46, 139);
+    color: rgb(63,81,181);
     text-decoration: none;
 }
 
@@ -342,30 +180,6 @@ a .icon {
     vertical-align: middle;
 }
 
-#vim .icon,
-#twitter .fa,
-#github .fa,
-#soundcloud .fa {
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -ms-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease;
-}
-
-@-webkit-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -ms-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -ms-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
-@-moz-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -ms-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -ms-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
-@-o-keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -ms-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -ms-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: (0deg); -moz-transform: (0deg); -ms-transform: (0deg); -o-transform: (0deg); transform: rotateZ(0deg);}}
-@keyframes shake {0% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} 25% {-webkit-transform: rotateZ(-25deg); -moz-transform: rotateZ(-25deg); -ms-transform: rotateZ(-25deg); -o-transform: rotateZ(-25deg); transform: rotateZ(-25deg);} 75% {-webkit-transform: rotateZ(25deg); -moz-transform: rotateZ(25deg); -ms-transform: rotateZ(25deg); -o-transform: rotateZ(25deg); transform: rotateZ(25deg);} 100% {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);}}
-
-#github i.fa.animate {
-    -webkit-animation: shake 1s ease 0s 1;
-    -moz-animation: shake 1s ease 0s 1;
-    -ms-animation: shake 1s ease 0s 1;
-    -o-animation: shake 1s ease 0s 1;
-    animation: shake 1s ease 0s 1;
-}
-
 @-webkit-keyframes fly {0% {top: 0; left: 0; opacity: 1;} 50% {top: -10px; left: 15px; opacity: 0.6;} 80% {top: -20px; left: 40px; opacity: 0;} 81% {top: 0px; left: 0px; opacity: 0;} 100% {top: 0px; left: 0px; opacity: 1;}}
 @-moz-keyframes fly {0% {top: 0; left: 0; opacity: 1;} 50% {top: -10px; left: 15px; opacity: 0.6;} 80% {top: -20px; left: 40px; opacity: 0;} 81% {top: 0px; left: 0px; opacity: 0;} 100% {top: 0px; left: 0px; opacity: 1;}}
 @-o-keyframes fly {0% {top: 0; left: 0; opacity: 1;} 50% {top: -10px; left: 15px; opacity: 0.6;} 80% {top: -20px; left: 40px; opacity: 0;} 81% {top: 0px; left: 0px; opacity: 0;} 100% {top: 0px; left: 0px; opacity: 1;}}
@@ -382,7 +196,10 @@ a .icon {
   left: 0;
 }
 
-#vim .icon.animate,
+.social > a #twitter_i {
+  top: 4px;
+}
+
 #twitter i.fa.animate {
     -webkit-animation: fly 1s ease 0s 1;
     -moz-animation: fly 1s ease 0s 1;
@@ -391,49 +208,37 @@ a .icon {
     animation: fly 1s ease 0s 1;
 }
 
-@-webkit-keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
-@-moz-keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
-@-o-keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
-@keyframes rain {0% {opacity: 1;} 50% {opacity: 0.3;} 100% {opacity: 1;}}
-
-#vim .icon.animate,
-#soundcloud i.fa.animate {
-    -webkit-animation: rain 1s linear 0s 1;
-    -moz-animation: rain 1s linear 0s 1;
-    -ms-animation: rain 1s linear 0s 1;
-    -o-animation: rain 1s linear 0s 1;
-    animation: rain 1s linear 0s 1;
-}
-
 .badge {
     display: inline-block;
-    padding: 3px 6px;
-    margin: 2px;
-    border-radius: 5px;
-    color: #aaa;
-    background-color: #222;
-    -webkit-box-shadow: 1px 1px 3px #777;
-    -moz-box-shadow: 1px 1px 3px #777;
-    -ms-box-shadow: 1px 1px 3px #777;
-    box-shadow: 1px 1px 3px #777;
+    padding: 3px 6px 5px 6px;
+    margin: 4px 2px;
+    border-radius: 2px;
+    color: #222;
+    background-color: #e6e6e6;
+    -webkit-box-shadow: 1px 1px 3px #f0f0f0;
+    -moz-box-shadow: 1px 1px 3px #f0f0f0;
+    -ms-box-shadow: 1px 1px 3px #f0f0f0;
+    box-shadow: 1px 1px 3px #f0f0f0;
+    font-variant: all-small-caps;
     font-size: 0.9em;
-    font-weight: bold;
+    line-height: 1em;
+    font-weight: 300;
 }
 
 .badge.fr {
     color: #222;
-    background-color: #aaa;
-    -webkit-box-shadow: 1px 1px 3px black;
-    -moz-box-shadow: 1px 1px 3px black;
-    -ms-box-shadow: 1px 1px 3px black;
-    box-shadow: 1px 1px 3px black;
+    background-color: #e6e6e6;
+    font-weight: 600;
+    -webkit-box-shadow: 1px 1px 3px #f0f0f0;
+    -moz-box-shadow: 1px 1px 3px #f0f0f0;
+    -ms-box-shadow: 1px 1px 3px #f0f0f0;
+    box-shadow: 1px 1px 3px #f0f0f0;
 }
 
-.cv {
+.badge.cv {
     margin-top: 10px;
     cursor: pointer;
-    font-size: 0.8em;
-    font-variant: small-caps;
+    font-weight: 300;
 }
 
 .cv:hover {
@@ -451,6 +256,7 @@ section {
 .section_h {
     width: 40%;
     border-bottom: 1px solid #aaa;
+    font-weight: 300;
 }
 
 .portfolio h3 {
@@ -482,14 +288,13 @@ section {
     position: absolute;
     height: 30px;
     top: -15px;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -ms-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -ms-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .indie-logo:hover {
-    height: 80px;
-    top: -40px;
+  transform: translateX(25%) scale(1.25);
 }
