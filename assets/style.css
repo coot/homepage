@@ -266,6 +266,14 @@ section {
     font-weight: 300;
 }
 
+.bio h4 {
+  font-weight: 300;
+  font-variant-caps: all-small-caps;
+  margin-top: 8px;
+  margin-bottom: 5px;
+}
+
+
 .portfolio h3 {
     font-weight: 300;
     margin-bottom: 0.2em;
