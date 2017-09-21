@@ -31,6 +31,15 @@
 
 	<script type="text/javascript" async src="bower_components/html5shiv/dist/html5shiv.min.js"></script>
 	<script type="text/javascript" async src="bower_components/html5shiv/dist/html5shiv-printshiv.min.js"></script>
+	<script async>
+	  if(navigator.serviceWorker) {
+	    navigator.serviceWorker
+	      .register('/sw.js')
+	      .catch(function(err) {
+		console.error('Unable to register service worker.', err);
+	      });
+	  }
+	</script>
     </head>
     <body>
 	<div class="wrapper">
