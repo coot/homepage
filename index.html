@@ -53,7 +53,7 @@
 		    <article class="personal_data print_only">
 			<span>age</span>: <span id="age">36</span><br />
 			<span>nationality</span>: Polish <small>(living in Portugal)</small><br />
-			<span>languages</span>: english <small>(fluent)</small>, polish <small>(native)</small>, portuguese <small>(basic)</small>, french <small>(basic)</small><br />
+			<span>languages</span>: English <small>(fluent)</small>, Polish <small>(native)</small>, Portuguese <small>(basic)</small>, French <small>(basic)</small><br />
 		    </article>
 		</div>
 		<address>
@@ -219,9 +219,9 @@
 		      <h3><a class="title" id="gravicus" href="http://gravicus.com" target="_blank"><small></small> Gravicus</a></h3>
 		      <p>
 			At the moment I am working at Gravicus and I am
-			responsible for frontend development.  We decided to
+			responsible for front-end development.  We decided to
 			build ui with
-			<a href="https://purescript.org">PureScript</a> and
+			<a href="http://purescript.org">PureScript</a> and
 			<a href="https://facebook.github.io/react/">React</a>.
 			I setup various projects using <a
 			  href="https://github.com/coot/react-redox">Redox</a>,
@@ -231,23 +231,23 @@
 		      <p>
 			I've been also responsible for implementing pixel
 			perfect designs closely working with our designer.
-			Writing complex ui elements with pseudo-elements and
+			Writing complex ui elements using pseudo-elements and
 			well designed modern css.  I've decided to try
 			<a href="https://github.com/postcss/postcss"
 			  target="_blank">postcss</a>.  It introduces proper
 			scoping of css which avoids problems in the long run.
-			It fits well functional programming paradigm with its
-			composition of css classes (it tames side effects of
-			globally scoped css and introduces composition of css
-			classes which is obeys the laws of a semigroup).
+			It fits well into functional programming paradigm with
+			its composition of css classes (it tames side effects
+			of globally scoped css and introduces composition of
+			css classes which is obeys the laws of a semigroup).
 		      </p>
 		      <p>
-			I setup unitests of which runs both in node with <a
-			  href="https://pursuit.purescript.org/packages/purescript-test-unit"
+			I setup unittest which runs both in node with <a
+			  href="http://pursuit.purescript.org/packages/purescript-test-unit"
 			  target="_blank">purescript-test-unit</a> and in
 			the browser using karma runner.  Before taking up this
 			role I wrote a library to run
-			<pre>purescript-test-unit</pre> using karma runner in
+			<code>purescript-test-unit</code> using karma runner in
 			a browser environment and bindings for the airbnb's <a
 			  href="https://github.com/airbnb/enzyme"
 			  target="_blank">enzyme</a> react testing library.
@@ -259,7 +259,12 @@
 			from the DSL allows to plug an interpreter designed for
 			tests which can mock data, pretend request.  This will
 			allow us to have a very good testing architecture for
-			our work.
+			our work.  This is based on my work published on github:
+			<a target="_blank" href="https://pursuit.purescript.org/packages/purescript-redox"><code>redox</code></a>,
+			<a target="_blank" href="https://pursuit.purescript.org/packages/purescript-react-redox"><code>react-redox</code></a>
+			and my purely functional routing library <a
+		      target="_blank"
+		      href="https://github.com/coot/purescript-cofree-react-router"><code>cofree-react-router</code></a>.
 		      </p>
 		      <div class="badges">
 			<span class="badge fr">Progressive Web App</span>
@@ -273,6 +278,105 @@
 			<span class="badge fr">purescript-enzyme</span>
 			<span class="badge fr">purescript-unit-test</span>
 		      </div>
+		    </article>
+		    <article>
+		      <h3><a class="title" id="zephyr" href="https://github.com/coot/zephyr" target="_blank"><small></small> Zephyr</a></h3>
+		      <p>
+			This is an open-source project which provides a
+			tree shaking algorithm for
+			<a href="http://purescript.org" target="_blank">PureScript</a>.
+			It outputs a set of CommonJS modules which can be
+			bundled with webpack, rollup or any other tool.
+			<code>zephyr</code> allows to build lazy loaded
+			applications that are also properly minified before
+			shipping. This opens new possibilities in the
+			<code>PureScript</code> ecosystem.
+		      </p>
+		      <div class="badges">
+			<span class="badge fr">Haskell</span>
+			<span class="badge fr">PureScript</span>
+			<span class="badge fr">Stack</span>
+		      </div>
+		    </article>
+		    <article>
+		      <h3><a class="title" id="purescript-ecosystem" href="http://purescript.org">PureScript</a></h3>
+		      <p>
+			I am an active member of the <a href="http://purescript.org" target="_blank">PuresScript</a> community,
+			I have contributed to the <a target="_blank"
+			href="https://github.com/purescript/purescript">PureScript</a>
+		      compiler and I authored and maintain various libraries.  My noticeable original libraries:
+			<ul>
+			  <li>
+			    <a href="https://pursuit.purescript.org/packages/purescript-redox" target="_blank">purescript-redox</a>
+			    <section>
+			      <a href="http://redux.js.org/"
+				target="_blank">Redux</a> architecture for
+			      <code>PureScript</code> applications, that
+			      focuses on correctness and compostability and
+			      testability.  It is using a pairing between free
+			      monad (DSL) and a cofree comonad (interpreter).
+			      Interestingly you can compose DSL's (taking
+			      a sum) and compose the corresponding interpreters.
+			    </section>
+			  </li>
+			  <li>
+			    <a href="https://pursuit.purescript.org/packages/purescript/purescript-react-redox" target="_blank">purescript-react-redox</a>
+			    <section>
+			      <a href="https://facebook.github.io/react/" target="_blank">React</a> bindings for Redox.
+			    </section>
+			  </li>
+			  <li>
+			    <a href="https://pursuit.purescript.org/packages/purescript/purescript-cofree-react-router" target="_blank">purescript-cofree-react-router</a>
+			    <section>
+			      React router modelled using a <code>Cofree Array</code> comonad.  This is not surprising if you realise that <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model" target="_blank">DOM</a> can be modelled by <code>Cofree Array</code> tree structure.  The comonad gives nice api for declaring routes and the library provides combinators for querying mounted components.
+			    </section>
+			  </li>
+			  <li>
+			    <a href="https://pursuit.purescript.org/packages/purescript/purescript-react-ix" target="_blank">purescript-react-ix</a>
+			    <section>
+			      PureScript React bindings that provide safe way of dealing with advanced react features like refs, mutations of the react element (storing callback references, DOM references).  It has no runtime overhead.  The safety is provided by tracking the changes of a <code>ReactThis</code> in an indexed monad.
+			    </section>
+			  </li>
+			  <li>
+			    <a href="https://pursuit.purescript.org/packages/purescript/purescript-react-spaces" target="_blank">purescript-react-spaces</a>
+			    <section>
+			      A free monad DSL which provides a interface for
+			      writing React vDOM tree.  It is interpreted
+			      during execution time so it has a runtime cost.
+			      It is similar to <a
+			      href="https://jaspervdj.be/blaze/" target="_blank">BlazeHTML</a>
+			    library.  Together with redox this provides an
+			    alternative for <a
+			    href="http://purescript-pux.org" target="_blank">pux</a>.
+			    </section>
+			  </li>
+			  <li>
+			    <a href="https://pursuit.purescript.org/packages/purescript/purescript-karma-test-unit" target="_blank">purescript-karma-test-unit</a>
+			    <section>
+			      This is a small bridge that lets run <a href="https://pursuit.purescript.org/packages/purescript-test-unit" target="_blank">purescript-test-unit</a> tests in a browser using <a href="https://karma-runner.github.io/1.0/index.html" target="_blank">karma runner</a>.
+			    </section>
+			  </li>
+			  <li>
+			    <a href="https://github.com/purescript-contrib/purescript-vim" target="_blank">purescript-vim</a> and <a href="https://github.com/FrigoEU/psc-ide-vim" target="_blank">psc-ide-vim</a>
+			    <section>
+			      I am maintaining the first one, and I rewrote the second one.  These are <a href="https://www.vim.org" target="_blank">vim</a> plugins that makes Haskell devs cry ;).
+			    </section>
+			  </li>
+			</ul>
+			I contributed to more than a few core purescript libraries, just to mention a few:
+			<ul>
+			  <li>
+			    <a href="https://github.com/purescript/purescript-free" target="_blank">purescript-free</a>
+			  </li>
+			  <li>
+			    <a href="https://github.com/purescript-contrib/purescript-profunctor-lenses" target="_blank">profunctor-lenses</a>
+			  </li>
+			    <a href="https://github.com/purescript-web/purescript-dom" target="_blank">purescript-dom</a>
+			  <li>
+			    <a href="https://github.com/purescript-contrib/react" target="_blank">purescript-test-unit</a>
+			  </li>
+			</ul>
+		      </p>
 		    </article>
 		    <article>
 		      <h3><a class="title" id="rubble" href="http://rubble.tech" target="_blank"><small></small> Rubble</a></h3>
@@ -413,7 +517,7 @@
 			<h3><span id="tellterms" class="title">TellTerms</span></h3>
 			Social platform for sharing enriched hyperlink text connected to LinkedIn <i class="fa fa-linkedin-square"></i>.
 			<p>
-			  I worked both as a backend and frontend developer.
+			  I worked both as a backend and front-end developer.
 			  I implemented pixel perfect designs handed by the
 			  design team.  There was a big issue with legacy code
 			  at the beginning.  After initial struggle with a single
@@ -465,7 +569,7 @@
 		    </article>
 		    <article>
 			<h3><span id="edurino" class="title">Edurino</span></h3>
-			Email-based microlearning site
+			Email-based micro-learning application
 			<p>
 			    The service targeted busy professionals who wanted
 			    to learn new skills. Where I helped was with my
