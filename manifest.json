@@ -1,6 +1,6 @@
 { "name": "Marcin Szamotulski HomePage",
   "short_name": "Marcin Szamotulski",
-  "display": "browser",
+  "display": "standalone",
   "start_url": ".",
   "background_color": "#fff",
   "theme_color": "#fff",
