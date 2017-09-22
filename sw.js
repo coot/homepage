@@ -44,7 +44,7 @@ workbox.router.registerRoute(
 workbox.precache([
   {
     "url": "index.html",
-    "revision": "924051c9d18853491767d2ec4d4e080d"
+    "revision": "9c7208f264624ac77560baeec870ccd8"
   },
   {
     "url": "images/indie_hosters.svg",
