@@ -13,10 +13,28 @@ body {
     margin: 0px;
 }
 
-.wrapper {
+#wrapper {
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
+    transition: opacity .5s linear;
+    opacity: 1;
+}
+
+#wrapper.updating {
+  opacity: 0;
+}
+
+#update-info {
+  display: none;
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: white;
+}
+
+#update-info.show {
+  display: block;
 }
 
 header {
@@ -99,7 +117,7 @@ article {
 }
 
 @media screen and (max-width: 920px), screen and (max-height: 500px) {
-    .wrapper {
+    #wrapper {
 	width: 100%;
 	min-width: 300px;
     }
@@ -120,7 +138,7 @@ article {
 }
 
 @media screen and (min-width: 921px) and (min-height: 500px) {
-    .wrapper {
+    #wrapper {
 	width: 920px;
     }
 

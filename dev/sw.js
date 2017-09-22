@@ -9,7 +9,7 @@ workbox.router.registerRoute(
     new RegExp('^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/css\/font-awesome\.min\.css')
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
-      statuses: [0, 200]
+      statuses: [0, 200, 304]
     }
   })
 )

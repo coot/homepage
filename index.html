@@ -35,15 +35,77 @@
 	<script async>
 	  if (false && navigator.serviceWorker) {
 	    navigator.serviceWorker
-	      .register('/sw.js')
-	      .catch(function(err) {
-		console.error('Unable to register service worker.', err);
-	      });
+	      .register("/sw.js")
+	      .then(function(reg) {
+		reg.addEventListener("updatefound", function(event) {
+		  // event.srcElement is not supported by Firefox
+		  if (reg.active === null) return;
+
+		  const wrapper = document.getElementById("wrapper");
+		  wrapper.className = "updating";
+		  const info = document.getElementById("update-info")
+		  info.className = "show"
+
+		  let trPromise = new Promise(function(resolve, reject) {
+		    function trResolver (event) {
+		      wrapper.removeEventListener("transitionend", trResolver);
+		      resolve();
+		    }
+		    wrapper.addEventListener("transitionend", trResolver);
+		  })
+
+		  let sw = reg.installing;
+		  let swPromise = new Promise(function(resolve, reject) {
+		    sw.addEventListener("statechange", function(event) {
+		      // event.srcElement is not supported by Firefox
+		      if (sw.state == "activated")
+			resolve()
+		    })
+		  })
+
+		  Promise.all([swPromise, trPromise])
+		    .then(function() {
+		      return fetch("/index.html")
+			.then(function(response) {
+			  return response.text();
+			})
+			.then(function(html) {
+			  for (let i = wrapper.children.length - 1; i >= 0; i--) {
+			    wrapper.removeChild(wrapper.children[i])
+			  }
+			  const parser = new DOMParser();
+			  const doc = parser.parseFromString(html, "text/html");
+			  const newWrapper = doc.getElementById("wrapper");
+			  for (let i=0; i < newWrapper.children.length; i++) {
+			    wrapper.appendChild(newWrapper.children[i].cloneNode(true))
+			  }
+			  wrapper.className = ""
+			  setTimeout(function() {
+			    info.className = "";
+			  }, 2000)
+			});
+		    })
+		    .catch(function(err) {
+		      console.error(err)
+		      wrapper.className = ""
+		      info.className = ""
+		    });
+		  })
+		})
+		.catch(function(err) {
+		  console.error(err)
+		  const wrapper = document.getElementById("wrapper");
+		  wrapper.className = ""
+		  const info = document.getElementById("info");
+		  info.className = ""
+		  console.error("Unable to register service worker.", err);
+		});
 	  }
 	</script>
     </head>
     <body>
-	<div class="wrapper">
+	<div id="wrapper" class="wrapper">
+	    <div>Version: 82</div>
 	    <header class="info">
 		<div id="img_container">
 		    <img class="me"
@@ -612,6 +674,9 @@
 		</footer>
 	    </main>
 	    <div class="clearfix"></div>
+	</div>
+	<div id="update-info">
+	  Updating content...
 	</div>
     </body>
 </html>

@@ -9,7 +9,7 @@ workbox.router.registerRoute(
     new RegExp('^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/css\/font-awesome\.min\.css')
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
-      statuses: [0, 200]
+      statuses: [0, 200, 304]
     }
   })
 )
@@ -44,7 +44,7 @@ workbox.router.registerRoute(
 workbox.precache([
   {
     "url": "index.html",
-    "revision": "9c7208f264624ac77560baeec870ccd8"
+    "revision": "28b6de84ae704f9bfb552ac528fa0f77"
   },
   {
     "url": "images/indie_hosters.svg",
@@ -76,7 +76,7 @@ workbox.precache([
   },
   {
     "url": "assets/style.css",
-    "revision": "0c84aa296358d95c432fe77e4787ae2d"
+    "revision": "1da9f31c011cf1d633328a83faa4aab3"
   },
   {
     "url": "bower_components/html5shiv/dist/html5shiv.min.js",
@@ -87,3 +87,7 @@ workbox.precache([
     "revision": "8c3c50c95caa7cef54d2c8720de4db37"
   }
 ]);
+
+self.addEventListener('install', function(event) {
+  self.skipWaiting();
+});
