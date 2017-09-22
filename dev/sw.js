@@ -42,3 +42,7 @@ workbox.router.registerRoute(
 )
 
 workbox.precache([]);
+
+self.addEventListener('install', function(event) {
+  self.skipWaiting();
+});
