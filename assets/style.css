@@ -340,6 +340,7 @@ section {
 .papers ul {
   list-style: none;
   -webkit-padding-start: 0;
+  padding-inline-start: 0;
 }
 
 .papers > ul > li:not(:first-child) {
@@ -359,6 +360,7 @@ section {
 .authors {
   list-style: none;
   -webkit-padding-start: 0;
+  padding-inline-start: 0;
 }
 
 .authors > li {
