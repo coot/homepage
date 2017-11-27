@@ -336,3 +336,37 @@ section {
 .portfolio h3 a:visited i.fa {
     color: #ccc;
 }
+
+.papers ul {
+  list-style: none;
+  -webkit-padding-start: 0;
+}
+
+.papers > ul > li:not(:first-child) {
+  margin-top: 10px;
+}
+
+.journal {
+  font-variant: small-caps;
+  text-transform: uppercase;
+}
+
+.journal span {
+  font-variant-caps: all-small-caps;
+  text-transform: none;
+}
+
+.authors {
+  list-style: none;
+  -webkit-padding-start: 0;
+}
+
+.authors > li {
+  display: inline-block;
+  margin-right: 2px;
+  font-style: italic;
+}
+
+.authors li:not(:last-child):after {
+  content: ",";
+}

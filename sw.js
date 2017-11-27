@@ -44,7 +44,7 @@ workbox.router.registerRoute(
 workbox.precache([
   {
     "url": "index.html",
-    "revision": "a7edcd23e7885a2ca5b7e49cdf25169c"
+    "revision": "e345cb8582f1bd0c61d0663ed04edcc2"
   },
   {
     "url": "images/indie_hosters.svg",
@@ -76,7 +76,7 @@ workbox.precache([
   },
   {
     "url": "assets/style.css",
-    "revision": "1da9f31c011cf1d633328a83faa4aab3"
+    "revision": "a9f93f55cc5a2bfc8b8fd0b5b492e32d"
   },
   {
     "url": "bower_components/html5shiv/dist/html5shiv.min.js",
