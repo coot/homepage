@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "@coot homepage",
   "main": "build.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "workbox-build": "^2.0.1",
     "workbox-routing": "^2.0.0",
