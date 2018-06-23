@@ -1,0 +1,417 @@
+<!DOCTYPE html lang="en">
+    <head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+	<title>Marcin Szamotulski Homepage</title>
+	<meta name="description" content="I am a mathematician (PhD) and a software engineer delivering solutions using JavaScript, Haskell, Purescript and Python." /> 
+	<meta name="author" content="Marcin Szamotulski" />
+	<meta name="keywords" content="JavaScript React Angular Python Haskell PureScript programming  web applications PWA" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@me_coot" />
+	<meta name="twitter:title" content="Marcin Szamotulski - software engineer" />
+	<meta name="twitter:description" content="I am a full-stack web developer, and a mathematician" />
+	<meta name="twitter:creator" content="@coot_" />
+	<meta name="twitter:image:src" content="http://marcinszamotulski.me/images/marcinszamotulski-large.jpg" />
+	<meta name="twitter:domain" content="marcinszamotulski.me" />
+	<meta prefix="og: http://ogp.me/ns#" property="og:title" content="Marcin Szamotulski - software engineer" />
+	<meta prefix="og: http://ogp.me/ns#" property="og:site_name" content="Marcin Szamotulski - software engineer" />
+	<meta prefix="og: http://ogp.me/ns#" property="og:description" content="I am a full-stack web developer and a mathematician living in Lisbon, Portugal" />
+	<meta prefix="og: http://ogp.me/ns#" property="og:type" content="website" />
+	<meta prefix="og: http://ogp.me/ns#" property="og:url" content="http:/marcinszamotulski.me" />
+	<meta prefix="og: http://ogp.me/ns#" property="og:image" content="http://marcinszamotulski.me/images/marcinszamotulski-large.jpg" />
+	<meta property="fb:admins" content="100001888925907" />
+
+	<link rel="manifest"   href="/manifest.json" />
+	<link rel="import"     href="/header.html" data-target=".info-hdr" />
+	<link rel="stylesheet" href="/assets/style.css" />
+	<link rel="stylesheet" href="/assets/normalize.css" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="/assets/print_style.css" media="print"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" />
+
+	<script type="text/javascript" async src="/bower_components/html5shiv/dist/html5shiv.min.js"></script>
+	<script type="text/javascript" async src="/bower_components/html5shiv/dist/html5shiv-printshiv.min.js"></script>
+	<script type="text/x-mathjax-config">
+	    MathJax.Hub.Config({
+                tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+                TeX: {
+                    extensions: ["AMSmath.js"]
+                },
+            });
+	</script>
+	<script type="text/javascript" async
+	    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+	</script>
+	<script type="text/javascript" src="/assets/index.js"></script>
+	</script>
+    </head>
+    <body>
+	<div id="wrapper" class="wrapper post">
+	    <header class='info-hdr'></header>
+	    <main>
+		<header>
+		    <h1 class="section_h" id="freeness-from-free-algebras-to-free-monads">From free algebras to free monads</h1>
+		</header>
+		<p>
+		    In <a href="https://en.wikipedia.org/wiki/Universal_algebra">Universal algebra</a>
+		    <strong>freeness</strong> is a well defined algebraic
+		    property. We will explore it in the case of monoids and see
+		    how it generalises to the construction of free monads.
+		    Let’s start with a general definition.
+                </p>
+
+                <h2>Equational theories and free algrebras </h2>
+		<p>
+		    An algebra $A$ is free in for the class of
+		    algebras $\mathcal{C}$ over a subset $S\subset A$ if
+		    for every $B \in \mathcal{C}$ every map $S \rightarrow B$
+		    uniquelly extends to a <a href="https://en.wikipedia.org/wiki/Homomorphism">homomorphism</a>
+		    $A \rightarrow B$. <p>As
+		    you can see the definition of free algebras requires
+		    a context. So there is a different free monoid if you
+		    consider a class of all monoids than when you consider just
+		    a class of commutative monoids. Free algebras play an
+		    essiential role in a proof of a beutiful result
+		    <a href="http://mathworld.wolfram.com/BirkhoffsTheorem.htmp">Birkhoff theorem</a>.
+		    It states that a class of algebras
+		    $\mathcal{C}$ is an equational theory if and only
+		    if the class is closed under cartesian products,
+		    <a href="https://en.wikipedia.org/wiki/Homomorphism">homomorphic</a>
+		    images and subalgebras. Equational theories are classes of
+		    algebras which staisfy a set of equations; examples
+		    includes: semigroups, monoids, groups or boolean or heyting
+		    algebras but also commutative (abelian) semigroups
+		    / monoids / groups, and many other classical algebraic
+		    structures. We need to be a little bit more precise to be
+		    able to speak about equational theories for various
+		    algebras. Usually, one considers algebras of the same type,
+		    i.e. with the same set of operations, though without
+		    specifying their axioms.  In the first site only the same
+		    arities matter (number of inputs for each operation). This
+		    way one can make a distinction between groups and boolean
+		    algebras. Groups have three operations:
+		    $\cdot :G\times G\rightarrow G$ (of arity 2), $^{-1}:G\rightarrow G$ (of
+		    arity 1) and $1\in G$ (which is considered as an
+		    operation $G^0\rightarrow G$, of arity 0); whilist boolean
+		    algebras have two operations: $\wedge:L\times L\rightarrow L$ and
+		    $\vee:L\times L\rightarrow L$ both of arity 2. A type of an algebra
+		    is exactly the set of operations it supports. This way
+		    groups and lattices are have distinct type, but commutative
+		    monoids and monoids share the same type.
+                </p>
+
+                <h3>Terms, term functions and their algebra</h3>
+		<p>
+		    Let’s consider an algebra $A$ with a set of
+		    operations $f_i:A^{j_i}→A$, where opeation $f_i$ has arity
+		    $j_i$. Then the set of <strong>terms</strong> on a set $X$
+		    (set of variables) is inductivelly definied as:
+		
+                    <ul>
+                        <li>
+                            each $x\in X$ is a term (of arity $1$)
+                        </li>
+                        <li>
+                            each $f_i(x_1,\dots ,x_{j_i})$ is a term of arity $j_i$ for $x_1,\dots ,x_{j_i}\in X$
+                        </li>
+                        <li>
+                            if $g_1,\dots  g_n$ are terms of arities $j_1$ to $j_n$
+                            respectivelly, and $g$ is a term of arity $n$ then
+                            $g(g_1(x_{11},\dots,x_{1j_1}),\dots, g_n(x_{n1},\dots,x_{nj_n}))$ is a term of arity
+                            $j_1+\dots+j_n$ with $x_{kl}\in X$.
+                        </li>
+                    </ul>
+                </p>
+		<p>
+		    For example in groups both $x^{-1}\cdot x$ and
+		    $x\cdot y$ and $1$ (the unit of the group)
+		    are terms. So terms are just abstract expressions that one
+		    can build using some set of algebraic operations that are
+		    supported by the algebra type. Each term $t$
+		    defines a term function on every algebra of a given type.
+		    In groups the following terms are distinct but they define
+		    the equal term function: $x^{-1}\cdot x$ and
+		    $1$; $(x\cdot y)\cdot z$ and
+		    $x\cdot (y\cdot z)$; But the two terms $x\cdot y$
+		    and $y\cdot x$ define non equal term functions (on
+		    non-abelian groups). Another example comes from boolean
+		    algebras (or more broadly lattice theory) where the two
+		    terms $x\wedge (y\vee z)$ and $(x\wedge y)\vee(x\wedge z)$
+		    define equal term functions on Boolean algebras (or more
+		    generally
+		    <a href="https://en.wikipedia.org/wiki/Distributive_lattice">distributive lattices</a>).
+		    If $t$ is a term then the associated term
+		    function on an algebra $A$ we let denote by
+		    $\tilde{t}$. Term functions are natural to express
+		    equalities within a theory. Now we are ready to formally
+		    define eqauational classes of algebras.
+                </p>
+
+		<p>
+		    A class of algebras $C$ is an <strong>equational
+			theory</strong> if and only if there exists a set of
+		    pairs of terms $E$ such that the class consists
+		    exactly of algebras $A$ for which the following
+		    condition is satisified: for each pair of terms $(t, s)\in
+		    E$ two corresponding term functions $\tilde{t}$ and
+		    $\tilde{s}$ are equal on every algebra $A$ in the class $C$.
+                </p>
+
+		<p>
+		    For example the class of monoids is an equational theory
+		    for $E={(1\cdot x, x), (x\cdot 1, x), ((x\cdot y)\cdot z, x\cdot (y\cdot z))}$
+		    i.e. all the algebras with two operations: one of arity
+		    0 (the unit) and one of arity 2 (the multiplication), such
+		    that the $1$ is the unit for multiplication
+		    $\cdot $ and multiplication is associative. The class
+		    of commutative monoids is also an equational theory with
+		    one additional equation $(x\cdot y, y\cdot x)$. Boolean
+		    algebras, lattices and posets are also an equational
+		    theories.
+                </p>
+
+		<p>
+		    Coming back to free algebras: it turns out that the set of
+		    <em>terms</em> $T(X)$ on a given set of
+		    variables $X$ is a free algebra in the class of
+		    all algebras of the same type. Note that this class is
+		    usually very broad, but this is the first approximation to
+		    build free algebras in equational theories. We just
+		    consider equational theory without for empty set
+		    $E$ for the begining. Let’s see this on an
+		    example and let us consider algebras of the same type as
+		    a monoid: with one nullary operation (unit) and one 2-ary
+		    operation (multiplication); and let $X$ be a set
+		    of variables. Then $1$ is a valid term, and also
+		    if $t_1$ and $t_2$ are terms on
+		    $X$ then also $t_1\cdot t_2$ is a term.
+		    Clearly <em>terms</em> form an algebra of the same type.
+		    It’s easy to see that this is a free algebra in the class
+		    of all agebras of this type over the set $X$. If
+		    you have a map $f:X\rightarrow M$ to a monoid
+		    $M$, you don’t have a choice while extending it
+		    to a (monoid) homomorphism $T(X)\rightarrow M$:
+		    $t_1\cdot t_2$ must be mapped to $f(t_1)\cdot f(t_2)\in M$. This actually work for any algebra
+		    type, not just monoids. $T(X)$ is usually called
+		    term algebra.
+                </p>
+
+		<p>
+		    Moreover the set of equations that defines the class of
+		    monoids defines a
+		    <a href="https://en.wikipedia.org/wiki/Congruence_relation">congruence relation</a>
+		    on the term algebra $T(X)$ (i.e. an
+		    <a href="https://en.wikipedia.org/wiki/Equivalence_relation">equivalence relation</a>
+		    which is compatible with operations: $x_1\sim y_1$ and
+		    $x_2\sim y_2$ then $(x_1\cdot y_1) \sim (x_2\cdot
+		    y_2)$).  Congruences are exactly the relations which
+		    allow to build algebra structure on the quotient
+		    $A/\sim$ (the set of equivalence classes), so that
+		    the quotient map is an algebra homomorphism.  The key point
+		    here is that if we take the term algebra and take
+		    a quotient by the smalles congruence that contains all the
+		    pairs of terms which belong to the set $E$ we
+		    will obtain a free algebra in the equational class defined
+		    by $E$.
+                </p>
+                <h3>Free monoids</h3>
+		<p>
+		    Let’s take a look on a free monoid that we can build this
+		    way. First let us consider the free algebra
+		    $T(X)$ for algebras of the same type as monoids
+		    (which include non associative monoids, which unit does not
+		    behave like a unit). And let $\sim$ be the smallest
+		    relation (congruence) that enforces $T(X)/\sim$ to
+		    be a monoid.
+                </p>
+
+		<p>
+		    Since monoids are associative every element in
+		    $T(X)/\sim$ can be represented as $((x_1\cdot
+			x_2)\cdot \ldots) \cdot x_n$ (where we group
+		    brackets to the left). Multiplication of $((x_1\cdot
+			x_2)\cdot \ldots) \cdot x_n$ and $((y_1\cdot
+			y_2)\cdot \ldots) \cdot y_n$ is just
+		    $(((x_1\cdot x_2)\cdot \ldots \cdot x_n)\cdot
+			y_1)\cdot y_2)\cdot \ldots )\cdot y_n$ In Haskell
+		    if you’d represent the set $X$ as a type
+		    $a$ then the free monoid is just represented by
+		    a list type $[a]$ with multiplication: list
+		    concatenation. Just think of
+<pre class="haskell"><code>
+-- A set with `n` elements corresponds
+-- to a type with `n` constructors:
+data X = X_1|⋯|X_n
+</code></pre>
+
+		<h2 id="monads">Free Monads</h2>
+		<p>
+		    It turns out monads in $Hask$ are also an
+		    equational theory. Just the terms are higher kinded:
+		    $*\rightarrow*$ rather than $*$ as in
+		    monoids. In a free monoid case we took all terms to
+		    construct a monoid from a given type, very similar
+		    construction works for free monads.  Let us first take
+		    a mathematical point of view on monads.
+		
+		<p>
+		    A monad is an (endo) functor <code>m</code> with two natural transformations:
+<pre class="haskell"><code>
+class Monad where
+    return :: a -&gt; m a
+    join   :: m(m a) -&gt; m a
+</code></pre>
+		    which is unital and associative, i.e. the following law holds:
+<pre class="haskell"><code>
+    join . join == join &lt;$&gt; join             -- associativity
+    join . return  = id = join . fmap return -- unitality
+</code></pre>
+		</p>
+		<p>These axioms are easier to understand as diagrams:
+$$
+\begin{array}{ccc}
+    m\;(m\;(m\;a)                & \xrightarrow{join} & m\;(m\;a) \\\\
+    \small{fmap\;join}\downarrow &                    & \downarrow \small{join} \\\\
+    m\;(m\;a)                    & \xrightarrow{join} & m\;a \\\\
+\end{array}
+$$
+                <p>and
+$$
+\begin{array}{ccccc}
+m\;a & \xrightarrow{return} & m\;(m\;a)              & \xleftarrow{fmap\;return} & m\;a \\\\
+     & \small{id}\searrow   & \downarrow\small{join} & \swarrow\small{id}        & \\\\
+     &                      & m\;a                   &                           & 
+\end{array}
+$$
+		<p>
+                    Associativity sais that the two ways of mapping
+                    <code>m (m (m a)) → m a</code> are equal.  It is a basic
+                    lemma that this definition a monad is equivalent to what
+                    Haskellers are used to:
+<pre class="haskell"><code>
+class Monad where
+    return :: a -&gt; m a
+    &gt;&gt;=    :: m a -&gt; (a -&gt; m b) -&gt; m b
+</code></pre>
+		<p>Having <code>join</code> one defines <code>&gt;&gt;=</code> as
+<pre class="haskell"><code>
+    ma &gt;&gt;= f = join $ f &lt;$&gt; ma
+</code></pre>
+		<p>and the other way, having <code>&gt;&gt;=</code> then
+<pre class="haskell"><code>
+    join = (&gt;&gt;= id)`
+</code></pre>
+                    Not only these two constructions are reverse to each other,
+                    but also they translate the monad laws correctly.
+                </p>
+
+                <h3>Monoids in monoidal categories</h3>
+
+                To define a monoid $M$ in the cateogry $\mathcal{Set}$ one needs the product
+                $M\times M$.  Abstraction of this structure leads to monoidal categories.
+
+                Category $\mathcal{C}$ with a bifunctor
+                $-\otimes-:\mathcal{C}\times\mathcal{C}\rightarrow\mathcal{C}$ is called strict
+                monoidal category if `\otimes` is associative and unital, i.e. there exists
+                a unit object $1$ such that $1\otimes a=a=a\otimes 1$.
+
+                Most examples of monoidal categories are not strict but are associative and
+                unital up to a natural transformation.  Think of
+                $(A\times B)\times C\simeq A\times(B\times C)$ in $\mathcal{Set}$ (or any
+                category with (finite) products).
+
+                Then we can generalise a definition of a monoid to such categories:
+
+                <p>
+                A monoid in a monoidal category $\mathcal{C}$ with monoidal
+                product $-\otimes-$ and a unit $1$ is an object $m$ with a pair of morphisms
+                $$
+                \mathrm{mappend}:\;m\otimes m\rightarrow m
+                $$
+                and:
+                $$\mathrm{mempty}:\;1\rightarrow m$$
+                such that
+
+$$
+\begin{array}{ccc}
+    m\otimes m\otimes m                                  & \xrightarrow{\mathrm{mappend}\otimes\mathrm{id}} & m\otimes m \\\\
+    \small{\mathrm{id}\otimes\mathrm{mappend}}\downarrow &                                                  & \downarrow \small{\mathrm{mappend}} \\\\
+    m\otimes m                                           & \xrightarrow{\mathrm{mappend}}                   & m \\\\
+    \end{array}
+$$
+                <p>and
+$$
+\begin{array}{ccccc}
+m = m \otimes 1 & \xrightarrow{\mathrm{id}\otimes\mathrm{mempty}} & m\otimes m                         & \xleftarrow{\mathrm{mappend}\otimes\mathrm{id}} & 1\otimes m = m \\\\
+                & \small{\mathrm{id}}\searrow                     & \downarrow\small{\mathrm{mappend}} & \swarrow\small{\mathrm{id}}                     & \\\\
+                &                                                 & m                                  &                                                 & 
+\end{array}
+$$
+
+                </p>
+
+                <p>
+                    The main point of this section is that these diagrams have
+                    exatly the same shape as associativity and unitality for
+                    monads. Indeed, a monoid in the category of endofunctor
+                    with a monoidal product $\otimes$ to be functor composition
+                    and unit the identity functor is a monad.  In category
+                    theory this category is strict monoidal.  If you try to
+                    type this in Haskell you will end up with a (non strict)
+                    <a href="https://ncatlab.org/nlab/show/monoidal+category">monoidal structure</a>,
+                    where you will need to show
+                    <a href="https://ncatlab.org/nlab/show/pentagon+identity">penthagon equation</a>.
+                </p>
+
+                <p>
+                    These consideration suggest that we should be able to build
+                    a free monad using our algebraic approach to free algebras. And
+                    this is what we will follow in the next section.
+                </p>
+
+		<h3 id="on-the-way-to-construct-free-monad">Free monads</h3>
+		<p>
+                    Now to construct a free monad for a functor
+                    <code>f</code> (which playes the role of generator set)
+                    we’d need a type which embraces all the terms of types:
+                        <code>a, f a, f (f a), f (f (f a)), ...</code>
+                    These types correspond to terms of a type
+                    $(m\otimes m\otimes\ldots\otimes m)(a)$ in the monoidal category
+                    of endofunctors, i.e. we are on the right track to the free
+                    monoid vel monad.
+                </p>
+		<p>
+		    The monadic <code>join</code> should take something of
+		    type $m\;(m\; a)$, e.g. $f\;(f\;(\dots f\;(b)\dots)$
+                    where $b$ is of the form (i.e. has type)
+                    $f\;(f\;(\dots(f\;(a)\dots)$ for some $a$ into $m\;a$ and
+                    it should be quite clear how to do that. This is a good
+                    trace of a monad, and as we’ll see this translates into
+                    concrete Haskell type:
+<pre class="haskell"><code>
+data Free f a
+    = Return a
+      -- ^ the terms of type a
+    | Free (f (Free f a))
+      -- ^ recursive definition which embraces `f a`, `f (f a)` and so on
+</code></pre>
+		</p>
+		<p>
+		    <code>Free</code> is just a tree shaped by the functor
+		    <code>f</code> and <code>join</code> takes a tree of trees,
+                    stitches them together and outputs just a single tree. And
+                    it indeed embraces all the terms of types: <code>a, f a, f (f
+                    a), ...</code> into a single type.
+<pre class="haskell"><code>
+instance Monad (Free f a) where
+    return = Return
+    join (Return ma) = ma
+    -- ^ stich a tree of trees into a tree
+    join (Free fma) = Free $ join &lt;$&gt; fma
+    -- ^ recurse to the leaves
+</code></pre>
+		</p>
+	    </main>
+    </body>
+</html>

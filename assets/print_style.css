@@ -1,5 +1,5 @@
 main,
-header,
+.info-hdr,
 footer {
     max-width: 600px;
     margin-left: auto;
@@ -22,7 +22,7 @@ footer {
     padding-left: 45px;
 }
 
-header img.me {
+.info-hdr img.me {
     -webkit-filter: grayscale(100%);
     -moz-filter: grayscale(100%);
     -ms-filter: grayscale(100%);
@@ -30,12 +30,12 @@ header img.me {
     filter: grayscale(100%);
 }
 
-header img.me {
+.info-hdr img.me {
     width: 150px;
     height: 150px;
 }
 
-header #name {
+.info-hdr #name {
     margin-bottom: 0px;
 }
 

@@ -43,8 +43,24 @@ workbox.router.registerRoute(
 
 workbox.precache([
   {
+    "url": "header.html",
+    "revision": "59408055841389af8c6fa3a37f45ae33"
+  },
+  {
     "url": "index.html",
-    "revision": "95beea26a0f0da99f46d720db8b43732"
+    "revision": "1a033d324a794aa479ede06e3edf63e8"
+  },
+  {
+    "url": "about.html",
+    "revision": "7fa96c418cc8a30825e978d241694540"
+  },
+  {
+    "url": "posts/adts-and-universal-algebra.html",
+    "revision": "1391ad9d34e15a43792995ba50f4bd4d"
+  },
+  {
+    "url": "posts/freeness.html",
+    "revision": "b7d0b10e249bbbe3c3bc0f2fb3c27764"
   },
   {
     "url": "images/indie_hosters.svg",
@@ -63,12 +79,20 @@ workbox.precache([
     "revision": "bb22238b1625e6c10fc966ef30b6000a"
   },
   {
+    "url": "assets/index.js",
+    "revision": "551bd516db5fdd3fc6061c186eba3635"
+  },
+  {
+    "url": "assets/MathJax.js",
+    "revision": "27e135ad6e379b9e52682be4a56d1007"
+  },
+  {
     "url": "assets/normalize.css",
     "revision": "dca0089e5b1a1579441226245958e80f"
   },
   {
     "url": "assets/print_style.css",
-    "revision": "e4f43ff0cc0fb0a4a52d18e2acfdd9c7"
+    "revision": "34b729e90eadff3b019e2bead0ef4db3"
   },
   {
     "url": "assets/script.js",
@@ -76,15 +100,15 @@ workbox.precache([
   },
   {
     "url": "assets/style.css",
-    "revision": "8b8391a2bbe637433f812bf8e0953774"
+    "revision": "b1056d7240990d37f11e6258aad8cdea"
   },
   {
     "url": "bower_components/html5shiv/dist/html5shiv.min.js",
-    "revision": "3044234175ac91f49b03ff999c592b85"
+    "revision": "40bd440d29b3a9371b0c63fec41ee64f"
   },
   {
     "url": "bower_components/html5shiv/dist/html5shiv-printshiv.min.js",
-    "revision": "8c3c50c95caa7cef54d2c8720de4db37"
+    "revision": "9f03100ab5ce18e0049c25c6c4916802"
   }
 ]);
 
