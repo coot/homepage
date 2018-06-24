@@ -4,7 +4,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
 	<title>Marcin Szamotulski Homepage</title>
-	<meta name="description" content="I am a mathematician (PhD) and a software engineer delivering solutions using JavaScript, Haskell, Purescript and Python." /> 
+	<meta name="description" content="I am a mathematician (PhD) and a software engineer delivering solutions using JavaScript, Haskell, Purescript and Python." />
 	<meta name="author" content="Marcin Szamotulski" />
 	<meta name="keywords" content="JavaScript React Angular Python Haskell PureScript programming  web applications PWA" />
 	<meta name="twitter:card" content="summary_large_image" />
@@ -107,7 +107,7 @@
 		    operations $f_i:A^{j_i}→A$, where opeation $f_i$ has arity
 		    $j_i$. Then the set of <strong>terms</strong> on a set $X$
 		    (set of variables) is inductivelly definied as:
-		
+
                     <ul>
                         <li>
                             each $x\in X$ is a term (of arity $1$)
@@ -239,11 +239,9 @@
 		    $a$ then the free monoid is just represented by
 		    a list type $[a]$ with multiplication: list
 		    concatenation. Just think of
-<pre class="haskell"><code>
--- A set with `n` elements corresponds
+<pre class="haskell"><code>-- A set with `n` elements corresponds
 -- to a type with `n` constructors:
-data X = X_1|⋯|X_n
-</code></pre>
+data X = X_1|⋯|X_n</code></pre>
 
 		<h2 id="monads">Free Monads</h2>
 		<p>
@@ -254,19 +252,15 @@ data X = X_1|⋯|X_n
 		    construct a monoid from a given type, very similar
 		    construction works for free monads.  Let us first take
 		    a mathematical point of view on monads.
-		
+
 		<p>
 		    A monad is an (endo) functor <code>m</code> with two natural transformations:
-<pre class="haskell"><code>
-class Monad where
+<pre class="haskell"><code>class Monad where
     return :: a -&gt; m a
-    join   :: m(m a) -&gt; m a
-</code></pre>
+    join   :: m(m a) -&gt; m a</code></pre>
 		    which is unital and associative, i.e. the following law holds:
-<pre class="haskell"><code>
-    join . join == join &lt;$&gt; join             -- associativity
-    join . return  = id = join . fmap return -- unitality
-</code></pre>
+<pre class="haskell"><code>join . join == join &lt;$&gt; join             -- associativity
+    join . return  = id = join . fmap return -- unitality</code></pre>
 		</p>
 		<p>These axioms are easier to understand as diagrams:
 $$
@@ -281,7 +275,7 @@ $$
 \begin{array}{ccccc}
 m\;a & \xrightarrow{return} & m\;(m\;a)              & \xleftarrow{fmap\;return} & m\;a \\\\
      & \small{id}\searrow   & \downarrow\small{join} & \swarrow\small{id}        & \\\\
-     &                      & m\;a                   &                           & 
+     &                      & m\;a                   &                           &
 \end{array}
 $$
 		<p>
@@ -289,19 +283,13 @@ $$
                     <code>m (m (m a)) → m a</code> are equal.  It is a basic
                     lemma that this definition a monad is equivalent to what
                     Haskellers are used to:
-<pre class="haskell"><code>
-class Monad where
+<pre class="haskell"><code>class Monad where
     return :: a -&gt; m a
-    &gt;&gt;=    :: m a -&gt; (a -&gt; m b) -&gt; m b
-</code></pre>
+    &gt;&gt;=    :: m a -&gt; (a -&gt; m b) -&gt; m b</code></pre>
 		<p>Having <code>join</code> one defines <code>&gt;&gt;=</code> as
-<pre class="haskell"><code>
-    ma &gt;&gt;= f = join $ f &lt;$&gt; ma
-</code></pre>
+<pre class="haskell"><code>ma &gt;&gt;= f = join $ f &lt;$&gt; ma</code></pre>
 		<p>and the other way, having <code>&gt;&gt;=</code> then
-<pre class="haskell"><code>
-    join = (&gt;&gt;= id)`
-</code></pre>
+<pre class="haskell"><code>join = (&gt;&gt;= id)`</code></pre>
                     Not only these two constructions are reverse to each other,
                     but also they translate the monad laws correctly.
                 </p>
@@ -311,7 +299,7 @@ class Monad where
                 To define a monoid $M$ in the cateogry $\mathcal{Set}$ one needs the product
                 $M\times M$.  Abstraction of this structure leads to monoidal categories.
 
-                Category $\mathcal{C}$ with a bifunctor
+                Category $\mathcal{C}$ with a <a href="https://ncatlab.org/nlab/show/bifunctor">bifunctor</a>
                 $-\otimes-:\mathcal{C}\times\mathcal{C}\rightarrow\mathcal{C}$ is called strict
                 monoidal category if `\otimes` is associative and unital, i.e. there exists
                 a unit object $1$ such that $1\otimes a=a=a\otimes 1$.
@@ -345,7 +333,7 @@ $$
 \begin{array}{ccccc}
 m = m \otimes 1 & \xrightarrow{\mathrm{id}\otimes\mathrm{mempty}} & m\otimes m                         & \xleftarrow{\mathrm{mappend}\otimes\mathrm{id}} & 1\otimes m = m \\\\
                 & \small{\mathrm{id}}\searrow                     & \downarrow\small{\mathrm{mappend}} & \swarrow\small{\mathrm{id}}                     & \\\\
-                &                                                 & m                                  &                                                 & 
+                &                                                 & m                                  &                                                 &
 \end{array}
 $$
 
@@ -389,13 +377,13 @@ $$
                     it should be quite clear how to do that. This is a good
                     trace of a monad, and as we’ll see this translates into
                     concrete Haskell type:
-<pre class="haskell"><code>
-data Free f a
+<pre class="haskell"><code>data Free f a
     = Return a
       -- ^ the terms of type a
     | Free (f (Free f a))
-      -- ^ recursive definition which embraces `f a`, `f (f a)` and so on
-</code></pre>
+      -- ^
+      -- recursive definition which embraces
+      -- `f a`, `f (f a)` and so on</code></pre>
 		</p>
 		<p>
 		    <code>Free</code> is just a tree shaped by the functor
@@ -403,15 +391,31 @@ data Free f a
                     stitches them together and outputs just a single tree. And
                     it indeed embraces all the terms of types: <code>a, f a, f (f
                     a), ...</code> into a single type.
-<pre class="haskell"><code>
-instance Monad (Free f a) where
+<pre class="haskell"><code>instance Monad (Free f a) where
     return = Return
     join (Return ma) = ma
     -- ^ stich a tree of trees into a tree
     join (Free fma) = Free $ join &lt;$&gt; fma
-    -- ^ recurse to the leaves
-</code></pre>
-		</p>
+    -- ^ recurse to the leaves</code></pre>
+                    This morphism corresponds to fold which is defined in a very similar way
+<pre class="haskell"><code>foldMap :: Monoid m => [m] -> m
+foldMap _ [] = mempty
+foldMap f (a : as) = mappend (f a) (foldMap f as)</code></pre>
+                </p>
+
+            <h2>Final remarks</h2>
+            <p>
+                I hope I convienced you that monads are algebraic constructs and I hope
+                you'll find univeral algebra approach useful. In many cases we
+                are dealing with algebraic structures which we require to
+                satisfy certiain equations. Very often they fit into equational
+                theories, which have a very clear description and which allow
+                free objects. Freeness is the property that lets one easily
+                interpret the free object in any other object of the same type.
+                In the monad setting they are really useful when writting DSLs,
+                since you will be able to interpret it in any monad, like IO or
+                some pure monad.
+            </p>
 	    </main>
     </body>
 </html>

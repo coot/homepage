@@ -122,9 +122,7 @@
                     for any type $a$. It’s elements are:
                 </p>
 		<p>
-                    <pre class="haskell"><code>
-                        Unit, Maybe Unit, Maybe (Maybe Unit), ...
-                    </code></pre>
+                    <pre class="haskell"><code>Unit, Maybe Unit, Maybe (Maybe Unit), ...</code></pre>
                 </p>
 		<p>
                     This algebra is free, there are no relations (or equalities
@@ -133,9 +131,7 @@
                     them using monads. For example for the <code>Maybe</code>
                     type we have
                 </p>
-		<pre class="haskell"><code>
-                    (Just (Just x) &gt;&gt;= id) == Just x
-                </code></pre>
+		<pre class="haskell"><code>(Just (Just x) &gt;&gt;= id) == Just x</code></pre>
 		<p>
                     for every <code>x :: a</code>. Note that this equation is
                     on the level of terms rather than types.
@@ -157,16 +153,12 @@
                     <code>Left (Left x)</code> (for some type <code>x</code>). Then the
                     <code>Either</code> monad provides only one relation:
                 </p>
-		<pre class="haskell"><code>
-                    (Right (Right x) &gt;&gt;= id) == Right x
-                </code></pre>
+		<pre class="haskell"><code>(Right (Right x) &gt;&gt;= id) == Right x</code></pre>
 		<p>
                     and there is no relation for the <code>Left</code>
                     constructor:
                 </p>
-		<pre class="haskell"><code>
-                    (Left (x :: Either a) &gt;&gt;= id) == Left x
-                </code></pre>
+		<pre class="haskell"><code>(Left (x :: Either a) &gt;&gt;= id) == Left x</code></pre>
 		<p>
                     for every term <code>x :: a</code>. The corresponding Peano
                     algebra has the form:

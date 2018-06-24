@@ -70,15 +70,19 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "index.html",
-    "revision": "d73532e519f8c29d4bd0e6554fa1dfb5"
+    "revision": "4e32a02080ede5ba6ce090fa9124da1e"
   },
   {
     "url": "posts/adts-and-universal-algebra.html",
-    "revision": "1340d052ab0931c6287d1441492585f1"
+    "revision": "54f58153bbdb1772b1eccbc65f06e0e7"
+  },
+  {
+    "url": "posts/free-monads.html",
+    "revision": "d98f9ff1f0d42944e6ab1e346d8a472a"
   },
   {
     "url": "posts/freeness.html",
-    "revision": "cadff7e3670c395056261901de3842d4"
+    "revision": "19324f47e10462ad36037a50cc9a128e"
   },
   {
     "url": "images/indie_hosters.svg",
@@ -114,7 +118,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "assets/style.css",
-    "revision": "b1056d7240990d37f11e6258aad8cdea"
+    "revision": "01acfae05f6284f4f16c73b06baac6f5"
   },
   {
     "url": "bower_components/html5shiv/dist/html5shiv.min.js",
