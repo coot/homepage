@@ -4,8 +4,44 @@ importScripts(
   , "/node_modules/workbox-precaching/build/workbox-precaching.dev.js"
 );
 
+workbox.core.setCacheNameDetails({
+  prefix: 'coot-homepage',
+  suffix: 'v1',
+  precache: 'cache',
+  runtime: 'cache'
+});
+
+console.log(workbox.core.cacheNames)
+
 workbox.routing.registerRoute(
-    new RegExp('^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/css\/font-awesome\.min\.css')
+    (function(args) {
+      var pathname = args.url.pathname
+      var hostname = args.url.hostname
+      if (hostname != location.hostname)
+        return null
+      if (/^\/(\?.*|#.*)?$/.test(pathname))
+        return {}
+      else if (/^\/assets\//.test(pathname))
+        return {}
+      else if (/^\/.*\.html/.test(pathname))
+        return {}
+      else
+        return null
+    })
+  , workbox.strategies.networkFirst()
+)
+
+workbox.routing.registerRoute(
+    /\/images\//
+  , workbox.strategies.staleWhileRevalidate({
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
+  })
+)
+
+workbox.routing.registerRoute(
+    /^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/css\/font-awesome\.min\.css/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200, 304]
@@ -14,7 +50,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    new RegExp('^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/fonts\/fontawesome-webfont\.woff.*')
+    /^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/fonts\/fontawesome-webfont\.woff.*/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -23,7 +59,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    new RegExp('https:\/\/fonts\.googleapis\.com\/css.*')
+    /^https:\/\/fonts\.googleapis\.com\/css.*/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -32,7 +68,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    new RegExp('https:\/\/fonts\.gstatic.com\/s\/opensans\/.*')
+    /^https:\/\/fonts\.gstatic.com\/s\/opensans\/.*/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -41,22 +77,12 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    new RegExp('https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/mathjax\/2\.7\.4\/MathJax\.js.*')
+    /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/mathjax\/2\.7\.4\/MathJax\.js.*/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
     }
   })
-)
-
-workbox.routing.registerRoute(
-    new RegExp('/*.html')
-  , workbox.strategies.networkFirst()
-)
-
-workbox.routing.registerRoute(
-    new RegExp('/posts/*.html')
-  , workbox.strategies.networkFirst()
 )
 
 workbox.precaching.precacheAndRoute([
@@ -70,7 +96,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "index.html",
-    "revision": "4e32a02080ede5ba6ce090fa9124da1e"
+    "revision": "38968ba7a3270900ff08c6fe475fb920"
   },
   {
     "url": "posts/adts-and-universal-algebra.html",
@@ -78,11 +104,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "posts/free-monads.html",
-    "revision": "d98f9ff1f0d42944e6ab1e346d8a472a"
-  },
-  {
-    "url": "posts/freeness.html",
-    "revision": "19324f47e10462ad36037a50cc9a128e"
+    "revision": "5ca8445f4c4c5ae302afabc6b836508b"
   },
   {
     "url": "images/indie_hosters.svg",
@@ -118,7 +140,7 @@ workbox.precaching.precacheAndRoute([
   },
   {
     "url": "assets/style.css",
-    "revision": "01acfae05f6284f4f16c73b06baac6f5"
+    "revision": "ccc0c1f2f8b33ab956a8b1ba32edddbd"
   },
   {
     "url": "bower_components/html5shiv/dist/html5shiv.min.js",
