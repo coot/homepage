@@ -5,9 +5,9 @@
   "main": "build.js",
   "dependencies": {},
   "devDependencies": {
-    "workbox-build": "^2.0.1",
-    "workbox-routing": "^2.0.0",
-    "workbox-runtime-caching": "^2.0.0"
+    "workbox-build": "^3.3.0",
+    "workbox-routing": "^3.3.0",
+    "workbox-precaching": "^3.3.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

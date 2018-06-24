@@ -1,11 +1,10 @@
 importScripts(
-    "workbox-sw.prod.v2.0.1.js"
-  , "workbox-routing.prod.v2.0.0.js"
-  , "workbox-runtime-caching.prod.v2.0.0.js"
+    "/node_modules/workbox-sw/build/workbox-sw.js"
+  , "/node_modules/workbox-routing/build/workbox-routing.dev.js"
+  , "/node_modules/workbox-precaching/build/workbox-precaching.dev.js"
 );
-const workbox = new self.WorkboxSW();
 
-workbox.router.registerRoute(
+workbox.routing.registerRoute(
     new RegExp('^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/css\/font-awesome\.min\.css')
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
@@ -14,7 +13,7 @@ workbox.router.registerRoute(
   })
 )
 
-workbox.router.registerRoute(
+workbox.routing.registerRoute(
     new RegExp('^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/fonts\/fontawesome-webfont\.woff.*')
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
@@ -23,7 +22,7 @@ workbox.router.registerRoute(
   })
 )
 
-workbox.router.registerRoute(
+workbox.routing.registerRoute(
     new RegExp('https:\/\/fonts\.googleapis\.com\/css.*')
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
@@ -32,8 +31,8 @@ workbox.router.registerRoute(
   })
 )
 
-workbox.router.registerRoute(
-    new RegExp('https:\/\/fonts.gstatic.com\/s\/opensans\/.*')
+workbox.routing.registerRoute(
+    new RegExp('https:\/\/fonts\.gstatic.com\/s\/opensans\/.*')
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -41,26 +40,45 @@ workbox.router.registerRoute(
   })
 )
 
-workbox.precache([
-  {
-    "url": "header.html",
-    "revision": "59408055841389af8c6fa3a37f45ae33"
-  },
-  {
-    "url": "index.html",
-    "revision": "1a033d324a794aa479ede06e3edf63e8"
-  },
+workbox.routing.registerRoute(
+    new RegExp('https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/mathjax\/2\.7\.4\/MathJax\.js.*')
+  , workbox.strategies.staleWhileRevalidate({
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
+  })
+)
+
+workbox.routing.registerRoute(
+    new RegExp('/*.html')
+  , workbox.strategies.networkFirst()
+)
+
+workbox.routing.registerRoute(
+    new RegExp('/posts/*.html')
+  , workbox.strategies.networkFirst()
+)
+
+workbox.precaching.precacheAndRoute([
   {
     "url": "about.html",
     "revision": "7fa96c418cc8a30825e978d241694540"
   },
   {
+    "url": "header.html",
+    "revision": "681d0b4c1c7cda091ce2c485b591a85c"
+  },
+  {
+    "url": "index.html",
+    "revision": "d73532e519f8c29d4bd0e6554fa1dfb5"
+  },
+  {
     "url": "posts/adts-and-universal-algebra.html",
-    "revision": "1391ad9d34e15a43792995ba50f4bd4d"
+    "revision": "1340d052ab0931c6287d1441492585f1"
   },
   {
     "url": "posts/freeness.html",
-    "revision": "b7d0b10e249bbbe3c3bc0f2fb3c27764"
+    "revision": "cadff7e3670c395056261901de3842d4"
   },
   {
     "url": "images/indie_hosters.svg",
@@ -80,11 +98,7 @@ workbox.precache([
   },
   {
     "url": "assets/index.js",
-    "revision": "551bd516db5fdd3fc6061c186eba3635"
-  },
-  {
-    "url": "assets/MathJax.js",
-    "revision": "27e135ad6e379b9e52682be4a56d1007"
+    "revision": "f23dc1fb6ae887f9412bacdc97407c57"
   },
   {
     "url": "assets/normalize.css",

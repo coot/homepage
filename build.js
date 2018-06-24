@@ -3,9 +3,7 @@ const workboxBuild = require("workbox-build");
 workboxBuild.injectManifest({
   "globDirectory": "./",
   "globPatterns": [
-    "header.html",
-    "index.html",
-    "about.html",
+    "*.html",
     "posts/*.html",
     "images/*.{svg,jpg,png}",
     "assets/*.{css,js}",
