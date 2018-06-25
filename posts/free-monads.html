@@ -60,10 +60,27 @@
 		    tightly connected to free algebras.  We will consider free
 		    monoids.  Then we'll explain how monads can be brought into
 		    the picture in the context of monoidal categories. This
-		    will lead to a precise definition of free monad as free
-		    monoids.  Let’s start with a general definition.
+		    will lead to a precise definition of a free monad as a free
+		    monoid.
                 </p>
 
+                <p>
+                    This post requires familiarity with some very basic
+                    Category Theory and does not assume any knowledge on
+                    Universal Algebra.  Most mathematical notions will be
+                    introduced but you might want to dig into literature for
+                    some more examples; though most of the books are quite
+                    lengthy and not suited for non-mathematicians - you've been
+                    worned ;).  Knowing this I tried to bring all the required
+                    definitions, together with some very basic examples.  You
+                    may want to read aboud semigroups, monoids, groups,
+                    lattices, Boolean or Heyting algebras from wikipedia
+                    articles or try to find info on <a
+                    href="https://ncatlab.org/nlab/show/HomePage">nCatLab</a>
+                    (though this is is a heavy resource, with mostly with
+                    higher categorical approach, so probably better suited for
+                    more familiar readers).
+                </p>
 
 		<h2>Preliminaries</h2>
 		<p>
@@ -72,7 +89,7 @@
 		    $A^n$ the $n$-th cartesian product of $A$, i.e.
 		    $A^2=A\times A$.
 
-		    <p>
+		    <div class="definition">
 			An <b>algebra</b> $\underline{A}$ is a set $A$ together
 			with a finite set of operations $f_i:A^{j_i}\rightarrow A$
 			($i=1,\ldots,n$), usually simply written as
@@ -82,7 +99,7 @@
 			number.  The set $A$ is usally called <b>universum</b>
 			of the algebra $\underline{A}$.  The set of arities
 			operations is called <b>type of the algebra</b> $A$.  
-		    </p>
+		    </div>
 
 		    Examples includes many classical algebraic structures, like
 		    <i>semigroups</i>, where there is only a single operation of
@@ -96,7 +113,7 @@
 		    deals with very special cases of some of more esotheric
 		    algebras.
 
-		    <p id="homomorphism">
+		    <div class="definition" id="homomorphism">
 			A <b>homomorphism</b> between two algebras $(A,
 			(f_i^A)_{i=1,\ldots,n})$ and $(B, (f_i^B)_{i=1,\ldots,n})$
 			(of the same type) is a map $h:A\rightarrow B$ with the
@@ -104,7 +121,7 @@
 			$$
 			    h(f^A_i(a_1,\ldots, a_{i_j})) = f^B_i(f(a_1),\ldots,f(a_{i_j}))
 			$$
-		    </p>
+		    </div>
 
 		    This means that <i>homomorphism preserve operations</i>.  For
 		    example a homomorphism of monoids is a map that preserves
@@ -123,13 +140,13 @@
 		</p>
 
                 <h2>Equational theories and free algrebras </h2>
-		<p>
+		<div class="definition">
 		    An algebra $A$ is <b>free</b> in for the class of
 		    algebras $\mathcal{C}$ over a subset $S\subset A$ if
 		    for every $B\in\mathcal{C}$ every map $S\rightarrow B$
 		    uniquelly extends to a <a href="#homomorphism">homomorphism</a>
 		    $A\rightarrow B$.
-		</p>
+		</div>
 		<p>
 		    Many theories allow for free albebras.  Let's give some
 		    simple examples.  The monoid of natural numbers
@@ -174,7 +191,7 @@
                 </p>
 
                 <h3>Terms, term functions and their algebra</h3>
-		<p id="term">
+		<div class="definition" id="term">
 		    Let’s consider an algebra $\underline{A}=(A, (f_i)_{i=1,\ldots,n})$.
 		    Then the set of <strong>terms</strong> on a set $X$
 		    (set of variables) is inductivelly definied as:
@@ -192,7 +209,7 @@
                             $j_1+\dots+j_n$ with $x_{kl}\in X$.
                         </li>
                     </ul>
-                </p>
+                </div>
 		<p>
 		    For example in groups both $x^{-1}\cdot x$ and
 		    $x\cdot y$ and $1$ (the unit of the group)
@@ -218,7 +235,7 @@
 		    define eqauational classes of algebras.
                 </p>
 
-		<p>
+		<div class="definition">
 		    A class of algebras $\mathcal{C}$ is an <strong>equational
 			theory</strong> if and only if there exists a set of
 		    pairs of terms $\mathbf{E}$ such that the class consists
@@ -227,7 +244,7 @@
 		    \mathbf{E}$ two corresponding term functions $\tilde{t}$ and
 		    $\tilde{s}$ are equal on every algebra $\mathcal{A}$ in the
 		    class $\mathcal{C}$.
-                </p>
+                </div>
 
 		<p>
 		    For example the class of monoids is an equational theory
@@ -333,7 +350,7 @@ data X = X_1|⋯|X_n</code></pre>
 		    look at them from another perspective.  Let us first take
 		    a mathematical definition of view on monads.
 		</p>
-		<p id="monad">
+		<div class="definition" id="monad">
 		    A <b>monad</b> is an (endo) <i>functor</i> <code>m</code>
 		    with two <i>natural transformations</i>:
 <pre class="haskell"><code>class Monad where
@@ -342,8 +359,8 @@ data X = X_1|⋯|X_n</code></pre>
 		    which is unital and associative, i.e. the following law holds:
 <pre class="haskell"><code>join . join == join . fmap join          -- associativity
 join . return  = id = join . fmap return -- unitality</code></pre>
-		</p>
-		<p>These axioms are easier to understand as diagrams:
+                    <p>
+                        These axioms are easier to understand as diagrams:
 $$
 \begin{equation}\label{monad-associativity}
 \begin{array}{ccc}
@@ -353,7 +370,9 @@ $$
 \end{array}
 \end{equation}
 $$
-                <p>and
+                    </p>
+                    and
+                    <p>
 $$
 \begin{equation}\label{monad-unitality}
 \begin{array}{ccccc}
@@ -363,6 +382,8 @@ m\;a & \xrightarrow{return} & m\;(m\;a)              & \xleftarrow{fmap\;return}
 \end{array}
 \end{equation}
 $$
+                    </p>
+		</div>
 		<p>
 		    It is a basic lemma that this definition a monad is
 		    equivalent to what Haskellers are used to:
@@ -383,7 +404,7 @@ $$
 		sets) one needs the product $M\times M$.  Abstraction of this
 		structure leads to monoidal categories.
 
-		<p id="monoidal-category">
+		<div class="definition" id="monoidal-category">
 		    Category $\mathcal{C}$ with a <a
 			href="https://ncatlab.org/nlab/show/bifunctor">bifunctor</a>
 		    $-\otimes-:\mathcal{C}\times\mathcal{C}\rightarrow\mathcal{C}$
@@ -392,7 +413,7 @@ $$
 		    $a,b,c\in\mathcal{C}$ $(a\otimes b)\otimes c = a\otimes
 		    (b\otimes c)$ and there exists a unit object $1$ such that
 		    $1\otimes a=a=a\otimes 1$.
-		</p>
+		</div>
 
 		<p>
 		    Most examples of monoidal categories are not strict but are associative and
@@ -405,7 +426,7 @@ $$
 		    Now we can generalise a definition of a monoid to such categories:
 		</p>
 
-                <p id="monoid-in-a-monoidal-category">
+                <div class="definition" id="monoid-in-a-monoidal-category">
 		    A <b>monoid</b> in a monoidal category $\mathcal{C}$ with monoidal
 		    product $-\otimes-$ and a unit $1$ is an object $m$ with a pair of morphisms
 		    $$
@@ -414,6 +435,7 @@ $$
 		    and:
 		    $$\mathrm{mempty}:\;1\rightarrow m$$
 		    such that
+                    <p>
 
 $$
 \begin{equation}\label{monoid-associtivity-in-monoidal-category}
@@ -424,7 +446,9 @@ $$
 \end{array}
 \end{equation}
 $$
-                <p>and
+                    </p>
+                    and
+                    <p>
 $$
 \begin{equation}\label{monoid-unitality-in-monoidal-category}
 \begin{array}{ccccc}
@@ -435,7 +459,8 @@ m = m \otimes 1 & \xrightarrow{\mathrm{id}\otimes\mathrm{mempty}} & m\otimes m  
 \end{equation}
 $$
 
-                </p>
+                    </p>
+                </div>
 
                 <p>
                     The main point of this section is that these diagrams have
@@ -509,7 +534,7 @@ $$
       -- `f a`, `f (f a)` and so on</code></pre>
 		</p>
 		<p>
-		    <code>Free</code> is just a tree shaped by the functor
+		    <code>(Free f)</code> is just a tree shaped by the functor
                     <code>f</code>.  This type indeed embraces all the terms of
                     types: <code>a, f a, f (f a), ...</code> into a single
                     type.  Now the monad instance:
@@ -532,6 +557,7 @@ foldMap f (a : as) = mappend (f a) (foldMap f as)</code></pre>
                     specialisations of the same function!
                 </p>
 
+            <h3>Some examples of free monads</h3>
             <h2>Final remarks</h2>
             <p>
                 I hope I convienced you that monads are algebraic constructs and I hope
@@ -545,6 +571,18 @@ foldMap f (a : as) = mappend (f a) (foldMap f as)</code></pre>
                 since you will be able to interpret it in any monad, like IO or
                 some pure monad.
             </p>
+            <h2>References</h2>
+            <ul>
+                <li>
+                    <a href="http://www.math.hawaii.edu/~ralph/Classes/619/univ-algebra.pdf">A Course in Universal Algebra</a> by S. Burries, H.P. Sankappanavar
+                </li>
+                <li>
+                    <a href="https://www.springer.com/gp/book/9780387774862">Universal Algebra</a> by G. Grätzer
+                </li>
+                <li>
+                    <a href="http://www.tac.mta.ca/tac/reprints/articles/22/tr22.pdf">Category Theory for Computing Science</a> by M.Barr and C.Wells
+                </li>
+            </ul>
 	    </main>
     </body>
 </html>

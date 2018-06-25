@@ -471,3 +471,18 @@ section {
 .authors li:not(:last-child):after {
   content: ",";
 }
+
+.definition {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: block;
+  padding-left: 1em;
+}
+
+.definition::before {
+  display: block;
+  content: "Definition";
+  font-size: large;
+  font-weight: 300;
+  margin-bottom: 3px;
+}
