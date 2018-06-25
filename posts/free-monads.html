@@ -264,8 +264,9 @@
 		    free algebras in an equational theory. This is just the
 		    equational theory for the empty set $\mathbf{E}$.  Let’s see
 		    this on an example and let us consider algebras of the same
-		    type as a monoid: with one nullary operation (unit) and one
-		    2-ary operation (multiplication).  Let $X$ be a set of
+		    type as a monoid: with one nullary operation (unit or
+		    <code>mempty</code> if you like) and one 2-ary operation
+		    (multiplication / <code>mappend</code>).  Let $X$ be a set of
 		    variables. Then $1$ is a valid term, and also if $t_1$ and
 		    $t_2$ are terms on $X$ then also $t_1\cdot t_2$ is a term.
 		    If you have a map $f:X\rightarrow M$ to a monoid $M$, you
@@ -285,8 +286,8 @@
 		</p>
 		<p>
 		    Congruences are exactly the relations which allow to build
-		    algebra structure on the quotient $A/\sim$ (the set of
-		    equivalence classes), so that the quotient map is an
+		    algebra structure on the quotient $\underline{A}/\sim$ (the
+		    set of equivalence classes), so that the quotient map is an
 		    algebra homomorphism.  The key point here is that if we
 		    take the term algebra and take a quotient by the smallest
 		    congruence that contains all the pairs of terms which
@@ -344,19 +345,23 @@ join . return  = id = join . fmap return -- unitality</code></pre>
 		</p>
 		<p>These axioms are easier to understand as diagrams:
 $$
+\begin{equation}\label{monad-associativity}
 \begin{array}{ccc}
     m\;(m\;(m\;a)                & \xrightarrow{join} & m\;(m\;a) \\\\
     \small{fmap\;join}\downarrow &                    & \downarrow \small{join} \\\\
     m\;(m\;a)                    & \xrightarrow{join} & m\;a \\\\
 \end{array}
+\end{equation}
 $$
                 <p>and
 $$
+\begin{equation}\label{monad-unitality}
 \begin{array}{ccccc}
 m\;a & \xrightarrow{return} & m\;(m\;a)              & \xleftarrow{fmap\;return} & m\;a \\\\
      & \small{id}\searrow   & \downarrow\small{join} & \swarrow\small{id}        & \\\\
      &                      & m\;a                   &                           &
 \end{array}
+\end{equation}
 $$
 		<p>
 		    It is a basic lemma that this definition a monad is
@@ -411,19 +416,23 @@ $$
 		    such that
 
 $$
+\begin{equation}\label{monoid-associtivity-in-monoidal-category}
 \begin{array}{ccc}
     m\otimes m\otimes m                                  & \xrightarrow{\mathrm{mappend}\otimes\mathrm{id}} & m\otimes m \\\\
     \small{\mathrm{id}\otimes\mathrm{mappend}}\downarrow &                                                  & \downarrow \small{\mathrm{mappend}} \\\\
     m\otimes m                                           & \xrightarrow{\mathrm{mappend}}                   & m \\\\
-    \end{array}
+\end{array}
+\end{equation}
 $$
                 <p>and
 $$
+\begin{equation}\label{monoid-unitality-in-monoidal-category}
 \begin{array}{ccccc}
 m = m \otimes 1 & \xrightarrow{\mathrm{id}\otimes\mathrm{mempty}} & m\otimes m                         & \xleftarrow{\mathrm{mappend}\otimes\mathrm{id}} & 1\otimes m = m \\\\
                 & \small{\mathrm{id}}\searrow                     & \downarrow\small{\mathrm{mappend}} & \swarrow\small{\mathrm{id}}                     & \\\\
                 &                                                 & m                                  &                                                 &
 \end{array}
+\end{equation}
 $$
 
                 </p>
@@ -468,22 +477,29 @@ $$
 		    all the expressions of Haskell's type (for arbitrary long
 		    products):
 		    $$
-			(\mathsf{Free}(f)\otimes\mathsf{Free}(f)\otimes\ldots\otimes \mathsf{Free}(f))(a)
+			\begin{equation}
+			    \begin{array}{c}
+				\bigl(\mathsf{Free}(f)\otimes\mathsf{Free}(f)\otimes\ldots\otimes \mathsf{Free}(f)\bigr)(a) \\\\
+				\quad\quad = \mathsf{Free}(f)\bigl(\mathsf{Free}(f)\bigl(\ldots (\mathsf{Free}(f)(a)\bigr)\ldots\bigr)
+			    \end{array}
+			\end{equation}
 		    $$
-		    In our setup the monoidal product $\otimes$ is just functor
-		    composition, thus
+                    In our setup the monoidal product $-\otimes-$ is just the
+                    functor composition, thus
 		    $\mathsf{Free}(f)(a)$ must be a type which (Haskell's)
-		    terms are terms of all the types:
+		    terms are of Haskell's types:
 		    <pre class="haskell"><code>a, f a, f (f a), f (f (f a)), ...</code></pre>
                 </p>
 		<p>
 		    The monadic <code>join</code> should take something of
 		    type $\mathsf{Free}(f)\;(\mathsf{Free}(f)\;(a))$, e.g. $f^n(b)=f\;(f\;(\dots f\;(b)\dots)$ (by abusing the notation $f^n$)
-                    where $b$ is of the form (i.e. has type)
-		    $f^m(a)=(f\;(f\;(\dots(f\;(a)\dots)$ for some $a$ into $\mathsf{Free}(f)(a)$ and
+                    where $b$ has type
+		    $f^m(a)=(f\;(f\;(\dots(f\;(a)\dots)$ into $\mathsf{Free}(f)(a)$ and
 		    it should be quite clear how to do that: just take
-		    $f^{n+m}(a)$.  This is a good trace of a monad, so 
-		    let us translate this into a concrete Haskell type:
+                    the obvoius element of type $f^{n+m}(a)$ - we'll make it
+                    concrete in a second...  Altogether, this is a good trace
+                    of a monad, so let us translate this into a concrete
+                    Haskell type:
 <pre class="haskell"><code>data Free f a
     = Return a
       -- ^ the terms of type a
@@ -494,20 +510,26 @@ $$
 		</p>
 		<p>
 		    <code>Free</code> is just a tree shaped by the functor
-		    <code>f</code> and <code>join</code> takes a tree of trees,
-                    stitches them together and outputs just a single tree. And
-                    it indeed embraces all the terms of types: <code>a, f a, f (f
-                    a), ...</code> into a single type.
+                    <code>f</code>.  This type indeed embraces all the terms of
+                    types: <code>a, f a, f (f a), ...</code> into a single
+                    type.  Now the monad instance:
 <pre class="haskell"><code>instance Monad (Free f a) where
     return = Return
     join (Return ma) = ma
     -- ^ stich a tree of trees into a tree
     join (Free fma) = Free $ join &lt;$&gt; fma
     -- ^ recurse to the leaves</code></pre>
-                    This morphism corresponds to fold which is defined in a very similar way
+                    As you can see, takes a tree of trees and outputs a a bigger tree, that's what <code>join</code> does on the <code>Return</code> constructor.
+                </p>
+                <p>
+                    <code>join</code> corresponds to <code>foldMap</code> which is
+                    defined in a very similar way
 <pre class="haskell"><code>foldMap :: Monoid m => [m] -> m
 foldMap _ [] = mempty
 foldMap f (a : as) = mappend (f a) (foldMap f as)</code></pre>
+                    If we had polymorphic function over monoidal categories,
+                    <code>foldMap</code> and <code>join</code> would be
+                    specialisations of the same function!
                 </p>
 
             <h2>Final remarks</h2>
