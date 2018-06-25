@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(function(html) {
                     var parser = new DOMParser();
                     var doc = parser.parseFromString(html, "text/html");
-                    copyChildren(target, link.import.body);
+                    copyChildren(target, doc.body);
                 });
         }
     }
