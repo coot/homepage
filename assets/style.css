@@ -475,14 +475,26 @@ section {
 .definition {
   margin-top: 10px;
   margin-bottom: 10px;
-  display: block;
   padding-left: 1em;
 }
 
 .definition::before {
-  display: block;
+  display: inline-block;
   content: "Definition";
   font-size: large;
   font-weight: 300;
   margin-bottom: 3px;
+  margin-right: 5px;
+}
+
+.definition h6 {
+  display: inline-block;
+  margin: 0;
+  margin-bottom: 3px;
+  font-size: 1em;
+  font-family: sans-serif;
+}
+
+.definition b {
+  font-family: sans-serif;
 }
