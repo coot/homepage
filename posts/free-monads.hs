@@ -120,11 +120,36 @@ instance Monoid m => Monad (MSet m) where
     MSet n a >>= f = case f a of
         MSet m a' -> MSet (m `mappend` n) a'
 
-data X2 a = X a | Y a
+data F2 a = FX a | FY a
     deriving Functor
+
+data S2 = SX | SY
+
+toM2 :: Free F2 a -> ([S2], a)
+toM2 (Return a) = ([], a)
+toM2 (Free (FX fa)) = case toM2 fa of
+    (m, a) -> (SX : m, a)
+toM2 (Free (FY fa)) = case toM2 fa of
+    (m, a) -> (SY : m, a)
+
+fromM2 :: ([S2], a) -> Free F2 a
+fromM2 ([], a) = Return a
+fromM2 (SX : xs, a) = Free (FX (fromM2 (xs, a)))
+fromM2 (SY : xs, a) = Free (FY (fromM2 (xs, a)))
 
 -- Exercise show that `Free X2 ≌ MSet Nat2`; or generalise this too `Free Xn
 -- ≌ MSet Natn` (where `n` is the number of generators).
+
+newtype Const a b = Const { runConst :: a }
+    deriving Functor
+
+toEither :: Free (Const a) b -> Either a b
+toEither (Return b) = Right b
+toEither (Free (Const a)) = Left a
+
+fromEither :: Either a b -> Free (Const a) b
+fromEither (Right b) = Return b
+fromEither (Left a)  = Free (Const a)
 
 main :: IO ()
 main = return ()
