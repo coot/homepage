@@ -108,19 +108,37 @@ img {
 
 pre.haskell {
     padding: 10px;
-    background-color: #dbdbdb;
+    background-color: #f0f0f0;
     color: #505050;
     border-radius: 3px;
     white-space: pre;
     box-shadow: 0px 0px 2px rgba(0,0,0,.7);;
 }
 
+.mjx-chtml.MathJax_CHTML {
+  font-size: 1.1em !important;
+}
+
 .mjx-chtml.MJXc-display {
     display: block;
+    font-size: 0.9em;
     padding: 10px 20px;
-    background-color: #dbdbdb;
+    background-color: #f0f0f0;
     color: #505050;
     box-shadow: 0px 0px 2px rgba(0,0,0,.7);;
+}
+
+.diagram {
+  display: block;
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  color: #505050;
+  box-shadow: 0px 0px 2px rgba(0,0,0,.7);;
+}
+
+.diagram img {
+  display: block;
+  margin: 0 auto;
 }
 
 @-webkit-keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -ms-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
@@ -155,35 +173,6 @@ ul > li section {
 
 article {
   margin-bottom: 40px;
-}
-
-@media screen and (max-width: 920px), screen and (max-height: 500px) {
-    #wrapper {
-	width: 100%;
-	min-width: 300px;
-    }
-
-    .info-hdr {
-	max-width: 380px;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 10px;
-    }
-
-    .post .info-hdr {
-	max-width: 740px;
-    }
-
-    main {
-	max-width: 540px;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 10px;
-    }
-
-    .post main {
-      max-width: 740px;
-    }
 }
 
 @media screen and (min-width: 921px) and (min-height: 500px) {
@@ -233,6 +222,57 @@ article {
        */
     }
 }
+
+@media screen and (max-width: 920px), screen and (max-height: 500px) {
+    #wrapper {
+	width: 100%;
+	min-width: 300px;
+    }
+
+    .info-hdr {
+	max-width: 380px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+    }
+
+    .post .info-hdr {
+	max-width: 740px;
+    }
+
+    main {
+	max-width: 540px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+    }
+
+    .post main {
+      max-width: 740px;
+    }
+}
+
+
+@media screen and (max-width: 600px) {
+  pre.haskell code,
+  .mjx-chtml.MJXc-display
+  {
+    font-size: .8em;
+  }
+
+
+  .diagram img {
+    max-width: 70vw;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  pre.haskell code,
+  .mjx-chtml.MJXc-display {
+    font-size: .7em;
+  }
+}
+
 
 footer {
     margin-top: 20px;
