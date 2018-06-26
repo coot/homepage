@@ -518,23 +518,17 @@ section {
   padding-left: 1em;
 }
 
-.definition::before {
-  display: inline-block;
-  content: "Definition";
-  font-size: large;
-  font-weight: 300;
-  margin-bottom: 3px;
-  margin-right: 5px;
-}
-
 .definition h6 {
   display: inline-block;
   margin: 0;
   margin-bottom: 3px;
   font-size: 1em;
-  font-family: sans-serif;
+  font-weight: 500;
 }
 
-.definition b {
-  font-family: sans-serif;
+.definition h6 span:first-child {
+  font-size: large;
+  font-weight: 300;
+  margin-bottom: 3px;
+  margin-right: 5px;
 }
