@@ -9,11 +9,9 @@ if (window.NodeList && !NodeList.prototype.forEach) {
 }
 
 // Service worker
-/*
- * if (navigator.serviceWorker) {
- *   navigator.serviceWorker.register("/sw.js")
- * }
- */
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.register("/sw.js")
+}
 
 function copyChildren(target, node) {
     var node = document.importNode(node, true);

@@ -11,8 +11,6 @@ workbox.core.setCacheNameDetails({
   runtime: 'cache'
 });
 
-console.log(workbox.core.cacheNames)
-
 workbox.routing.registerRoute(
     (function(args) {
       var pathname = args.url.pathname
@@ -21,7 +19,7 @@ workbox.routing.registerRoute(
         return null
       if (/^\/(\?.*|#.*)?$/.test(pathname))
         return {}
-      else if (/^\/assets\//.test(pathname))
+      else if (/^\/posts\/latex\//.test(pathname))
         return {}
       else if (/^\/.*\.html/.test(pathname))
         return {}
@@ -31,8 +29,18 @@ workbox.routing.registerRoute(
   , workbox.strategies.networkFirst()
 )
 
+
 workbox.routing.registerRoute(
     /\/images\//
+  , workbox.strategies.staleWhileRevalidate({
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
+  })
+)
+
+workbox.routing.registerRoute(
+    /\/pospts\/latex\//
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]

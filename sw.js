@@ -11,8 +11,6 @@ workbox.core.setCacheNameDetails({
   runtime: 'cache'
 });
 
-console.log(workbox.core.cacheNames)
-
 workbox.routing.registerRoute(
     (function(args) {
       var pathname = args.url.pathname
@@ -21,7 +19,7 @@ workbox.routing.registerRoute(
         return null
       if (/^\/(\?.*|#.*)?$/.test(pathname))
         return {}
-      else if (/^\/assets\//.test(pathname))
+      else if (/^\/posts\/latex\//.test(pathname))
         return {}
       else if (/^\/.*\.html/.test(pathname))
         return {}
@@ -31,8 +29,18 @@ workbox.routing.registerRoute(
   , workbox.strategies.networkFirst()
 )
 
+
 workbox.routing.registerRoute(
     /\/images\//
+  , workbox.strategies.staleWhileRevalidate({
+    cacheableResponse: {
+      statuses: [0, 200]
+    }
+  })
+)
+
+workbox.routing.registerRoute(
+    /\/pospts\/latex\//
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -85,7 +93,32 @@ workbox.routing.registerRoute(
   })
 )
 
-workbox.precaching.precacheAndRoute([]);
+workbox.precaching.precacheAndRoute([
+  {
+    "url": "images/indie_hosters.svg",
+    "revision": "4f88c2f3ed4cd728ce40926259e9c99e"
+  },
+  {
+    "url": "images/marcinszamotulski-250.jpg",
+    "revision": "026773f54cf2287b5bd06a21bbfab74d"
+  },
+  {
+    "url": "images/marcinszamotulski-480.jpg",
+    "revision": "55cdddeea070a2520c5c8a8039fae87f"
+  },
+  {
+    "url": "images/vim_icon_20.png",
+    "revision": "bb22238b1625e6c10fc966ef30b6000a"
+  },
+  {
+    "url": "bower_components/html5shiv/dist/html5shiv.js",
+    "revision": "f4d9dea8e0ae8455500862bbb874d63c"
+  },
+  {
+    "url": "bower_components/html5shiv/dist/html5shiv-printshiv.js",
+    "revision": "87ab03595191d555da6261d11d2b2e32"
+  }
+]);
 
 self.addEventListener('install', function(event) {
   self.skipWaiting();
