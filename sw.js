@@ -7,8 +7,6 @@ importScripts(
 workbox.core.setCacheNameDetails({
   prefix: 'coot-homepage',
   suffix: 'v1',
-  precache: 'cache',
-  runtime: 'cache'
 });
 
 workbox.routing.registerRoute(
@@ -40,7 +38,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    /\/pospts\/latex\//
+    /\/posts\/latex\//
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -67,7 +65,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    /^https:\/\/fonts\.googleapis\.com\/css.*/
+    /^https?:\/\/fonts\.googleapis\.com\/css.*/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -76,7 +74,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    /^https:\/\/fonts\.gstatic.com\/s\/opensans\/.*/
+    /^https?:\/\/fonts\.gstatic.com\/s\/opensans\/.*/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -85,7 +83,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/mathjax\/2\.7\.4\/MathJax\.js.*/
+    /^https?:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/(math)?jax\/2\.7\.4\/.*/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -101,6 +99,10 @@ workbox.precaching.precacheAndRoute([
   {
     "url": "images/elf-fg-gray-no-background-480.png",
     "revision": "27f9229890ad9d7ea3ad428fec3e7b7c"
+  },
+  {
+    "url": "images/elf-fg-gray-no-background.png",
+    "revision": "87529acd7da4a6f733e526d5722274a6"
   },
   {
     "url": "images/indie_hosters.svg",
