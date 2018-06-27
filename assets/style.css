@@ -532,3 +532,17 @@ section {
   margin-bottom: 3px;
   margin-right: 5px;
 }
+
+.ups {
+  max-width: 500px;
+  font-size: 3em;
+  font-weight: bold;
+  margin: 100px auto; 100px;
+  text-align: center;
+}
+
+.ups img {
+  display: block;
+  margin: 100px auto 20px;
+  width: 100%;
+}
