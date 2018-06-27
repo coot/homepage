@@ -95,6 +95,14 @@ workbox.routing.registerRoute(
 
 workbox.precaching.precacheAndRoute([
   {
+    "url": "images/elf-fg-gray-no-background-250.png",
+    "revision": "3f3ac922a688358bc891d38a26cd7cdd"
+  },
+  {
+    "url": "images/elf-fg-gray-no-background-480.png",
+    "revision": "27f9229890ad9d7ea3ad428fec3e7b7c"
+  },
+  {
     "url": "images/indie_hosters.svg",
     "revision": "4f88c2f3ed4cd728ce40926259e9c99e"
   },
