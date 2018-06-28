@@ -152,7 +152,7 @@
                     There are other examples of a Peano algebras in Haskell.
                     The <a href="https://hackage.haskell.org/package/base-4.9.0.0/docs/Data-Either.html">Either monad</a>
                     provides an example with two generators - or two data constructors
-                    <code>Left a</code> and <code>Right a</code>. As a Peano algebra it can be
+                    <code>Left</code> and <code>Right</code>. As a Peano algebra it can be
                     represented as a binary tree where the successor of
                     <code>Right x</code> is <code>Right (Right x)</code> and
                     the successor of <code>Left x</code> is
@@ -169,13 +169,8 @@
                     for every term <code>x :: a</code>. The corresponding Peano
                     algebra has the form:
                 </p>
-		<pre><code>      
-                       L• •R
-                        ╱╲
-                    LL•  •RL 
-                    ╱╲
-                LLL•  •RLL
-		</code></pre>
+		<div class="diagram">
+		    <img src="/posts/latex/either-peano.svg" width="400px"/>
 	    </main>
     </body>
 </html>
