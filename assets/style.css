@@ -512,12 +512,15 @@ section {
   content: ",";
 }
 
+.proof,
+.proposition,
 .definition {
   margin-top: 10px;
   margin-bottom: 10px;
   padding-left: 1em;
 }
 
+.proposition h6,
 .definition h6 {
   display: inline-block;
   margin: 0;
@@ -526,6 +529,12 @@ section {
   font-weight: 500;
 }
 
+.proposition h6 {
+  display: block;
+}
+
+.proof h6,
+.proposition h6 span:first-child,
 .definition h6 span:first-child {
   font-size: large;
   font-weight: 300;

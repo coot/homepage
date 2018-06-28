@@ -67,6 +67,9 @@ foldFree :: (Functor f, Monad m)
 foldFree _ (Return a) = return a
 foldFree f (Free fa)  = join $ f $ foldFree f <$> fa
 
+liftF :: Functor f => (forall x. Free f x -> m x) -> (f a -> m a)
+liftF f fa = f $ Free $ Return <$> fa
+
 foldMapL :: Monoid m => (a -> m) -> [a] -> m
 foldMapL _ [] = mempty
 foldMapL f (a : as) = mappend (f a) (foldMapL f as)

@@ -455,8 +455,9 @@ data X = X_1|⋯|X_n</code></pre>
 		    <h6><span>Definition</span> Monad</h6>
 		    <div>
 			A <b>monad</b> is an (endo) <i>functor</i> <code>m</code>
-			with two <i>natural transformations</i>:
-<pre class="haskell"><code>class Monad where
+			with two
+			<a href="https://en.wikipedia.org/wiki/Natural_transformation"><i>natural transformations</i></a>:
+			<pre class="haskell"><code>class Monad where
     return :: a -&gt; m a
     join   :: m(m a) -&gt; m a</code></pre>
 			which is unital and associative, i.e. the following law holds:
@@ -515,18 +516,19 @@ join . return  = id = join . fmap return</code></pre>
 		</div>
 
 		<p>
-		    Most examples of monoidal categories are not strict but are associative and
-		    unital up to a natural transformation.  Think of
-		    $(A\times B)\times C\simeq A\times(B\times C)$ in $\mathcal{Set}$ (or any
-                    category with (finite) products, like $\mathcal{Hask}$).
-                    Let me just stress out that since $\otimes$ is a bifunctor,
-                    for any two maps $f:\;a_1\rightarrow b_1$ and
-                    $g:\;a_2\rightarrow b_2$ we have a map $f\otimes g:
-                    a_1\otimes a_2\rightarrow b_1\otimes b_2$, and moreover it
-                    behaves nicely with respect to composition: $(f_1\otimes
-                    g_1) \cdot (f_2\otimes g_2) = (f_1\cdot
-                    f_2)\otimes(g_1\cdot g_2)$ for composable pairs of arrows
-                    $f_1,\;f_2$ and $g_1,\;g_2$.
+		    Most examples of monoidal categories are not strict but are
+		    associative and unital up to a
+		    <a href="https://en.wikipedia.org/wiki/Natural_transformation">natural transformation</a>.
+		    Think of $(A\times B)\times C\simeq A\times(B\times C)$ in
+		    $\mathcal{Set}$ (or any category with (finite) products,
+		    like $\mathcal{Hask}$).  Let me just stress out that since
+		    $\otimes$ is a bifunctor, for any two maps
+		    $f:\;a_1\rightarrow b_1$ and $g:\;a_2\rightarrow b_2$ we
+		    have a map $f\otimes g: a_1\otimes a_2\rightarrow
+		    b_1\otimes b_2$, and moreover it behaves nicely with
+		    respect to composition: $(f_1\otimes g_1) \cdot (f_2\otimes
+		    g_2) = (f_1\cdot f_2)\otimes(g_1\cdot g_2)$ for composable
+		    pairs of arrows $f_1,\;f_2$ and $g_1,\;g_2$.
                 </p>
 
 		<p>
@@ -588,13 +590,13 @@ join . return  = id = join . fmap return</code></pre>
 		    is just a functor.  So let's pick a functor <code>f</code>.
 		</p>
 		<p>
-                    Now to construct a free monad for a functor
-		    <code>f</code>?  The description of a free algebra says we
-		    should pick the $\mathsf{T}(f)/\sim$.  Note that here
-		    $\mathsf{T}(f)$ and $\mathsf{T}(f)/\sim$ are functors!  And let call $\mathsf{Free}(f)=\mathsf{T}(f)/\sim$.  So
-		    how the terms looks like in this setting?  We need to take
-		    all the expressions of Haskell's type (for arbitrary long
-		    products):
+		    To get a <i>free monad</i> we need to decypher
+		    $\mathsf{T}(f)/\sim$ in the context of a monoid in
+		    a monoidal category of endofunctors.
+		    Note that here $\mathsf{T}(f)$ and $\mathsf{T}(f)/\sim$ are
+		    functors!  To simplify the notation, let
+		    $\mathsf{Free}(f):=\mathsf{T}(f)/\sim$.  So what is a term in this setting?  It should be an expressions of 
+		    a Haskell's type:
 		    $$
 			\begin{equation}
 			    \begin{array}{c}
@@ -604,21 +606,20 @@ join . return  = id = join . fmap return</code></pre>
 			\end{equation}
 		    $$
                     In our setup the monoidal product $-\otimes-$ is just the
-                    functor composition, thus
-		    $\mathsf{Free}(f)(a)$ must be a type which (Haskell's)
-		    terms are of Haskell's types:
+		    functor composition, thus $\mathsf{Free}(f)(a)$ must be
+		    a type which (Haskell's) terms are of Haskell's types:
 		    <pre class="haskell"><code>a, f a, f (f a), f (f (f a)), ...</code></pre>
                 </p>
 		<p>
-		    The monadic <code>join</code> should take something of
+		    The monadic <code>join</code> will take something of
 		    type $\mathsf{Free}(f)\;(\mathsf{Free}(f)\;(a))$, e.g. $f^n(b)=f\;(f\;(\dots f\;(b)\dots)$ (by abusing the notation $f^n$)
                     where $b$ has type
-		    $f^m(a)=(f\;(f\;(\dots(f\;(a)\dots)$ into $\mathsf{Free}(f)(a)$ and
-		    it should be quite clear how to do that: just take
-                    the obvious element of type $f^{n+m}(a)$ - we'll make it
-                    concrete in a second...  Altogether, this is a good trace
-                    of a monad, so let us translate this into a concrete
-                    Haskell type:
+		    $f^m(a)=(f\;(f\;(\dots(f\;(a)\dots)$ and return something
+		    of type $\mathsf{Free}(f)(a)$ and it should be quite clear
+		    how to do that: just take the obvious element of type
+		    $f^{n+m}(a)$ - we'll make it concrete in a second...
+		    Altogether, this is a good trace of a monad, so let us
+		    translate this into a concrete Haskell type:
 <pre class="haskell"><code>data Free f a
     = Return a
       -- ^ the terms of type a
@@ -628,7 +629,7 @@ join . return  = id = join . fmap return</code></pre>
       -- `f a`, `f (f a)` and so on</code></pre>
 		</p>
 		<p>
-		    <code>(Free f)</code> is just a tree shaped by the functor
+		    <code>Free f</code> is just a tree shaped by the functor
                     <code>f</code>.  This type indeed embraces all the terms of
                     types: <code>a, f a, f (f a), ...</code> into a single
                     type.  Now the monad instance:
@@ -642,16 +643,129 @@ join . return  = id = join . fmap return</code></pre>
                     tree, that's what <code>join</code> does on the
                     <code>Return</code> constructor.
                 </p>
-                <p>
-                    <code>join</code> corresponds to <code>foldMap</code> which is
-                    defined in a very similar way
-<pre class="haskell"><code>foldMap :: Monoid m => [m] -> m
+		<p>
+		    Before formulating the next result let's describe morphisms
+		    between monads.  Let <code>m</code> and <code>n</code> be
+		    two monads then a <a href="https://en.wikipedia.org/wiki/Natural_transformation">natural transformation</a>
+		    <code>f :: forall a. m a -> n a</code> is a <i>homomorphism of monads</i> iff the
+		    following two conditions are satisfied:
+		    <pre class="haskell"><code>f . return == return
+join . f == f . fmap f . join</code></pre>
+		    Note that this two conditions are satisfied iff
+		    <code>f</code> is a monoid homorphism in the category of
+		    (endo)functors of $\mathcal{Hask}$.
+
+		    <div class="proposition">
+			<h6><span>Proposition</span></h6>
+			Let <code>f</code> be a functor, then <code>Free
+			    f</code> then there exists a morphism:
+			<pre class="haskell"><code>foldFree :: Functor f => (forall x. f x -> m x) -> (Free f a -> m a)</code></pre>
+			which restricts to an isomorphism of natural
+			transformations on the left hand side and monad
+			homomorphisms on the right hand side, and thus
+			<code>Free f</code> is rightly colled free monad..
+		    </div>
+
+		    <div class="proof">
+			<h6>Proof</h6>
+			Let start with a defintion of <code>foldFree</code>.
+<pre class="haskell"><code>foldFree :: Functor f => (forall x. f x -> m x) -> (Free f a -> m a)
+foldFree _ (Return a) = return a
+foldFree f (Free ff)  = join $ f $ foldFree f <$> ff</code></pre>
+			It's inverse is:
+<pre class="haskell"><code>liftF :: Functor f => (forall x. Free f x -> m x) -> (f a -> m a)
+liftF f fa = f $ Free $ Return <$> fa
+</code></pre>
+			First let's check that <code>foldFree f</code> is a morhpism of monads:
+			<pre class="haskell"><code>foldFree f (Return a)
+    -- | by definition of (foldFree f)
+    = return a
+			
+foldFree f (join (Return a))
+    = foldFree f a
+    -- | by monad unitality axiom
+    = join $ return $ foldFree f $ a
+    -- | by definition of (foldFree f)
+    = join $ foldFree f (Return $ foldFree f a)
+    -- | by definition of functor instance of (Free f)
+    = join $ foldFree f $ fmap (foldFree f) $ Return a
+
+foldFree f (join (Free ff)
+    -- | by definition of join for (Free f)
+    = foldFree f (Free $ fmap join $ ff)
+    -- | by definition of foldFree
+    = join $ f $ fmap (foldFree f) $ fmap join $ ff
+    = join $ f $ fmap (foldFree f . join) $ ff
+    -- | by induction hypothesis
+    = join $ f $ fmap (join . foldFree f . fmap (foldFree f)) $ ff
+    = join $ f $ fmap join $ fmap (foldFree f)
+	$ fmap (fmap (foldFree f)) $ ff
+    -- | f is natural transformation
+    = join $ fmap join $ f $ fmap (foldFree f)
+	$ fmap (fmap (foldFree f)) $ ff
+    -- | monad associativity
+    = join $ join $ f $ fmap (foldFree f)
+	$ fmap (fmap (foldFree f)) $ ff
+    -- | by definition of (foldFree f)
+    = join $ foldFree f $ Free
+	$ fmap (fmap (foldFree f)) $ ff
+    -- | by functor instance of (Free f)
+    = join $ foldFree f $ fmap (foldFree f) $ Free ff</code></pre>
+			And we have
+<pre class="haskell"><code>foldFree . liftF :: (forall x. Free f x -> m x) -> (Free f a -> m a)
+(foldFree . liftF $ f) (Return x)
+    -- ^ where f is a morphism of monads
+    = foldFree (liftF f) (Return x)
+    = return x
+    = f (Return x) -- since f is assumed to be a morphism of monads
+
+(foldFree . liftF $ f) (Free ff)
+    -- ^ where f is a morphism of monads
+    = foldFree (liftF f) (Free ff)
+    = join $ liftF f $ fmap (foldFree (liftF f)) $ ff
+    -- | by induciton hypothesis
+    = join $ liftF f $ fmap f $ ff
+    -- | by definition of (liftF f)
+    = join $ f $ Free $ fmap Return $ fmap f $ ff 
+    -- | by functor instance of (Free f)
+    = join $ f $ fmap f $ Free (Return ff)
+    -- | since f is a morphism of monads
+    = f $ join $ Free (Return ff)
+    = f $ Free ff</code></pre>
+<pre class="haskell"><code>liftF . foldFree :: (forall x. f x -> m x) -> (f a -> m a)
+(liftF . foldFree $ f) fa
+    -- ^ where f is a natural transformation
+    = liftF (foldFree f) $ fa
+    -- | by definition of liftF
+    = (foldFree f) $ Free $ fmap Return $ fa
+    -- | by definition of (foldFree f)
+    = join $ f $ fmap (foldFree f)  $ fmap Return $ fa
+    = join $ f $ fmap (foldFree f . Return) $ fa
+    -- | by defintion of (foldFree f)
+    = join $ f $ fmap return  $ fa
+    -- | since f is a natural transformation
+    = join $ fmap return $ f fa
+    -- | by monad unitality axiom 
+    = f fa</code></pre>
+		    </div>
+		    </p>
+		    <p>
+			<code>foldFree</code> corresponds to <code>foldMap</code> which is
+			defined in a very similar way
+<pre class="haskell"><code>foldMap :: Monoid m => (a -> m) -> [a] -> m
 foldMap _ [] = mempty
 foldMap f (a : as) = mappend (f a) (foldMap f as)</code></pre>
-                    If we had polymorphic function over monoidal categories,
-                    <code>foldMap</code> and <code>join</code> would be
-                    specialisations of the same function!
-                </p>
+		    Note that <code>foldMap</code> is an isomorphism onto
+		    monoid homomorphisms with an inverse
+<pre class="haskell"><code>g :: Monoid m => ([a] -> m) -> a -> m
+g f a = f [a]</code></pre>
+		    </p>
+		    <p>
+			Furthermore, if we had polymorphic functions over monoidal
+			categories in our type system, <code>foldMap</code> and
+			<code>foldFree</code> would be specialisations of the
+			same function!
+		    </p>
 
             <h3>Some examples of free monads</h3>
 	    Let us study some simple examples of free monads
