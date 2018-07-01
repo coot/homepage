@@ -25,18 +25,6 @@ body {
   opacity: 0;
 }
 
-#update-info {
-  display: none;
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  background: white;
-}
-
-#update-info.show {
-  display: block;
-}
-
 .info-hdr {
     position: relative;  /* absolute h1 */
     min-width: 300px;

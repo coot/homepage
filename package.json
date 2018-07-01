@@ -2,9 +2,16 @@
   "name": "homepage",
   "version": "1.0.0",
   "description": "@coot homepage",
-  "main": "build.js",
   "dependencies": {
     "bower": "^1.8.4",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.4",
+    "gulp-handlebars": "^5.0.2",
+    "gulp-htmlmin": "^4.0.0",
+    "gulp-image": "^4.3.0",
+    "gulp-nunjucks": "^4.0.0",
+    "handlebars": "^4.0.11",
+    "nunjucks": "^3.1.3",
     "workbox-cli": "^3.3.1"
   },
   "devDependencies": {
@@ -14,8 +21,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "workbox injectManifest",
-    "start": "http-server -c0 .",
+    "buildHTML": "gulp",
+    "build": "gulp",
+    "start": "http-server -c0 dist",
     "postinstall": "bower install"
   },
   "repository": {
