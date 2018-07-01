@@ -1,7 +1,7 @@
 importScripts(
-    "/node_modules/workbox-sw/build/workbox-sw.js"
-  , "/node_modules/workbox-routing/build/workbox-routing.prod.js"
-  , "/node_modules/workbox-precaching/build/workbox-precaching.prod.js"
+    "/assets/workbox-sw.js"
+  , "/assets/workbox-routing.prod.js"
+  , "/assets/workbox-precaching.prod.js"
 );
 
 workbox.core.setCacheNameDetails({
