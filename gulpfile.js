@@ -53,7 +53,7 @@ gulp.task("css", () => {
 
 gulp.task("images", () => {
     return gulp.src("images/*.{png,jpg,svg}")
-        .pipe(image())
+        // .pipe(image())
         .pipe(gulp.dest("dist/images"))
 })
 
