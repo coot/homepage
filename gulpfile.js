@@ -23,6 +23,7 @@ gulp.task("html", () => {
     return gulp.src([
         "templates/index.html",
         "templates/about.html",
+        "templates/404.html"
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: ""},
