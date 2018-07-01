@@ -61,8 +61,8 @@ gulp.task("js", () => {
     return gulp.src([
             "assets/*.js",
             "node_modules/workbox-sw/build/workbox-sw.js*",
-            "node_modules/workbox-routing/build/workbox-routing.dev.js*",
-            "node_modules/workbox-precaching/build/workbox-precaching.dev.js.*",
+            "node_modules/workbox-routing/build/workbox-routing.prod.js*",
+            "node_modules/workbox-precaching/build/workbox-precaching.prod.js.*",
             "bower_components/html5shiv/dist/html5shiv*.js"
         ])
         .pipe(gulp.dest("dist/assets"))
