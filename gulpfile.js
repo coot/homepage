@@ -4,7 +4,7 @@ const nunjucksGulp = require("gulp-nunjucks")
 const nunjucks = require("nunjucks")
 const htmlmin = require("gulp-htmlmin")
 const cleanCSS = require("gulp-clean-css")
-const image = require("gulp-image")
+const imagemin = require("gulp-imagemin")
 const workbox = require("workbox-build")
 
 function renderTemplate(path) {
@@ -54,7 +54,7 @@ gulp.task("css", () => {
 
 gulp.task("images", () => {
     return gulp.src("images/*.{png,jpg,svg}")
-        // .pipe(image())
+        .pipe(imagemin())
         .pipe(gulp.dest("dist/images"))
 })
 
