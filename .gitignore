@@ -2,7 +2,9 @@
 /bower_components
 /posts/free-monads
 *.hi
+*.o
 *.aux
 *.log
 *.pdf
 /dist
+/haskell/free-garden
