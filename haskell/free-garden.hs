@@ -34,7 +34,7 @@ read [\"From Free Algebras to Free Monads\"](https://marcinszamotulski.me/posts/
 
 module Data.Algebra.Free where
 
-import Prelude hiding (Monoid, mempty)
+import Prelude hiding (Monoid, Semigroup, mempty, (<>))
 
 import           Control.Monad (ap, join)
 import           Control.Monad.Free (Free)
