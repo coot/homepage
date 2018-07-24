@@ -560,7 +560,7 @@ structure leads to monoidal categories.
     The main point of this section is that these diagrams have
     exactly the same shape as associativity and unitality for
     <a href="#monad">monads</a>. Indeed, a monoid in the
-    category of endofunctors with functor composition as
+    category of endo-functors with functor composition as
     a monoidal product $\otimes$ and unit the identity functor
     is a monad.  In category theory this category is strict
     monoidal,  if you try to type this in Haskell you will end
@@ -654,8 +654,8 @@ join (Free fma) = Free $ join &lt;$&gt; fma
     <pre class="haskell"><code>f . return == return
 join . f == f . fmap f . join</code></pre>
     Note that this two conditions are satisfied iff
-    <code>f</code> is a monoid homorphism in the category of
-    (endo)functors of $\mathcal{Hask}$.
+    <code>f</code> is a monoid homomorphism in the category of (endo)functors
+    of $\mathcal{Hask}$.
 
     <div class="proposition">
 	<h6><span>Proposition</span></h6>
@@ -844,10 +844,10 @@ fromFree2 (Writer (SY : xs, a))
 </ul>
 <h2>Final remarks</h2>
 <p>
-I hope I convienced you that monads are algebraic constructs and I hope
-you'll find univeral algebra approach useful. In many cases we
+I hope I convinced you that monads are algebraic constructs and I hope
+you'll find universal algebra approach useful. In many cases we
 are dealing with algebraic structures which we require to
-satisfy certiain equations. Very often they fit into equational
+satisfy certain equations. Very often they fit into equational
 theories, which have a very clear description and which allow
 free objects. Freeness is the property that lets one easily
 interpret the free object in any other object of the same type.

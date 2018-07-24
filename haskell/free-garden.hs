@@ -788,7 +788,7 @@ instance FreeAlgebra1 FreeA where
           -> (a -> b)
           -> (FreeA f a -> d b)
     free1 _   f (Pure a) = pure $ f a
-    free1 nat f (FreeA fxa fx) = fmap f $ (nat fxa) <*> free1 nat id fx
+    free1 nat f (FreeA fxa fx) = fmap f $ nat fxa <*> free1 nat id fx
 
 instance Functor1 FreeA where
     type FunctorType1 FreeA f = Functor f
