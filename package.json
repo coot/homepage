@@ -24,7 +24,7 @@
     "buildHTML": "gulp",
     "hs:test": "doctest -XDataKinds -XFlexibleContexts -XFlexibleInstances -XTypeApplications -fdiagnostics-color=never haskell/free-garden.hs",
     "haddock": "haddock --optghc=\"-no-link\" --optghc=\"-no-hs-main\" -o haskell/html -h --no-print-missing-docs --hyperlinked-source haskell/*.hs",
-    "build": "npm run haddock; gulp",
+    "build": "gulp",
     "start": "http-server -c0 dist",
     "postinstall": "bower install"
   },
