@@ -9,3 +9,9 @@
 /dist
 /haskell/free-garden
 todo.md
+/latex/*.dvi
+/latex/*.svg
+/latex/*.log
+/latex/*.aux
+/latex/*.ps
+/latex/*.pdf

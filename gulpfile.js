@@ -36,7 +36,8 @@ gulp.task("html", () => {
 gulp.task("html:posts", () => {
     gulp.src([
         "templates/posts/free-monads.html",
-        "templates/posts/peano-algebras-in-haskell.html"
+        "templates/posts/peano-algebras-in-haskell.html",
+        "templates/posts/monadicity.html"
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },
