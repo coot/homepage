@@ -80,8 +80,7 @@ class FreeAlgebra (m :: Type -> Type)  where
     forget :: forall a. AlgebraType  m a => Proof (AlgebraType0 m a) (m a)
 
 -- |
--- All types which satisfy @'FreeAlgebra'@ constraint are foldable.  You
--- can use this map to build a @'Foldable'@ instance.
+-- All types which satisfy @'FreeAlgebra'@ constraint are foldable.
 --
 -- prop> foldFree . returnFree == id
 --
