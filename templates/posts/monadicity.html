@@ -73,11 +73,13 @@ class FreeAlgebra (m :: Type -> Type)  where
     -- subcategory of @Hask@ of types satisfyling @AlgebraType0 m a@
     -- constraint to the full subcategory satisfying @AlgebraType m a@,
     -- @fmapFree@ below proves that it's a functor.
-    proof  :: forall a. AlgebraType0 m a => Proof (AlgebraType m (m a)) (m a)
+    proof :: forall a. AlgebraType0 m a
+	  => Proof (AlgebraType m (m a)) (m a)
     -- |
     -- Proof that the forgetful functor from types @a@ satisfying
     -- @AgelbraType m a@ to @AlgebraType0 m a@ is well defiend.
-    forget :: forall a. AlgebraType  m a => Proof (AlgebraType0 m a) (m a)
+    forget :: forall a. AlgebraType  m a
+	   => Proof (AlgebraType0 m a) (m a)
 
 -- |
 -- All types which satisfy @'FreeAlgebra'@ constraint are foldable.
@@ -368,7 +370,9 @@ joinF :: forall  m a .
       => Hom m (FreeMAlg m (FreeMAlg m a)) (FreeMAlg m a)
 joinF = case proof @m @a of
     Proof Dict -> case forget @m @(m a) of
-        Proof Dict -> Hom $ \(FreeMAlg mma) -> FreeMAlg $ joinFree $ fmapFree runFreeMAlg mma
+        Proof Dict ->
+	    Hom $ \(FreeMAlg mma)
+		-> FreeMAlg $ joinFree $ fmapFree runFreeMAlg mma
 
 -- |
 -- bind of the @'FreeMAlg'@ monad
@@ -508,13 +512,18 @@ k_inv_pointed = foldFreeAlg (FreeMAlg Nothing)
 -- |
 -- @'invert'@ deduced from @FreeMAlg FreeGroup@ @MAlg@ instance.
 k_inv_group_invert :: (MAlg FreeGroup a, Eq a) => a -> a
-k_inv_group_invert a = foldFreeAlg (FreeMAlg (FreeGroup.fromList [Left a]))
+k_inv_group_invert a
+    = foldFreeAlg (FreeMAlg (FreeGroup.fromList [Left a]))
 
 -- |
 -- @'act'@ deduced from @FreeMAlg FreeMSet@ @MAlg@ instance.
 k_inv_act :: (MAlg (FreeMSet m) a, Monoid m) => m -> a -> a
 k_inv_act m a = foldFreeAlg $ FreeMAlg $ FreeMSet (m, a)
 </code></pre>
+    <small>A reference for <a
+    href="https://hackage.haskell.org/package/free-algebras/docs/Data-Group-Free.html">free
+    group</a>: <code>newtype FreeGroup a = FreeGroup [Either
+    a a]</code>.</small>
     </p>
 
     <h3>Laws</h3>
@@ -525,8 +534,9 @@ k_inv_act m a = foldFreeAlg $ FreeMAlg $ FreeMSet (m, a)
         associativity of the multiplication and unit law for
         <code>mempty</code> and this is simply cerried by the free
 	monoid <code>[a]</code>.  The same will hold for any other
-	free algebra.  This is just because the free algebra carries
-	all the laws of the category of given algebra types (monoids
+	free algebra and thus by the monad <code>FreeAlgebra m =>
+	m</code>.  This is just because the free algebra carries all
+	the laws of the category of given algebra types (monoids
 	/ semigroups / lattices, ...) and no other equality is built
 	in.
     </p>
