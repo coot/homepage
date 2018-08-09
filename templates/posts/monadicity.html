@@ -3,7 +3,7 @@
 {% block main %}
 <header>
     <h1 class="section_h" id="monadicity">Monadicity</h1>
-    <h3>Categorical Algebra</h3>
+    <h3>From Algebras to Monads and back to Algebras</h3>
 </header>
     <p>
         In this post I'd like to introduce you to how mathematicians think
@@ -17,8 +17,10 @@
             href="https://hackage.haskell.org/package/free-algebras">library</a>
         I recently wrote, and it will use snippets of code from it.
     </p>
-    Let <code>Monad</code> be the category of monads and <code>Hask</code> be
-    the category of Haskell types.  There are two functors that connect this two categories:
+    Let <code>Hask</code> be
+    the category of Haskell types and <code>Monoid</code> be the category of
+    monoids in <code>Hask</code>.  There are two functors that connect this two
+    categories:
     $$U:\mathrm{Monoid}\rightarrow\mathrm{Hask}$$
     which sends a monoid $m$ to its underlying type forgetting the $Monad$
     constraint; and the free monoid functor:
@@ -104,8 +106,10 @@ instance FreeAlgebra [] where
     proof  = Proof Dict
     forget = Proof Dict
 </code></pre>
-    The type class <code>FreeAlgebra</code> has many more instances, e.g. for
-    semigroups, groups, idempotent semigroups (semi-lattices), abelian
+    The type class <a
+	href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra</code></a>
+    has many more instances, e.g. for semigroups, groups, idempotent semigroups
+    (semi-lattices), abelian
     semigroups / monoids / groups, and there is even a version for functors,
     applicative functors and monads.  For simplicity, in this post we will not
     touch the higher kinded types, but all of this works perfectly well for
@@ -122,7 +126,9 @@ instance FreeAlgebra [] where
     -> (a -> d)
 unFoldMapFree f = f . returnFree
 </code></pre>
-Note that <code>foldMap</code> (also <code>foldMapFree</code>) has some nice properties:
+Note that <code>foldMap</code> (also
+<a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>)
+has some nice properties:
     <ul>
         <li>
             For each <code>f :: Monoid m => a -> m</code> the map <code>foldMap
@@ -137,7 +143,8 @@ Note that <code>foldMap</code> (also <code>foldMapFree</code>) has some nice pro
             <code>foldMap f (as ++ bs :: [a])</code>.  The result will be the same because
             monoids (and list concatenation) satisfy the associativity law.
             <p>
-                When you will define an instance of <code>FreeAlgebra</code>
+		When you will define an instance of
+		<a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra</code></a>
                 you should check that this law is obeyed.  Otherwise
                 all the theory that we are uncovering here will fail.
             </p>
@@ -148,8 +155,8 @@ Note that <code>foldMap</code> (also <code>foldMapFree</code>) has some nice pro
                 and monoids, and this is crucial.  For non associative monoids,
                 the functor which will appear instead of a list will not obey
                 the associativity law and it will not be required to prove that
-                <code>foldMapFree</code> preserves non associative
-                multiplication.
+		<a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>
+		preserves non associative multiplication.
             </p>
         </li>
         <li>
@@ -169,10 +176,14 @@ Note that <code>foldMap</code> (also <code>foldMapFree</code>) has some nice pro
         </li>
     </ul>
     <p>
-        The last two properties mean that <code>foldMapFree</code> (and
-        <code>foldMap</code>) is a natural transformation of bifunctors from
-        <code>Hom m</code> to <code>AlgHom m</code> which we define below.
-<pre class="haskell"><code>data Hom m a b where
+	The last two properties mean that
+	<a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>
+	(and <a href="https://hackage.haskell.org/package/base/docs/Data-Foldable.html#v:foldMap"><code>foldMap</code></a>)
+	is a natural transformation of bifunctors
+	from
+	<a href="#Hom"><code>Hom m</code></a> to <a
+	href="#AlgHom"><code>AlgHom m</code></a> which we define below.
+<pre class="haskell" id="Hom"><code>data Hom m a b where
     Hom :: (AlgebraType0 m a, AlgebraType0 m b)
          => (a -> b)
          -> Hom m a b
@@ -187,7 +198,7 @@ bimapHom :: forall m a' a b b'.
          -> Hom m a' b'
 bimapHom f g (Hom ab) = Hom (g . ab . f)
 </code></pre>
-<pre class="haskell"><code>data AlgHom m a b where
+<pre class="haskell" id="AlgHom"><code>data AlgHom m a b where
     AlgHom :: ( AlgebraType  m a
               , AlgebraType  m b
               )
@@ -212,9 +223,12 @@ bimapAlgHom f g (AlgHom ab) = AlgHom (g . ab . f)
 	Note that you could define (full sub-) categories of <code>Hask</code>
 	using these bifunctors.
     </p>
-    We can put all four properties (together with <code>foldMapFree</code>
-    being a bijection), into single statement: <code>foldMapFree</code> is
-    a natural isomorphism between <code>Hom m</code> and <code>AlgHom m</code>:
+    We can put all four properties (together with
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>
+    being a bijection), into single statement:
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>
+    is a natural isomorphism between <a href="#Hom"><code>Hom m</code></a>
+    and <a href="#AlgHom"><code>AlgHom m</code></a>:
 <pre class="haskell"><code>-- |
 ψ :: forall m a d .
          ( FreeAlgebra  m
@@ -242,10 +256,11 @@ bimapAlgHom f g (AlgHom ab) = AlgHom (g . ab . f)
     <code>U</code> are called <b>adjoint functors</b>.  In case of monoids the
     functor <code>F</code> is simply the list functor: <code>[]</code>
     and it is the left adjoin (it appears in the left argument of
-    <code>AlgHom</code>) to the forgetful functor from the category of monoids
-    to <code>Hask</code> (it's on the right hand since of <code>Hom
-        m a d</code> though in an invisible way, only because we are dropping
-    a constraint).
+    <a href="#AlgHom"><code>AlgHom</code></a>) to the forgetful functor from
+    the category of monoids
+    to <code>Hask</code> (it's on the right hand since of
+    <a href="#Hom"><code>Hom m a d</code></a> though in an invisible way,
+    only because we are dropping a constraint).
     </p>
 
     <h2>Unit and counit of an adjunction</h2>
@@ -298,7 +313,7 @@ counit = case forget @m @d of
     the map <code>unAlgHo counit = foldFree</code> and it can be recasted to
     a monad's <code>join</code>:
 <pre class="haskell"><code>-- |
--- @'FreeAlgebra'@ constraint implies @Monad@ constrain.
+-- @'FreeAlgebra'@ constraint implies @Monad@ constraint.
 joinFree :: forall m a .
           ( FreeAlgebra  m
           , AlgebraType0 m a
@@ -324,16 +339,20 @@ bindFree :: forall m a b .
 bindFree ma f = case proof @m @b of
     Proof Dict -> foldMapFree f ma
 </code></pre>    
-    Together with <code>returnFree :: FreeAlgebra m => a -> m a</code> we have
-    a a very general formula for constructing monads; actually any monad arise
-    in this way: from a pair of adjoint functors; the <code>counit</code>
-    morphism defines <code>join</code> and the <code>unit</code> defines
-    <code>return</code>.
+    Together with
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:returnFree"><code>returnFree :: FreeAlgebra m => a -> m a</code></a>
+    we have a a very general formula for constructing monads; actually any
+    monad arise in this way: from a pair of adjoint functors; the
+    <code>counit</code> morphism defines
+    <a href="https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:join"/><code>join</code></a>
+    and the <code>unit</code> defines
+    <a href="https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:return"><code>return</code></a>.
 
-    Let us put this monad in a wrapper type, we are using @GADTs@ to
-    capture the @FreeAlgebra m@ constraint.
-<pre class="haskell"><code>
--- |
+    Let us put this monad in a wrapper type, we are using <code>GADTs</code> to
+    capture the
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra m</code></a>
+	constraint.
+<pre class="haskell" id="FreeMAlg"><code>-- |
 -- The composition of @Free@ followed by @U@
 data FreeMAlg (m :: * -> *) (a :: *) where
     FreeMAlg :: ( FreeAlgebra m, AlgebraType m a ) => m a -> FreeMAlg m a
@@ -399,7 +418,7 @@ bindF (FreeMAlg ma) (Hom f) = case proof @m @a of
     adjunction?
 
     In Haskell this category will fit into a simple type class:
-<pre class="haskell"><code>class MAlg m a where
+<pre class="haskell" id="MAlg"><code>class MAlg m a where
     alg :: m a -> a
 
 instance MAlg [] [a] where
@@ -408,7 +427,7 @@ instance MAlg [] [a] where
 instance MAlg NonEmpty (NonEmpty a) where
     alg = NE.fromList . concatMap NE.toList
 </code></pre>
-    We can define <code>MAlg</code> instance for <code>FreeMAlg</code>:
+We can define <a href="#MAlg"><code>MAlg</code></a> instance for <a href="#FreeMAlg"><code>FreeMAlg</code></a>:
 <pre class="haskell"><code>instance ( FreeAlgebra m
          , AlgebraType0 m a
          , AlgebraType0 m (FreeMAlg m a)
@@ -419,15 +438,16 @@ instance MAlg NonEmpty (NonEmpty a) where
     <small>Note that this is an undecidable instance, since the
 	constraints are not smaller than the instance head.</small>
 
-    It turns out that <code>FreeMAlg m</code> is a left adjoin functor to the
-    forgetful functor $\mathrm{U_{MAlg}}$ from the category of
-    <code>m</code>-algebras to $\mathrm{Hask}$ which sends an
-    <code>m</code>-algebra <code>f :: m a ->
-        a</code> to <code>a</code>.  This is simply because we can write
-    <code>FreeAlgebra</code> instance for this type.  Well, not quite, only
-    because Haskell computes types families in a lazy way, but we can define all the
-    morphisms we need (we leave checking all the necessary properties
-    though to the curious reader):
+    It turns out that <a href="#FreeMAlg"><code>FreeMAlg m</code></a> is
+    a left adjoin functor to the forgetful functor $\mathrm{U_{MAlg}}$ from the
+    category of <code>m</code>-algebras to $\mathrm{Hask}$ which sends an
+    <code>m</code>-algebra <code>f :: m a -> a</code> to <code>a</code>.  This
+    is simply because we can write
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra</code></a>
+    instance for this type.  Well, not quite, only because Haskell computes
+    types families in a lazy way, but we can define all the morphisms we need
+    (we leave checking all the necessary properties though to the curious
+    reader):
 <pre class="haskell"><code>returnFreeMAlg
     :: FreeAlgebra m
     => a
@@ -451,8 +471,10 @@ foldFreeMAlg
 foldFreeMAlg = foldMapFreeMAlg id
 </code></pre>
     We're kind of at the starting point of this post again.  Since we have an
-    instance of <code>FreeAlgebra</code> we can define an adjunction
-    in the same way, but for the class <code>MAlg</code>.
+    instance of
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra</code></a>
+    we can define an adjunction in the same way, but for the class
+    <a href="#MAlg"><code>MAlg</code></a>.
 
     So we end up with the following picture:
     <div class="diagram">
@@ -478,18 +500,21 @@ k _ = foldFree
     <p>
         A right adjoin functor $\mathrm{U}$ is called monadic iff the
         comparison functor is an equivalence of categories.  This means that
-        the two categories <code>Alg</code> and <code>MAlg</code> have exactly
-        the same categorical properties.  It turns out that all algebraic
-        theories which have free algebras (equivalently equational theories)
-        are monadic.  This includes the categories of semigroups, monoids,
-        groups, etc are all monadic, but also the categories of functors,
-        applicative functors and monads on <code>Hask</code> are monadic too.
+	the two categories <code>Alg</code> and
+	<a href="#MAlg"><code>MAlg</code></a> have exactly the same
+	categorical properties.  It turns out that all algebraic theories which
+	have free algebras (equivalently equational theories) are monadic.
+	This includes the categories of semigroups, monoids, groups, etc are
+	all monadic, but also the categories of functors, applicative functors
+	and monads on <code>Hask</code> are monadic too.
 
-        From technical point of view, maybe the most important fact is that
-        the free monad encodes algebraic operations that the initial category
-	was using.  So in out example, we should be able to define
-	<code><></code> and <code>mempty</code> only using the list
-	monad.  And it's quite trivial:
+	From technical point of view, maybe the most important fact is that the
+	free monad encodes algebraic operations that the initial category was
+	using.  So in out example, we should be able to define
+	<a href="https://hackage.haskell.org/package/base/docs/Data-Semigroup.html#v:-60--62-"><code><></code></a>
+	and
+	<a href="https://hackage.haskell.org/package/base/docs/Data-Monoid.html#v:mempty"><code>mempty</code></a>
+	only using the list monad.  And it's quite trivial:
 
 <pre class="haskell"><code>-- |
 -- @'mempty'@ deduced from @FreeMAlg []@ @MAlg@ instance.
@@ -542,6 +567,12 @@ k_inv_act m a = foldFreeAlg $ FreeMAlg $ FreeMSet (m, a)
     </p>
 
     <h2>Final remarks</h2>
-    A fully working example is here <a
-    href="https://github.com/coot/free-algebras/tree/master/example/src/Data/Algebra/Free/Monadicity.hs">here</a>.
+    A working example on which this post is based is published on <a
+    href="https://github.com/coot/free-algebras/tree/master/example/src/Data/Algebra/Free/Monadicity.hs">github</a>.
+    This monadicity works well for higher kinded algebras, e.g. functors,
+    applicative functors or monads.  The changes that one needs to make are
+    really minimal: use <a
+    href="https://hackage.haskell.org/package/free-algebras/docs/Control-Algebra-Free.html#t:FreeAlgebra1"><code>FreeAlgebra1</code></a>
+    type class of <code>FreeAlgebra</code>.  Please check the <a
+    href="https://github.com/coot/free-algebras/blob/master/example/src/Control/Algebra/Free/Monadicity.hs">code</code>.
 {% endblock %}
