@@ -60,6 +60,16 @@ main {
   padding-left: 30px;
 }
 
+.blog-posts .date {
+  font-size: 0.8em;
+  margin-left: 30px;
+}
+
+.blog-posts .links {
+  list-style: none;
+  font-size: small;
+}
+
 .langs {
     margin-top: 10px;
 }
