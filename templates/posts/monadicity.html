@@ -568,11 +568,11 @@ k_inv_act m a = foldFreeAlg $ FreeMAlg $ FreeMSet (m, a)
 
     <h2>Final remarks</h2>
     A working example on which this post is based is published on <a
-    href="https://github.com/coot/free-algebras/tree/master/example/src/Data/Algebra/Free/Monadicity.hs">github</a>.
+    href="https://github.com/coot/free-algebras/tree/master/examples/src/Data/Algebra/Free/Monadicity.hs">github</a>.
     This monadicity works well for higher kinded algebras, e.g. functors,
     applicative functors or monads.  The changes that one needs to make are
     really minimal: use <a
     href="https://hackage.haskell.org/package/free-algebras/docs/Control-Algebra-Free.html#t:FreeAlgebra1"><code>FreeAlgebra1</code></a>
     type class of <code>FreeAlgebra</code>.  Please check the <a
-    href="https://github.com/coot/free-algebras/blob/master/example/src/Control/Algebra/Free/Monadicity.hs">code</code>.
+    href="https://github.com/coot/free-algebras/blob/master/examples/src/Control/Algebra/Free/Monadicity.hs">code</code>.
 {% endblock %}
