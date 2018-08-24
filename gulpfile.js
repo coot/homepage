@@ -1,5 +1,6 @@
 const fs = require("fs")
 const gulp = require("gulp")
+const exec = require("gulp-exec")
 const nunjucksGulp = require("gulp-nunjucks")
 const nunjucks = require("nunjucks")
 const htmlmin = require("gulp-htmlmin")
@@ -33,11 +34,19 @@ gulp.task("html", () => {
         .pipe(gulp.dest("dist"))
 })
 
-gulp.task("html:posts", () => {
+gulp.task("html:posts:lhs", () => {
+    return gulp.src("templates/posts/*.lhs")
+        .pipe(exec('ghc <%= file.path %>'))
+        .pipe(exec('pandoc <%= file.path %> -o <%= file.path %>.html'))
+        .pipe(exec.reporter())
+})
+
+gulp.task("html:posts", ["html:posts:lhs"], () => {
     gulp.src([
         "templates/posts/free-monads.html",
         "templates/posts/peano-algebras-in-haskell.html",
-        "templates/posts/monadicity.html"
+        "templates/posts/monadicity.html",
+        "templates/posts/finite-state-machines.html"
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },

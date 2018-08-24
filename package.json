@@ -6,6 +6,7 @@
     "bower": "^1.8.4",
     "gulp": "^3.9.1",
     "gulp-clean-css": "^3.9.4",
+    "gulp-exec": "^3.0.2",
     "gulp-handlebars": "^5.0.2",
     "gulp-htmlmin": "^4.0.0",
     "gulp-imagemin": "^4.1.0",
