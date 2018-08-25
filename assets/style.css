@@ -40,6 +40,10 @@ main {
     min-height: 100vh;
 }
 
+main > header .section_h {
+  width: 100%;
+}
+
 footer .license {
   font-variant: small-caps;
 }
@@ -50,7 +54,12 @@ footer .license {
 }
 
 ul.blog-posts {
-  list-style: lower-roman;
+  list-style: none;
+}
+
+ul.blog-posts > li {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .blog-posts h1 {
@@ -61,6 +70,7 @@ ul.blog-posts {
 
 .blog-posts p {
   margin-top: 5px;
+  margin-bottom: 5px;
   padding-left: 30px;
 }
 
