@@ -35,14 +35,14 @@ gulp.task("html", () => {
         .pipe(gulp.dest("dist"))
 })
 
-gulp.task("html:posts:lhs", () => {
+gulp.task("posts:lhs", () => {
     return gulp.src("templates/posts/*.lhs")
         .pipe(gexec('ghc -Wall <%= file.path %>'))
         .pipe(gexec('pandoc <%= file.path %> -o <%= file.path %>.html'))
         .pipe(gexec.reporter())
 })
 
-gulp.task("html:posts", ["html:posts:lhs"], () => {
+gulp.task("posts", ["posts:lhs"], () => {
     gulp.src([
         "templates/posts/free-monads.html",
         "templates/posts/peano-algebras-in-haskell.html",
@@ -114,7 +114,7 @@ gulp.task("js", () => {
         .pipe(gulp.dest("dist/assets"))
 })
 
-gulp.task("default", ["html", "html:posts", "images", "css", "js"], () => {
+gulp.task("default", ["html", "posts", "images", "css", "js"], () => {
     return workbox.injectManifest({
         globDirectory: "./dist",
         globPatterns: [
