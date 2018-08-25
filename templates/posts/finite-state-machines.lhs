@@ -28,9 +28,8 @@ see how usefull is the __Kleisli category__.
 > module Control.Category.FSM where
 
 > import           Prelude hiding (id, foldMap, (.))
-> -- ^ Note that we're imporing `id` and `.` from `Control.Category`
-
-> -- import           Control.Arrow (Kleisli (..))
+> -- ^ Note that we're imporing `id` and `.`
+> --   from `Control.Category`
 > import           Control.Category (Category (id, (.)), (<<<))
 > import           Control.Monad ((>=>))
 > import           Data.List.NonEmpty (NonEmpty (..), (<|))
@@ -154,7 +153,8 @@ out that with any moand `m` one can associate a category where arrows are `a
 -> m b` instead of `a -> b`.  Let us investigate this in detail, as this
 allows for many interesting interpretations.
 
-> newtype Kleisli m a b = Kleisli { runKleisli :: a -> m b }
+> newtype Kleisli m a b =
+>    Kleisli { runKleisli :: a -> m b }
 > 
 > instance Monad m => Category (Kleisli m) where
 >   id                    = Kleisli return
@@ -430,7 +430,10 @@ But we can easily interpret in `ShoppingCat` in any Kleisli category,
 especially in `Klesli IO`.  Here we lift just the pure interpretation, but
 equaly well you could do some `IO` here.
 
-> checkoutM :: forall m a b . Monad m => ShoppingCat a b -> Kleisli m a b
+> checkoutM
+>     :: forall m a b . Monad m
+>     => ShoppingCat a b
+>     -> Kleisli m a b
 > checkoutM = foldFunCat nat
 >     where
 >     nat :: Tr x y -> Kleisli m x y
@@ -488,7 +491,9 @@ embed Cancel          = cancel
 This property does not leave any space how this functor has to be
 implemented, that's why `ShoppingCat` is the initial `ShoppingCatT` category.
 
-> embed :: forall c a b. ShoppingCatT c => ShoppingCat a b -> c a b
+> embed :: forall c a b. ShoppingCatT c
+>       => ShoppingCat a b
+>       -> c a b
 > embed = foldFunCat nat
 >     where
 >     nat :: Tr x y -> c x y
@@ -514,7 +519,10 @@ all possible events).  In this case one can describe the state machine simply
 by a free monoid `[e]` where `e` represents the type of events and use the
 following version of `foldMapKleisli` (`foldFunCat`) to give interpretations:
 
-> foldMapKleisli :: Monad m => (e -> Kleisli m v v) -> [e] -> Kleisli m v v
+> foldMapKleisli :: Monad m
+>                => (e -> Kleisli m v v)
+>                -> [e]
+>                -> Kleisli m v v
 > foldMapKleisli _ [] = id
 > foldMapKleisli f (e : es) = f e <<< foldMapKleisli f es
 
