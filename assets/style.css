@@ -45,12 +45,12 @@ main {
     padding-top: 0px;
 }
 
-.blog-posts {
-  list-style: none;
+ul.blog-posts {
+  list-style: lower-roman;
 }
 
 .blog-posts h1 {
-  display: inline-block;
+  display: inline;
   font-size: 1.1em;
   margin-bottom: 5px;
 }
