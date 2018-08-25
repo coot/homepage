@@ -40,6 +40,10 @@ main {
     min-height: 100vh;
 }
 
+footer .license {
+  font-variant: small-caps;
+}
+
 .post main {
     padding-bottom: 60px;
     padding-top: 0px;
@@ -154,6 +158,12 @@ pre.haskell a {
 .diagram img {
   display: block;
   margin: 0 auto;
+}
+
+.post .video iframe {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .post figure figcaption {

@@ -441,6 +441,15 @@ Unpacking the `Kleisli` category gives us:
 > chechoutM' :: Monad m => ShoppingCat a b -> a -> m b
 > chechoutM' = runKleisli . checkoutM
 
+The freedom of the choice of monad in the Kleisli category can give you
+various ways of dealing with exceptional conditions (e.g. not valid card) and
+error handling (`IOException`s ...).  Also having various interpretation can
+be very good for testing, e.g. having a reference implementation might be
+a very good idea to increase assurance of the software you are developing.
+Check out Duncan Coutts' <a
+href="https://www.youtube.com/watch?v=mhKUHpQZIoc">lecture</a> on this
+technique.
+
 Finally tagless description
 ---------------------------
 

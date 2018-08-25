@@ -7,13 +7,6 @@
 <meta name="description" content="I am a mathematician (PhD) and a software engineer delivering solutions using JavaScript, Haskell, Purescript and Python." /> 
 <meta name="author" content="Marcin Szamotulski" />
 <meta name="keywords" content="JavaScript React Angular Python Haskell PureScript programming  web applications PWA" />
-<meta name="twitter:card" content="photo" />
-<meta name="twitter:title" content="Mathematics and Programming Blog" />
-<meta name="twitter:description" content="Blog about reach intersection of mathematics and programming, explaining mathematical ideas behind programming languages concepts." />
-<meta name="twitter:creator" content="@me_coot" />
-<meta name="twitter:image" content="https://marcinszamotulski.me/images/monad-associativity.png" />
-<meta name="twitter:url" content="https://marcinszamotulski.me" />
-<meta name="twitter:site" content="@me_coot" />
 <meta prefix="og: http://ogp.me/ns#" property="og:title" content="Marcin Szamotulski - software engineer" />
 <meta prefix="og: http://ogp.me/ns#" property="og:site_name" content="Marcin Szamotulski - software engineer" />
 <meta prefix="og: http://ogp.me/ns#" property="og:description" content="I am a full-stack developer and a mathematician" />
@@ -33,6 +26,19 @@
 <script type="text/javascript" async src="/assets/html5shiv.js"></script>
 <script type="text/javascript" async src="/assets/html5shiv-printshiv.js"></script>
 <script type="text/javascript" src="/assets/index.js"></script>
+
+
+        
+        <meta name="twitter:card" content="photo" />
+        <meta name="twitter:title" content="Mathematics and Programming Blog" />
+        <meta name="twitter:description" content="Blog about reach intersection of mathematics and programming, explaining mathematical ideas behind programming languages concepts." />
+        <meta name="twitter:creator" content="@me_coot" />
+        <meta name="twitter:url" content="https://marcinszamotulski.me" />
+        <meta name="twitter:site" content="@me_coot" />
+        
+        
+        <meta name="twitter:image" content="https://marcinszamotulski.me/images/monad-associativity.png" />
+        
 
 	
 	<script type="text/javascript" async
@@ -305,6 +311,8 @@ f &gt;=&gt; return = f</code></pre>
 <p>Unpacking the <code>Kleisli</code> category gives us:</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="ot">chechoutM&#39; ::</span> <span class="dt">Monad</span> m <span class="ot">=&gt;</span> <span class="dt">ShoppingCat</span> a b <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> m b</a>
 <a class="sourceLine" id="cb38-2" data-line-number="2">chechoutM&#39; <span class="fu">=</span> runKleisli <span class="fu">.</span> checkoutM</a></code></pre></div>
+<p>The freedom of the choice of monad in the Kleisli category can give you various ways of dealing with exceptional conditions (e.g. not valid card) and error handling (<code>IOException</code>s …). Also having various interpretation can be very good for testing, e.g. having a reference implementation might be a very good idea to increase assurance of the software you are developing. Check out Duncan Coutts’ <a
+href="https://www.youtube.com/watch?v=mhKUHpQZIoc">lecture</a> on this technique.</p>
 <h2 id="finally-tagless-description">Finally tagless description</h2>
 <p>We can give a finally tagless description of the shopping category. For that we first define the class of categories in which one can do all the <code>Tr</code> operations:</p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="kw">class</span> <span class="dt">Category</span> c <span class="ot">=&gt;</span> <span class="dt">ShoppingCatT</span> (<span class="ot">c ::</span> <span class="fu">*</span> <span class="ot">-&gt;</span> <span class="fu">*</span> <span class="ot">-&gt;</span> <span class="fu">*</span>) <span class="kw">where</span></a>
@@ -358,5 +366,8 @@ embed Cancel          = cancel</code></pre>
 	    </main>
 	    <div class="clearfix"></div>
 	</div>
+        <footer>
+            Copyright © Marcin Szamotulski 2017-2018, <a href="https://raw.githubusercontent.com/coot/homepage/master/LICENSE"><span class="license">license</span></a>
+        </footer>
     </body>
 </html>
