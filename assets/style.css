@@ -325,17 +325,27 @@ article {
 
 
 footer {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: .8rem;
-    text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: .8rem;
+  text-align: center;
 }
 
 .post_footer {
+  display: flex;
   margin-top: 40px;
   font-size: 1.05em;
+}
+
+.post_footer .home {
+  flex: 1 0 50%;
+  text-align: left;
+}
+
+.post_footer .twitter {
+  flex: 1 0 50%;
   font-style: italic;
   text-align: right;
 }
