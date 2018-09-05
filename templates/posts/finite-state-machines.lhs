@@ -199,7 +199,7 @@ reason for the name of this axiom):
 f >=> (g >=> h) = (f >=> g) >=> h
 ```
 
-Let us proove this:
+Let us prove this:
 
 ```
 (f >=> (g >=> h)) a 
@@ -234,17 +234,17 @@ There is a worth noting sepcialization of `foldFunCat` to Kleisli category:
 >    -> (Cat f a b -> Kleisli m a b)
 > foldFunKleisli = foldFunCat
 
-if you expand `Kleisli` newtype wrapper you will get the type
+if you expand `Kleisli` newtype wrapper we will get
 
-```
-foldFunKleisli'
-  :: (forall x y.  f x y -> x -> m y)
-  -> Cat f a b
-  -> a -> m b
-```
+> foldFunKleisli'
+>   :: Monad m
+>   => (forall x y.  f x y -> x -> m y)
+>   -> Cat f a b
+>   -> a -> m b
+> foldFunKleisli' fun cab = runKleisli $ foldFunKleisli (Kleisli . fun) cab
 
-A final observation that is useful, is that in any category the type `cat c =>
-c v v` is a monoid with identity `id` and multiplication `(.)`.  In `(->)` we
+A final observation, is that in any category the type `cat c => c v v` is
+a monoid with identity `id` and multiplication `(.)`.  In `(->)` we
 have `Data.Monoid.Endo` newtype wrapper for that purpose, and it could be
 generalised:
 
@@ -298,7 +298,7 @@ Whenever `e` is a `Monoid`, `Single e v` is a `Category`:
 
 > instance Monoid e => Category (Single e v) where
 >   id :: forall a . Monoid e => Single e v a a
->   id = unsafeCoerce (idSingle @e)
+>   id  = unsafeCoerce (idSingle @e)
 >   (.) = composeSingle
 
 Furthemore, in this case the free category corresponds to free
@@ -327,27 +327,26 @@ First let us see how `foldFuncCat` specializes:
 > _foldFunCat = foldFunCat
 
 now note that the only natural transformation `f x y -> Single e v x y` that we
-can have are once that come from a map `g :: f v v -> Single e v v v`.  Hence
+can have are one that comes from a map `g :: f v v -> Single e v v v`.  Hence
 `foldFunCat` reduces further to to
 
 > foldFunCat'
 >     :: forall e f v.
 >        Monoid e
->     => (f v v -> Single e v v v)
->     -> Cat f v v
->     -> Single e v v v
+>     => (f v v -> Single e v v v) -- ≅ f v v -> e
+>     -> Cat f v v                 -- ≅ [f v v]
+>     -> Single e v v v            -- ≅ e
 > foldFunCat' f c = foldFunCat (unsafeCoerce f) c
 
-Assuming that `endo :: f v v -> Cat f v v` is an isomorphism (which  it is for
-a large class of bifunctors, e.g. `Single e v`), and since `Single e v v v ≅ e`,
-we have: `Cat (Single e v) v v ≅ [e]` (via `endo`) and `Single e v v v ≅ e`
-(given by `Single` constructor), so we end up with a map `(e -> m) -> [e] -> m`
-which is the claimed `foldMap`.  Finally, both `foldMap` and `foldFunCat`
-are defined using the same recursion pattern, hence they must be equal.  
+Assuming that `endo :: f v v -> Cat f v v` is an isomorphism (which it is for
+a large class of bifunctors, e.g. `Single e v`) we have: `Cat f v v ≅ [v]`; so
+we end up with a map `Monoid m => (a -> m) -> [a] -> m` which is the claimed
+`foldMap`.  Finally, both `foldMap` and `foldFunCat` are defined using the
+same recursion pattern, hence they must be equal.  
 
 To recap what we have just show: `foldFunCat` for
 `f = Single e v` and `g = Monoid m => Single e v` is just `foldMap`.
-In this light we can view `foldFunCat` as a generalisation `foldMap`.  There
+In this case we can view `foldFunCat` as a generalisation `foldMap`.  There
 is also another way of coming to this conclusin via free objects (check out
 [free-algebras package](https://hackage.haskell.org/package/free-algebras).
 
