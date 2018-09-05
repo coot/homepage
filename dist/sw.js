@@ -21,6 +21,8 @@ workbox.routing.registerRoute(
         return {}
       else if (/^\/.*\.html/.test(pathname))
         return {}
+      else if (/^\/assets\/.*\.(css|js)/.test(pathname))
+        return {}
       else
         return null
     })
@@ -65,7 +67,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    /^https?:\/\/fonts\.googleapis\.com\/css.*/
+    /\/assets\/.*\.ttf/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]

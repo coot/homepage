@@ -1,0 +1,15 @@
+{ "name": "Marcin Szamotulski HomePage",
+  "short_name": "Marcin Szamotulski",
+  "display": "standalone",
+  "start_url": ".",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "orientation": "any",
+  "lang": "en",
+  "icons": [
+    { "src": "images/elf-fg-gray-no-background-250.png",
+      "sizes": "250x250" },
+    { "src": "images/elf-fg-gray-no-background-480.png",
+      "sizes": "480x480" }
+  ]
+}

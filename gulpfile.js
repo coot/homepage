@@ -63,6 +63,11 @@ gulp.task("css", () => {
         .pipe(gulp.dest("dist/assets"))
 })
 
+gulp.task("fonts", () => {
+    return gulp.src("assets/*.ttf")
+        .pipe(gulp.dest("dist/assets"))
+})
+
 function execPromise(cmd, obj, cb) {
     return new Promise((resolve, reject) => {
         child_process.exec(cmd, obj, (error, stdout, stderr) => {
@@ -103,6 +108,11 @@ gulp.task("images", () => {
         .pipe(gulp.dest("dist/images"))
 })
 
+gulp.task("manifest", () => {
+    gulp.src("./manifest.json")
+        .pipe(gulp.dest("dist"))
+})
+
 gulp.task("js", () => {
     return gulp.src([
             "assets/*.js",
@@ -114,15 +124,16 @@ gulp.task("js", () => {
         .pipe(gulp.dest("dist/assets"))
 })
 
-gulp.task("default", ["html", "posts", "images", "css", "js"], () => {
+gulp.task("default", ["html", "posts", "images", "css", "fonts", "js", "manifest"], () => {
     return workbox.injectManifest({
         globDirectory: "./dist",
         globPatterns: [
+            "assets/*.{css,js}",
             "images/*.{svg,jpg,png}",
             "bower_components/html5shiv/dist/html5shiv.js",
             "bower_components/html5shiv/dist/html5shiv-printshiv.js",
         ],
-        swSrc: "./dev/sw.js",
-        swDest: "./dist/sw.js"
+        swSrc: "sw.js",
+        swDest: "dist/sw.js"
     })
 })
