@@ -413,12 +413,12 @@ endofunctors of `(->)`).
 Interpretation of the `Tr` graph in the `(->)` category:
 
 > natPure :: Tr a b -> a -> b
-> natPure (SelectFirst i) _            = HasItems (i :| [])
-> natPure (Select i) (HasItems is)     = HasItems (i <| is)
-> natPure (SelectCard c) (HasItems is) = CardSelected c is
-> natPure Confirm (CardSelected c is)  = CardConfirmed c is
-> natPure PlaceOrder _                 = OrderPlaced
-> natPure Cancel _                     = NoItems
+> natPure (SelectFirst i) _                    = HasItems (i :| [])
+> natPure (Select i)      (HasItems is)        = HasItems (i <| is)
+> natPure (SelectCard c)  (HasItems is)        = CardSelected c is
+> natPure Confirm         (CardSelected c is)  = CardConfirmed c is
+> natPure PlaceOrder      _                    = OrderPlaced
+> natPure Cancel          _                    = NoItems
 
 Interpretation of `ShoppingCat` in `(->)` (a functor between two categories):
 
@@ -462,7 +462,7 @@ operations:
 > class Category c => ShoppingCatT (c :: * -> * -> *) where
 >     selectFirst :: CartItem -> c NoItems HasItems
 >     select      :: CartItem -> c HasItems HasItems
->     selectCard  :: Card -> c HasItems CardSelected
+>     selectCard  :: Card     -> c HasItems CardSelected
 >     confirm     :: c CardSelected CardConfirmed
 >     placeOrder  :: c CardConfirmed OrderPlaced
 >     cancel      :: c s NoItems
