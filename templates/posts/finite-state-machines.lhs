@@ -74,9 +74,9 @@ enough to consider the case when x has length greater than 1:
 
 ```
 (x :.: xs) . Id
-   = x :.: (xs . Id)
+   == x :.: (xs . Id)
    -- by induction on the length of xs
-   = x :.: xs
+   == x :.: xs
 ``` 
 
 Now let us prove associativity. The proof is also by induction on the length
@@ -84,21 +84,21 @@ of the first element:
 
 ```
 ((x :.: Id) . y) . z
-  = (x :.: y) . z
-  = (x :.: (y . z))
-  = (x :.: (Id . (y . z))
-  = (x :.: Id) . (y . z)
+  == (x :.: y) . z
+  == (x :.: (y . z))
+  == (x :.: (Id . (y . z))
+  == (x :.: Id) . (y . z)
 ```
 
 And the induction step:
 
 ```
 ((x :.: xs) . y) . z
-  = (x :.: (xs . y)) . z
-  =  x :.: ((xs . y) . z)
+  == (x :.: (xs . y)) . z
+  ==  x :.: ((xs . y) . z)
   -- by induction on the length of xs
-  =  x :.: (xs . (y . z))
-  =  (x :.: xs) . (y . z)
+  ==  x :.: (xs . (y . z))
+  ==  (x :.: xs) . (y . z)
 ```
 
 As expected we have a lawful category `Cat f`.
@@ -172,16 +172,16 @@ $ fmap g (f a)`).  Monadic operations `return` and
 `>>=` carry the unitality laws:
 
 ```
-return >>= f = f
-m >>= return = m
+return >>= f == f
+m >>= return == m
 ```
 
 
 They become even simpler when we re-write them using `>=>`:
 
 ```
-return >=> f = f
-f >=> return = f
+return >=> f == f
+f >=> return == f
 ```
 
 This means that `Kleisli return` is indeed the identity arrow in `Kleisli m`
@@ -189,26 +189,27 @@ category.  It remain to show that the composition is associative, and this, as
 you can expect, can be derived from the monad associativity law:
 
 ```
-m >>= (\x -> k x >>= h) = (m >>= k) >>= k)
+m >>= (\x -> k x >>= h)
+  == (m >>= k) >>= k)
 ```
 
 which using Kleisli composition, takes much simpler form (which conveys the
 reason for the name of this axiom):
 
-```
-f >=> (g >=> h) = (f >=> g) >=> h
+```f >=> (g >=> h)
+  == (f >=> g) >=> h
 ```
 
 Let us prove this:
 
 ```
 (f >=> (g >=> h)) a 
-  = f a >>= (g >=> h)
-  = f a >>= \b -> g b >>= h)
+  == f a >>= (g >=> h)
+  == f a >>= \b -> g b >>= h)
   -- by monadic associativity law
-  = (f a >>= g) >>= h
-  = ((f >=> g) a) >>= h
-  = ((f >=> g) >=> h) a
+  == (f a >>= g) >>= h
+  == ((f >=> g) a) >>= h
+  == ((f >=> g) >=> h) a
 ```
 
 The associativity of Kleisli composition `>=>` is exactly what we need to
