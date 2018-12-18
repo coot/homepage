@@ -35,10 +35,10 @@ Kleisli contstruction
 > 
 > instance Monad m => Category (Kleisli m) where
 >   id = Kleisli return
->   Kleisli f . Kleisli g = Kleisli (\a -> f =<< g a)
+>   Kleisli f . Kleisli g = Kleisli (\x -> f =<< g x)
 
 The Keisli composition is so useful, it has it's own operator defined in
-`Control.Arrow`:
+`Control.Monad`:
 
 > (<=<) :: Monad m => (y -> m z) -> (x -> m y) -> x -> m z
 > f <=< g = \x -> f =<< g x
@@ -68,8 +68,10 @@ construction.
 >   Free ff  >>= f = Free (fmap (>>= f) ff)
 
 The universal property of a free monad can be expressed with a class, which
-I copy from `free-algebras` package (I don't include details that are not
-important for this blog post):
+I borrowed from [free-algebras
+package](https://hackage.haskell.org/package/free-algebras-0.0.7.0/docs/Control-Algebra-Free.html#t:FreeAlgebra1)
+(I don't include all details that are not important for this blog post;  The
+details where described in this [post](/posts/free-monads.html)):
 
 > class FreeAlgebra1 (m :: (* -> *) -> * -> *) where
 >   -- | Natural transformation that embeds generators into `m`.
@@ -86,6 +88,9 @@ important for this blog post):
 >     -> (m f a -> d a)
 >     -- ^ a morphism from `m f` to `d`
 
+In this blog post whenever we will refer to `liftFree` and `foldNatFree` we
+will actually refer to this instance:
+
 > instance FreeAlgebra1 Free where
 >   liftFree fa = Free (Return <$> fa)
 >   foldNatFree _nat (Return a) = return a
@@ -93,42 +98,87 @@ important for this blog post):
 >     join $ nat $
 >       (foldNatFree nat) <$> ff -- induction step
 
+You probably recognise `Free.liftF` and `Free.foldFree` from the [free
+package](https://hackage.haskell.org/package/free/docs/Control-Monad-Free.html).
+
 Instances of this class have the property that to construct a natural
 transformation from `FreeAlgebra1 m => m f` to a monad `Monad d => d` is
 enought to come up with a natural transformation of functors `forall x. f a ->
 d a`.  If you'd like to explore more why this class is the right one to speak
 about freeness, checkout one of my previous
-[posts](https://coot.me/posts/free-monads.html).  Note that the instance
-follows the structure, and there is not much room how to implement the
+[posts](https://coot.me/posts/free-monads.html).  Note that the instance for
+`Free` follows the structure, and there is no room how to implement the
 methods: that's a very common feeling in category theory, which means one is
 on the right path.
 
-A valid instance of `FreeAlgebra1` has to have some additional properties
-or laws (as they are called more often).  The first is that both `liftFree`
-and `foldNatFree nat` (for any `nat`) are natural transformations:
+This particular instance satisfies rather interesting laws:
 
 ![liftFree natural transformation](/images/liftFree-nat.svg)
 
-or as an equation: `fmap g . liftFree == liftFree . fmap g`
+or as an equation:
+```
+fmap g . liftFree == liftFree . fmap g
+```
+
+This is more or less streightforward, just take a look at the definition of
+`liftFree`.
 
 ![foldNatFree natural transformation](/images/foldNatFree-nat.svg)
 
 or as an equation:
 
 ```
-fmap g . foldNatFree nat
-  == foldNatFree nat . fmap g
+fmap g . foldNatFree nat == foldNatFree nat . fmap g
 ```
 
-There are also an additional requirement, which comes from the fact that we
-are looking for a free functor from the category of (endo-)functors into the
-category of monads.  `foldNatFree nat` has to ba monad morphism for any `nat`.
-This means that the following diagrams commute (or equations hold):
+This one is slightly more involved, and lets prove it:
+
+```
+(foldNatFree nat . fmap g) (Return a)
+  = foldNatFree nat (Return (g a))
+  = return (g a)
+  = fmap g (return a)
+  = fmap g (foldNatFree nat (Return a))
+  = (fmap g . foldNatFree nat) (Return a)
+```
+
+and
+
+```
+(foldNatFree nat . fmap g) (Free ff)
+  = foldNatFree nat (fmap g (Free ff))
+  = foldNatFree nat (Free (fmap (fmap g) ff))
+  = join $ nat $ foldNatFree nat <$> (fmap (fmap g) ff)
+  = join $ nat $ foldNatFree nat <$> fmap g <$> ff
+  = join $ nat $ (foldNatFree nat . fmap g) <$> ff
+  -- by induction hypotesis
+  = join $ nat $ (fmap g . foldNatFree nat) <$> ff
+  = join $ nat $ fmap g <$> (foldNatFree nat <$> ff)
+  = join $ nat $ fmap (fmap g) (foldNatFree nat <$> ff)
+  -- since nat is a natural transformation
+  = join $ fmap (fmap g) $ nat (foldNatFree nat <$> ff)
+  -- join is a natural transformation
+  -- join :: Monad m => m (m a) -> m a
+  = fmap g $ join $ $ nat (foldNatFree nat <$<> ff)
+  = fmap g $ foldNatFree nat (Free ff)
+  = (fmpg g . foldNatFree nat) (Free ff)
+```
+
+Since in our case `Free` is a functor from the category of (endo-)functors
+into the category of monads.  `foldNatFree nat` has to ba monad morphism for
+any `nat`.  This means that the following diagrams commute (or equations
+hold):
 
 ![foldNatFree - monad morphism: the unit law](/images/foldNatFree-mmorph-unit.svg)
 
-or as equations: `return = return . foldNatFree nat` and more two commutative
-diagrams:
+or as an equation:
+
+```
+return = return . foldNatFree nat
+```
+
+This should be clear from definition of `foldNatFree`.  Moreover, the
+following diagram commutes:
 
 ![foldNatFree - monad morphism: the join law](/images/foldNatFree-mmorph-join.svg)
 
@@ -139,6 +189,44 @@ join . (foldNatFree nat . fmap (foldNatFree nat))
   == foldNatFree nat . join
 ```
 
+Let us prove this it:
+
+```
+join . (foldNatFree nat . fmap (foldNatFree nat)) (Return (Return a))
+  == join (foldNatFree nat (Return (foldNatFree nat (Retrun a))))
+  == join (foldNatFree nat (Return (return a))
+  == join (return (return a))
+  == return a
+  == foldNatFree nat (Return a)
+  == foldNatFree nat (join (Return (Return a)))
+```
+
+And the other one, which we prove starting from the right hand side:
+```
+foldNatFree nat (join (Free ff)))
+  -- by definition of join
+  = foldNatFree nat (Free (fmap join ff))
+  -- by definition of foldNatFree
+  = join $ nat $ fmap (foldNatFree nat) (fmap join ff)
+  = join $ nat $ fmap (foldNatFree nat . join) ff
+  -- by induction hypotesis
+  = join $ nat $ fmap (join . foldNatFree nat . fmap (foldNatFree nat)) ff
+  = join $ nat $ fmap join $ fmap (foldNatFree nat) $
+      fmap (fmap foldNatFree nat)) ff
+  -- since nat is a natural transformation
+  = join $ fmap join $ nat $ fmap (foldNatFree nat) $
+      fmap (fmap (foldNatFree nat)) ff
+  -- by associativity of join
+  = join $ join $ nat $ fmap (foldNatFree nat) $
+      fmap (fmap (foldNatFree nat)) ff
+  -- by definition of foldNatFree (the outer one)
+  = join $ foldNatFree nat $ Free $ fmap (fmap (foldNatFree nat)) ff
+  -- by definition of functor instance for Free
+  = join $ foldNatFree nat $ fmap (foldNatFree nat) $ Free ff
+  = (join . foldNatFree nat . fmap (foldNatFree nat)) $ Free ff
+
+```
+
 Note that by the natural transformation law for `foldNatFree` we have:
 
 ```
@@ -146,9 +234,12 @@ foldNatFree nat . fmap (foldNatFree nat)
   == fmap (foldNatFree nat) . foldNatFree nat
 ```
 
-For any monad morphism `fn :: (Monad m, Monad n) => m a -> n a`, one can easily
-prove that `fn . (f <=< g) == fn . f <=< fn . g`, in particular this is true for
-`foldNatFree nat`.
+For any monad morphism `fn :: (Monad m, Monad n) => m a -> n a`, we will show
+that:
+
+```fn . (f <=< g) == (fn . f) <=< (fn . g)```
+
+in particular this is true for `foldNatFree nat`.
 
 ```
 (fn . f <=< fn . g)
@@ -171,8 +262,9 @@ prove that `fn . (f <=< g) == fn . f <=< fn . g`, in particular this is true for
 
 The proof could be much shorter if we use monad morphism law in terms of
 binds.  The equivalne form of `join (fmap fn . fn) == fn . join` expressed
-with bind is `fn (f =<< ma) = (fn . f) =<< fn ma`.  Another reason to use
-`join` is that the law take the same form as for monoid homomorphisms.
+with bind is `fn (f =<< ma) = (fn . f) =<< fn ma`.  A reason to use
+`join` is that the law take the same form as for monoid homomorphisms, so it
+is very easy to remember them.
 
 Kleisli categories for free monads
 ----------------------------------
@@ -193,10 +285,14 @@ Kleisli categories for free monads
 > foldKleisli nat (Kleisli f) = Kleisli $ foldNatFree nat . f
 
 This means that `Kleisli (Free f)` is a free category for the class of graphs
-of type `Functor f => Kleisli f` (`Keisli f` is a category when `f`
-is a monad).  Both morphisms: `liftKleisli` is marely a morphisms of graphs,
-while `foldKleisli` is a functor, which means it preserves `id` and the
-composition `(.) :: Category c => c y z -> c x y -> c x y`.
+of type
+
+```Functor f => Kleisli f```
+
+(`Keisli f` is a category only when `f` is a monad).  Both morphisms:
+`liftKleisli` is marely a morphisms of graphs, while `foldKleisli` is
+a functor, which means it preserves `id` and the composition `(.) :: Category
+c => c y z -> c x y -> c x y`.
 
 ```
 foldKleisli nat id
