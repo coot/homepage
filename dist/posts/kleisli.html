@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head id="head">
+	<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+<title>Marcin Szamotulski Homepage</title>
+<meta name="description" content="I am a mathematician (PhD) and a software engineer delivering solutions using JavaScript, Haskell, Purescript and Python." /> 
+<meta name="author" content="Marcin Szamotulski" />
+<meta name="keywords" content="JavaScript React Angular Python Haskell PureScript programming  web applications PWA" />
+<meta prefix="og: http://ogp.me/ns#" property="og:title" content="Marcin Szamotulski - software engineer" />
+<meta prefix="og: http://ogp.me/ns#" property="og:site_name" content="Marcin Szamotulski - software engineer" />
+<meta prefix="og: http://ogp.me/ns#" property="og:description" content="I am a full-stack developer and a mathematician" />
+<meta prefix="og: http://ogp.me/ns#" property="og:type" content="website" />
+<meta prefix="og: http://ogp.me/ns#" property="og:url" content="http:/marcinszamotulski.me" />
+<meta prefix="og: http://ogp.me/ns#" property="og:image" content="http://marcinszamotulski.me/images/marcinszamotulski-large.jpg" />
+<meta property="fb:admins" content="100001888925907" />
+
+<link rel="shortcut icon" type="image/png" href="/images/elf-fg-gray-no-background-250.png" />
+<link rel="manifest"   href="/manifest.json" />
+<link rel="stylesheet" href="/assets/style.css" />
+<link rel="stylesheet" href="/assets/normalize.css" />
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="/assets/print_style.css" media="print"/>
+<link rel="stylesheet" href="/assets/open_sans.css" />
+
+<script type="text/javascript" async src="/assets/html5shiv.js"></script>
+<script type="text/javascript" async src="/assets/html5shiv-printshiv.js"></script>
+<script type="text/javascript" src="/assets/index.js"></script>
+
+
+        
+        <meta name="twitter:card" content="photo" />
+        <meta name="twitter:title" content="Mathematics and Programming Blog" />
+        <meta name="twitter:description" content="Blog about reach intersection of mathematics and programming, explaining mathematical ideas behind programming languages concepts." />
+        <meta name="twitter:creator" content="@me_coot" />
+        <meta name="twitter:url" content="https://marcinszamotulski.me" />
+        <meta name="twitter:site" content="@me_coot" />
+        
+        
+        <meta name="twitter:image" content="https://marcinszamotulski.me/images/monad-associativity.png" />
+        
+
+	
+	<script type="text/javascript" async
+	    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+	</script>
+	<script type="text/x-mathjax-config">
+	    MathJax.Hub.Config({
+		tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+		TeX: {
+		    extensions: ["AMSmath.js"]
+		},
+	    });
+	</script>
+
+	<!-- Matomo -->
+	<script async type="text/javascript">
+	  var _paq = _paq || [];
+	  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+	  _paq.push(['trackPageView']);
+	  _paq.push(['enableLinkTracking']);
+	  (function() {
+	    var u="//analitics.marcinszamotulski.me/";
+	    _paq.push(['setTrackerUrl', u+'piwik.php']);
+	    _paq.push(['setSiteId', '1']);
+	    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+	    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+	  })();
+	</script>
+	<!-- End Matomo Code -->
+    </head>
+    <body>
+	<div id="wrapper" class="wrapper post">
+	    <header class='info-hdr'>
+		
+		<ul class="links">
+		    <li class="home">
+			<a href="/">Home</a>
+		    </li>
+		</ul>
+
+	    </header>
+	    <main>
+		
+<h1 id="kleisli-categories-and-free-monads">Kleisli categories and Free monads</h1>
+<p>Given a monad <strong>m</strong> one can construct the <em>Kleisli category</em> <code>Control.Arrow.Kleisli m</code>, in this post we’ll explore what happens when we start with a free monad.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="ot">{-# LANGUAGE KindSignatures      #-}</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="ot">{-# LANGUAGE ScopedTypeVariables #-}</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="ot">{-# LANGUAGE RankNTypes          #-}</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">module</span> <span class="dt">Control.Category.Kleisli</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">import</span> <span class="dt">Prelude</span> <span class="kw">hiding</span> (id, (.))</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw">import</span> <span class="dt">Control.Category</span> (<span class="dt">Category</span> (id, (.)))</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw">import</span> <span class="dt">Control.Monad</span> (ap, join)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Control.Monad.Free</span> <span class="kw">as</span> <span class="dt">Free</span></a></code></pre></div>
+<h2 id="kleisli-contstruction">Kleisli contstruction</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">newtype</span> <span class="dt">Kleisli</span> m a b <span class="fu">=</span> <span class="dt">Kleisli</span> {<span class="ot"> runKleisli ::</span> a <span class="ot">-&gt;</span> m b }</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw">instance</span> <span class="dt">Monad</span> m <span class="ot">=&gt;</span> <span class="dt">Category</span> (<span class="dt">Kleisli</span> m) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">  id <span class="fu">=</span> <span class="dt">Kleisli</span> return</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">  <span class="dt">Kleisli</span> f <span class="fu">.</span> <span class="dt">Kleisli</span> g <span class="fu">=</span> <span class="dt">Kleisli</span> (\x <span class="ot">-&gt;</span> f <span class="fu">=&lt;&lt;</span> g x)</a></code></pre></div>
+<p>The Keisli composition is so useful, it has it’s own operator defined in <code>Control.Monad</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ot">(&lt;=&lt;) ::</span> <span class="dt">Monad</span> m <span class="ot">=&gt;</span> (y <span class="ot">-&gt;</span> m z) <span class="ot">-&gt;</span> (x <span class="ot">-&gt;</span> m y) <span class="ot">-&gt;</span> x <span class="ot">-&gt;</span> m z</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">f <span class="fu">&lt;=&lt;</span> g <span class="fu">=</span> \x <span class="ot">-&gt;</span> f <span class="fu">=&lt;&lt;</span> g x</a></code></pre></div>
+<h2 id="free-monads">Free monads</h2>
+<p>Free monad construction gives you a monad out of a functor. It will satisfy all the monad laws: associativity, and unitality axioms, and it is a universal construction.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">data</span> <span class="dt">Free</span> f a</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">  <span class="fu">=</span> <span class="dt">Return</span> a</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">  <span class="fu">|</span> <span class="dt">Free</span> (f (<span class="dt">Free</span> f a))</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="kw">instance</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Functor</span> (<span class="dt">Free</span> f) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">  fmap f (<span class="dt">Return</span> a) <span class="fu">=</span> <span class="dt">Return</span> (f a)</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">  fmap f (<span class="dt">Free</span> ff)  <span class="fu">=</span> <span class="dt">Free</span> (fmap f <span class="fu">&lt;$&gt;</span> ff)</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="kw">instance</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Applicative</span> (<span class="dt">Free</span> f) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">  pure <span class="fu">=</span> return</a>
+<a class="sourceLine" id="cb5-11" data-line-number="11">  (<span class="fu">&lt;*&gt;</span>) <span class="fu">=</span> ap</a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="kw">instance</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Monad</span> (<span class="dt">Free</span> f) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14">  return <span class="fu">=</span> <span class="dt">Return</span></a>
+<a class="sourceLine" id="cb5-15" data-line-number="15">  <span class="dt">Return</span> a <span class="fu">&gt;&gt;=</span> f <span class="fu">=</span> f a</a>
+<a class="sourceLine" id="cb5-16" data-line-number="16">  <span class="dt">Free</span> ff  <span class="fu">&gt;&gt;=</span> f <span class="fu">=</span> <span class="dt">Free</span> (fmap (<span class="fu">&gt;&gt;=</span> f) ff)</a></code></pre></div>
+<p>The universal property of a free monad can be expressed with a class, which I borrowed from <a href="https://hackage.haskell.org/package/free-algebras-0.0.7.0/docs/Control-Algebra-Free.html#t:FreeAlgebra1">free-algebras package</a> (I don’t include all details that are not important for this blog post; The details where described in this <a href="/posts/free-monads.html">post</a>):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">class</span> <span class="dt">FreeAlgebra1</span> (<span class="ot">m ::</span> (<span class="fu">*</span> <span class="ot">-&gt;</span> <span class="fu">*</span>) <span class="ot">-&gt;</span> <span class="fu">*</span> <span class="ot">-&gt;</span> <span class="fu">*</span>) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">  <span class="co">-- | Natural transformation that embeds generators into `m`.</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="ot">  liftFree ::</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> f a <span class="ot">-&gt;</span> m f a</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">  <span class="co">-- | The freeness property.</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">  foldNatFree</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="ot">    ::</span> forall d f a <span class="fu">.</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">       ( <span class="dt">Monad</span> d</a>
+<a class="sourceLine" id="cb6-9" data-line-number="9">       , <span class="dt">Functor</span> f</a>
+<a class="sourceLine" id="cb6-10" data-line-number="10">       )</a>
+<a class="sourceLine" id="cb6-11" data-line-number="11">    <span class="ot">=&gt;</span> (forall x<span class="fu">.</span> f x <span class="ot">-&gt;</span> d x)</a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">    <span class="co">-- ^ a natural transformation which embeds generators of `m` into `d`</span></a>
+<a class="sourceLine" id="cb6-13" data-line-number="13">    <span class="ot">-&gt;</span> (m f a <span class="ot">-&gt;</span> d a)</a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">    <span class="co">-- ^ a morphism from `m f` to `d`</span></a></code></pre></div>
+<p>In this blog post whenever we will refer to <code>liftFree</code> and <code>foldNatFree</code> we will actually refer to this instance:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">FreeAlgebra1</span> <span class="dt">Free</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">  liftFree fa <span class="fu">=</span> <span class="dt">Free</span> (<span class="dt">Return</span> <span class="fu">&lt;$&gt;</span> fa)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">  foldNatFree _nat (<span class="dt">Return</span> a) <span class="fu">=</span> return a</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">  foldNatFree nat  (<span class="dt">Free</span> ff)  <span class="fu">=</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">    join <span class="fu">$</span> nat <span class="fu">$</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">      (foldNatFree nat) <span class="fu">&lt;$&gt;</span> ff <span class="co">-- induction step</span></a></code></pre></div>
+<p>You probably recognise <code>Free.liftF</code> and <code>Free.foldFree</code> from the <a href="https://hackage.haskell.org/package/free/docs/Control-Monad-Free.html">free package</a>.</p>
+<p>Instances of this class have the property that to construct a natural transformation from <code>FreeAlgebra1 m =&gt; m f</code> to a monad <code>Monad d =&gt; d</code> is enought to come up with a natural transformation of functors <code>forall x. f a -&gt; d a</code>. If you’d like to explore more why this class is the right one to speak about freeness, checkout one of my previous <a href="https://coot.me/posts/free-monads.html">posts</a>. Note that the instance for <code>Free</code> follows the structure, and there is no room how to implement the methods: that’s a very common feeling in category theory, which means one is on the right path.</p>
+<p>This particular instance satisfies rather interesting laws:</p>
+<figure>
+<img src="/images/liftFree-nat.svg" alt="liftFree natural transformation" /><figcaption>liftFree natural transformation</figcaption>
+</figure>
+<p>or as an equation:</p>
+<pre><code>fmap g . liftFree == liftFree . fmap g</code></pre>
+<p>This is more or less streightforward, just take a look at the definition of <code>liftFree</code>.</p>
+<figure>
+<img src="/images/foldNatFree-nat.svg" alt="foldNatFree natural transformation" /><figcaption>foldNatFree natural transformation</figcaption>
+</figure>
+<p>or as an equation:</p>
+<pre><code>fmap g . foldNatFree nat == foldNatFree nat . fmap g</code></pre>
+<p>This one is slightly more involved, and lets prove it:</p>
+<pre><code>(foldNatFree nat . fmap g) (Return a)
+  = foldNatFree nat (Return (g a))
+  = return (g a)
+  = fmap g (return a)
+  = fmap g (foldNatFree nat (Return a))
+  = (fmap g . foldNatFree nat) (Return a)</code></pre>
+<p>and</p>
+<pre><code>(foldNatFree nat . fmap g) (Free ff)
+  = foldNatFree nat (fmap g (Free ff))
+  = foldNatFree nat (Free (fmap (fmap g) ff))
+  = join $ nat $ foldNatFree nat &lt;$&gt; (fmap (fmap g) ff)
+  = join $ nat $ foldNatFree nat &lt;$&gt; fmap g &lt;$&gt; ff
+  = join $ nat $ (foldNatFree nat . fmap g) &lt;$&gt; ff
+  -- by induction hypotesis
+  = join $ nat $ (fmap g . foldNatFree nat) &lt;$&gt; ff
+  = join $ nat $ fmap g &lt;$&gt; (foldNatFree nat &lt;$&gt; ff)
+  = join $ nat $ fmap (fmap g) (foldNatFree nat &lt;$&gt; ff)
+  -- since nat is a natural transformation
+  = join $ fmap (fmap g) $ nat (foldNatFree nat &lt;$&gt; ff)
+  -- join is a natural transformation
+  -- join :: Monad m =&gt; m (m a) -&gt; m a
+  = fmap g $ join $ $ nat (foldNatFree nat &lt;$&lt;&gt; ff)
+  = fmap g $ foldNatFree nat (Free ff)
+  = (fmpg g . foldNatFree nat) (Free ff)</code></pre>
+<p>Since in our case <code>Free</code> is a functor from the category of (endo-)functors into the category of monads. <code>foldNatFree nat</code> has to ba monad morphism for any <code>nat</code>. This means that the following diagrams commute (or equations hold):</p>
+<figure>
+<img src="/images/foldNatFree-mmorph-unit.svg" alt="foldNatFree - monad morphism: the unit law" /><figcaption>foldNatFree - monad morphism: the unit law</figcaption>
+</figure>
+<p>or as an equation:</p>
+<pre><code>return = return . foldNatFree nat</code></pre>
+<p>This should be clear from definition of <code>foldNatFree</code>. Moreover, the following diagram commutes:</p>
+<figure>
+<img src="/images/foldNatFree-mmorph-join.svg" alt="foldNatFree - monad morphism: the join law" /><figcaption>foldNatFree - monad morphism: the join law</figcaption>
+</figure>
+<p>or as an equation:</p>
+<pre><code>join . (foldNatFree nat . fmap (foldNatFree nat))
+  == foldNatFree nat . join</code></pre>
+<p>Let us prove this it:</p>
+<pre><code>join . (foldNatFree nat . fmap (foldNatFree nat)) (Return (Return a))
+  == join (foldNatFree nat (Return (foldNatFree nat (Retrun a))))
+  == join (foldNatFree nat (Return (return a))
+  == join (return (return a))
+  == return a
+  == foldNatFree nat (Return a)
+  == foldNatFree nat (join (Return (Return a)))</code></pre>
+<p>And the other one, which we prove starting from the right hand side:</p>
+<pre><code>foldNatFree nat (join (Free ff)))
+  -- by definition of join
+  = foldNatFree nat (Free (fmap join ff))
+  -- by definition of foldNatFree
+  = join $ nat $ fmap (foldNatFree nat) (fmap join ff)
+  = join $ nat $ fmap (foldNatFree nat . join) ff
+  -- by induction hypotesis
+  = join $ nat $ fmap (join . foldNatFree nat . fmap (foldNatFree nat)) ff
+  = join $ nat $ fmap join $ fmap (foldNatFree nat) $
+      fmap (fmap foldNatFree nat)) ff
+  -- since nat is a natural transformation
+  = join $ fmap join $ nat $ fmap (foldNatFree nat) $
+      fmap (fmap (foldNatFree nat)) ff
+  -- by associativity of join
+  = join $ join $ nat $ fmap (foldNatFree nat) $
+      fmap (fmap (foldNatFree nat)) ff
+  -- by definition of foldNatFree (the outer one)
+  = join $ foldNatFree nat $ Free $ fmap (fmap (foldNatFree nat)) ff
+  -- by definition of functor instance for Free
+  = join $ foldNatFree nat $ fmap (foldNatFree nat) $ Free ff
+  = (join . foldNatFree nat . fmap (foldNatFree nat)) $ Free ff
+</code></pre>
+<p>Note that by the natural transformation law for <code>foldNatFree</code> we have:</p>
+<pre><code>foldNatFree nat . fmap (foldNatFree nat)
+  == fmap (foldNatFree nat) . foldNatFree nat</code></pre>
+<p>For any monad morphism <code>fn :: (Monad m, Monad n) =&gt; m a -&gt; n a</code>, we will show that:</p>
+<p><code>fn . (f &lt;=&lt; g) == (fn . f) &lt;=&lt; (fn . g)</code></p>
+<p>in particular this is true for <code>foldNatFree nat</code>.</p>
+<pre><code>(fn . f &lt;=&lt; fn . g)
+  == \a -&gt; fn . f =&lt;&lt; (fn . g) a
+  == \a -&gt; fn . f =&lt;&lt; fn (g a)
+  -- by definition of join (or =&lt;&lt; in terms of a join)
+  == \a -&gt; join (fn . f &lt;$&gt; fn (g a))
+  -- by functor associativity law
+  == \a -&gt; join (fn &lt;$&gt; (f &lt;$&gt; fn (g a)))
+  -- since fn is a morphism of monads it is a natural transformation
+  -- and thus it commutes with fmap/&lt;$&gt;
+  == \a -&gt; join (fn &lt;$&gt; (fn (f &lt;$&gt; g a)))
+  -- since fn is a morphism of monads: join (fmap fn . fn) == fn . join
+  == \a -&gt; fn (join (f &lt;$&gt; g a))
+  -- by definition of join
+  == \a -&gt; fn (f =&lt;&lt; g a)
+  == \a -&gt; fn (f &lt;=&lt; g) a
+  == fn (f &lt;=&lt; g)</code></pre>
+<p>The proof could be much shorter if we use monad morphism law in terms of binds. The equivalne form of <code>join (fmap fn . fn) == fn . join</code> expressed with bind is <code>fn (f =&lt;&lt; ma) = (fn . f) =&lt;&lt; fn ma</code>. A reason to use <code>join</code> is that the law take the same form as for monoid homomorphisms, so it is very easy to remember them.</p>
+<h2 id="kleisli-categories-for-free-monads">Kleisli categories for free monads</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb18-1" data-line-number="1">liftKleisli</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="ot">  ::</span> <span class="dt">Monad</span> m</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">  <span class="ot">=&gt;</span> <span class="dt">Kleisli</span> m a b</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4">  <span class="ot">-&gt;</span> <span class="dt">Kleisli</span> (<span class="dt">Free</span> m) a b</a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">liftKleisli (<span class="dt">Kleisli</span> f) <span class="fu">=</span> <span class="dt">Kleisli</span> (liftFree <span class="fu">.</span> f)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb19-1" data-line-number="1">foldKleisli</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="ot">  ::</span> ( <span class="dt">Functor</span> f</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">     , <span class="dt">Monad</span> m</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">     )</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5">  <span class="ot">=&gt;</span> (forall x<span class="fu">.</span> f x <span class="ot">-&gt;</span> m x)</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">  <span class="ot">-&gt;</span> <span class="dt">Kleisli</span> (<span class="dt">Free</span> f) a b</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">  <span class="ot">-&gt;</span> <span class="dt">Kleisli</span> m a b</a>
+<a class="sourceLine" id="cb19-8" data-line-number="8">foldKleisli nat (<span class="dt">Kleisli</span> f) <span class="fu">=</span> <span class="dt">Kleisli</span> <span class="fu">$</span> foldNatFree nat <span class="fu">.</span> f</a></code></pre></div>
+<p>This means that <code>Kleisli (Free f)</code> is a free category for the class of graphs of type</p>
+<p><code>Functor f =&gt; Kleisli f</code></p>
+<p>(<code>Keisli f</code> is a category only when <code>f</code> is a monad). Both morphisms: <code>liftKleisli</code> is marely a morphisms of graphs, while <code>foldKleisli</code> is a functor, which means it preserves <code>id</code> and the composition <code>(.) :: Category c =&gt; c y z -&gt; c x y -&gt; c x y</code>.</p>
+<pre><code>foldKleisli nat id
+  == foldKleisli nat (Kleisli Return)
+  == Kleisli (foldNatFree nat . Return)
+  == Kleisli return
+  == id</code></pre>
+<pre><code>foldKleisli nat (Kleisli f . Kleisli g)
+  == foldKleisli nat (Kleisli f &lt;=&lt; g)
+  == Kleisli (foldNatFree nat (f &lt;=&lt; g))
+  -- foldNatFree nat is a morphism of monads thus
+  == Kleisli (foldNatFree nat f &lt;=&lt; foldNatFree nat g)
+  == Kleisli (foldNatFree nat f) . Kleisli (foldNatFree nat g)
+  == foldKleisli nat f . foldKleisli nat g</code></pre>
+
+
+                
+<footer class="post_footer">
+    <div class="home">
+	<a href="/">Home</a>
+    </div>
+    <div class="twitter">
+	Follow me on twitter <a href="https://twitter.com/me_coot">@me_coot</a>
+    </div>
+</footer>
+
+	    </main>
+	    <div class="clearfix"></div>
+	</div>
+        <footer>
+            Copyright © Marcin Szamotulski 2017-2018, <a href="https://raw.githubusercontent.com/coot/homepage/master/LICENSE"><span class="license">license</span></a>
+        </footer>
+    </body>
+</html>
