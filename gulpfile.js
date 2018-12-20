@@ -48,7 +48,7 @@ gulp.task("posts", ["posts:lhs"], () => {
         "templates/posts/peano-algebras-in-haskell.html",
         "templates/posts/monadicity.html",
         "templates/posts/finite-state-machines.html",
-        "templates/posts/kleisli.html",
+        "templates/posts/kleisli-categories-and-free-monads.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },

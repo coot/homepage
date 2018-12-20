@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "Typed Transitions, Finite-State Machines and Free Categories"
-date: 25-08-2018
+title: "Kleisli Categories and Free Monads"
+date: 20-12-2018
 author: Marcin Szamotulski
 categories: finite-state-machines
-tags: ["haskell", "finite-state-machines", "categories", "math"]
+tags: ["haskell", "free-monads", "kleisli-categories", "categories", "math"]
 excerpt: |
-    Finite state machines are graphs, which generate a category.  We explore
-    this point of using free algebra approach and tagless-final style.
+  Kleisli categories for free monads are a free construction.
 ---
 
-Kleisli categories and Free monads
+Kleisli Categories and Free Monads
 ==================================
 
 Given a monad __m__ one can construct the _Kleisli category_
