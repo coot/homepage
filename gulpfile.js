@@ -36,8 +36,8 @@ gulp.task("html", () => {
 })
 
 gulp.task("posts:lhs", () => {
+    child_process.execSync("cabal new-build")
     return gulp.src("templates/posts/*.lhs")
-        .pipe(gexec('ghc -Wall <%= file.path %>'))
         .pipe(gexec('pandoc <%= file.path %> -o <%= file.path %>.html'))
         .pipe(gexec.reporter())
 })

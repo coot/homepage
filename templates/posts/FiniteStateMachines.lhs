@@ -25,7 +25,7 @@ see how usefull is the __Kleisli category__.
 > {-# LANGUAGE ScopedTypeVariables #-}
 > {-# LANGUAGE TypeApplications #-}
 
-> module Control.Category.FSM where
+> module FiniteStateMachines where
 
 > import           Prelude hiding (id, foldMap, (.))
 > -- ^ Note that we're imporing `id` and `.`

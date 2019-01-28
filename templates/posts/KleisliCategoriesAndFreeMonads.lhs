@@ -20,7 +20,7 @@ start with a free monad.
 > {-# LANGUAGE ScopedTypeVariables #-}
 > {-# LANGUAGE RankNTypes          #-}
 
-> module Control.Category.Kleisli where
+> module KleisliCategoriesAndFreeMonads where
 >
 > import Prelude hiding (id, (.))
 > import Control.Category (Category (id, (.)))
