@@ -17,8 +17,6 @@ workbox.routing.registerRoute(
         return null
       if (/^\/(\?.*|#.*)?$/.test(pathname))
         return {}
-      else if (/^\/posts\/latex\//.test(pathname))
-        return {}
       else if (/^\/.*\.html/.test(pathname))
         return {}
       else if (/^\/assets\/.*\.(css|js)/.test(pathname))
@@ -32,15 +30,6 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
     /\/images\//
-  , workbox.strategies.staleWhileRevalidate({
-    cacheableResponse: {
-      statuses: [0, 200]
-    }
-  })
-)
-
-workbox.routing.registerRoute(
-    /\/posts\/latex\//
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
@@ -76,7 +65,7 @@ workbox.routing.registerRoute(
 )
 
 workbox.routing.registerRoute(
-    /^https?:\/\/fonts\.gstatic.com\/s\/opensans\/.*/
+    /^https?:\/\/fonts\.gstatic.com\/s\/OpenSans\/.*/
   , workbox.strategies.staleWhileRevalidate({
     cacheableResponse: {
       statuses: [0, 200]
