@@ -49,7 +49,7 @@ gulp.task("posts", ["posts:lhs"], () => {
         "templates/posts/monadicity.html",
         "templates/posts/finite-state-machines.html",
         "templates/posts/kleisli-categories-and-free-monads.html",
-        "templates/posts/categories-with-effects.html",
+        "templates/posts/categories-with-monadic-effects.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },

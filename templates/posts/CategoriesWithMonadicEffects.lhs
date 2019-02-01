@@ -1,11 +1,10 @@
-Categories with Effects and State Machines
-==========================================
+Categories with Monadic Effects and State Machines
+==================================================
 
 In this posts we will present categories which can run monadic actions, which
-we call __effectful categories__ (though this notion might be umbigous for
-a category theories, it feels fine in a context of functional programming).  It
-turns out that one can build them in an abstract way, much the same way as *free
-monads*, and use them to specify state machines in a *succinct* and *type-safe
+we call __categories with monadic effects__ (abr. `EffCategories`).  It turns
+out that one can build them in an abstract way, much the same way as __free
+monads__, and use them to specify state machines in a *succinct* and *type-safe
 manner*.
 
 Most of the abstractions presented in this blog posts are included in the
@@ -30,7 +29,7 @@ posts on [finite state machines and categories](/posts/finite-state-machines.htm
 > {-# LANGUAGE ScopedTypeVariables    #-}
 > {-# LANGUAGE TypeFamilies           #-}
 
-> module CategoriesWithEffects where
+> module CategoriesWithMonadicEffects where
 
 > import           Prelude hiding (id, (.))
 
@@ -131,8 +130,8 @@ foldNatFree2 f ((x :.: xs) . ys)
   = foldNatFree2 f (x :.: xs) . foldNatFree f ys
 ```
 
-Categories with effects
-=======================
+Categories with monadic effects
+===============================
 
 Since Haskell is bound to monadic IO, if we want to represent a state machine
 that runs IO actions, we need a way to run monadic computations in the
@@ -142,7 +141,8 @@ give access to both:
 * monadic (onion like) composition
 * categorical (sequential) composition
 
-> -- | Categories which can lift monadic actions, i.e. effectful categories.
+> -- | Categories which can lift monadic actions, i.e. categories
+> -- with monadic effects.
 > --
 > class Category c => EffCategory c m | c -> m where
 >   lift :: m (c a b) -> c a b
@@ -159,8 +159,8 @@ And another very useful in our context, which is the prototypical example of
 >   lift m = Kleisli (\a -> m >>= \(Kleisli f) -> f a)
 
 We can actually define a category of `EffCategories`, in which objects are
-effectful categories, while morphisms are functors `f :: c a b -> c' a b` which
-satisfy the following property:
+categories with monadic effects, while morphisms are functors `f :: c a b -> c'
+a b` which satisfy the following property:
 ```
 f (lift mcab) = lift $ f <$> mcab
 ```
@@ -170,12 +170,12 @@ of 1-morphisms (like the category of categories is defined), but this goes
 beyond this post.
 
 Free monads are very successful to represent DSLs in an abstract way, and we'd
-like to have an analog way for building effectful categories.  The following
-defintion gives us a free construction of an effectful category.
+like to have an analog way for building categories with monadic effects.  The
+following defintion gives us a free construction of such a category.
 
 It is build abstractly, and its semantics / interpreatation is free to be
-defined in any effectful category, e.g. the pure `->` or in `Kleisli IO` or in
-any other effectful category.
+defined in any category with effects, e.g. the pure `->` or in `Kleisli IO` or
+in any other category with effects (in the same monad).
 
 > -- | Category transformer, which adds @'EffCategory'@ instance to the
 > -- underlying base category.
@@ -208,7 +208,7 @@ Since a free object requires two operations: the embedding of the original
 structure plus the required operations (in this case just `lift`),
 `FreeEffCat` has two constructors which correspons to these two operations.
 With this we can build an instance which prooves that `FreeEffCat` is indeed
-a free effectful category.
+a free category with effects.
 
 > type instance AlgebraType0 (FreeEffCat m) c = (Monad m, Category c)
 > type instance AlgebraType  (FreeEffCat m) c  = EffCategory c m
@@ -232,7 +232,7 @@ a free effectful category.
 >   forget2 = proof
 
 There is one law that we need to prove, that `foldNatFree2` is a morphism
-between effectful categories, i.e.
+between categories with monadic effects, i.e.
 ```
 foldNatFree2 nat (lift mab) = lift $ foldNatFree2 nat <$> mab
 ```

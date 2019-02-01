@@ -19,5 +19,5 @@ library
   exposed-modules:
     FiniteStateMachines
     KleisliCategoriesAndFreeMonads
-    CategoriesWithEffects
+    CategoriesWithMonadicEffects
 
