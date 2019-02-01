@@ -22,3 +22,15 @@
   font-weight: 700;
   src: local('Open Sans Bold'), local('OpenSans-Bold'), url(/assets/OpenSans-Bold.ttf) format('truetype');
 }
+@font-face {
+  font-family: 'Major Mono Display';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Major Mono Display'), local('MajorMonoDisplay-Regular'), url(/assets/MajorMonoDisplay-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Major Mono'), local('OxygenMono-Regular'), url(/assets/OxygenMono-Regular.ttf) format('truetype');
+}
