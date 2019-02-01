@@ -1,15 +1,3 @@
----
-layout: post
-title: "Typed Transitions, Finite-State Machines and Free Categories"
-date: 25-08-2018
-author: Marcin Szamotulski
-categories: finite-state-machines
-tags: ["haskell", "finite-state-machines", "categories", "math"]
-excerpt: |
-    Finite state machines are graphs, which generate a category.  We explore
-    this point of using free algebra approach and tagless-final style.
----
-
 Typed Transitions, Finite State Machines and Free Categories
 ============================================================
 

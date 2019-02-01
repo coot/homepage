@@ -1,14 +1,3 @@
----
-layout: post
-title: "Kleisli Categories and Free Monads"
-date: 20-12-2018
-author: Marcin Szamotulski
-categories: finite-state-machines
-tags: ["haskell", "free-monads", "kleisli-categories", "categories", "math"]
-excerpt: |
-  Kleisli categories for free monads are a free construction.
----
-
 Kleisli Categories and Free Monads
 ==================================
 
