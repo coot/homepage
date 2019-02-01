@@ -1,5 +1,11 @@
 {% extends "posts/base.html" %}
 
+{% block headerentries %}
+<li class="date right">
+    <small>Published 25 VII 2018</small>
+</li>
+{% endblock %}
+
 {% block main %}
 {% include "posts/FiniteStateMachines.lhs.html" %}
 {% endblock %}

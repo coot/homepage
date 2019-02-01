@@ -53,6 +53,10 @@ footer .license {
     padding-top: 0px;
 }
 
+ul {
+  list-style: circle;
+}
+
 ul.blog-posts {
   list-style: none;
 }
@@ -123,6 +127,15 @@ img {
   margin: 0;
   padding-left: 0;
   padding-inline-start: 0;
+}
+
+.info-hdr .links li {
+  margin-left: 5px;
+  display: inline-block;
+}
+
+.info-hdr .links li.right {
+  float: right;
 }
 
 .post .info-hdr {
