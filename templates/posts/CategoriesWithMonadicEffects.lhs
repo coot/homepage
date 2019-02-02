@@ -280,7 +280,7 @@ Example state machine
 =====================
 
 The following example is based on: __State Machines All The Way Down__ by
-*Edwin Bradly*, [youtube](https://www.youtube.com/watch?v=xq7ZuSRgCR4)
+*Edwin Brady*, [youtube](https://www.youtube.com/watch?v=xq7ZuSRgCR4)
 The idea is to define a state machine for a logging system, with a strong
 type properties: let the type checker prove that only logged in user have
 access to secret data.
@@ -295,7 +295,7 @@ states of the loggin system: logged in or logged out.
 >   LoggedOutType :: StateType
 
 We also define singletons for these promoted types to be able reason about the
-types on the term level.  In *Idris*, Edwin Bradly, could define all the
+types on the term level.  In *Idris*, Edwin Brady, could define all the
 neaded machinery on the type level, thanks to stronger type system.
 
 > data SStateType (a :: StateType) where
