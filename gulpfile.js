@@ -50,6 +50,7 @@ gulp.task("posts", ["posts:lhs"], () => {
         "templates/posts/finite-state-machines.html",
         "templates/posts/kleisli-categories-and-free-monads.html",
         "templates/posts/categories-with-monadic-effects.html",
+        "templates/posts/monadic-io.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },
