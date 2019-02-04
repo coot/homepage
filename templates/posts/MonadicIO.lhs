@@ -5,7 +5,7 @@ Have you every wondered why monads turns out to be the abstraction behind
 `IO`?  To find an answer we will build a two (very incomplete) models for
 `IO`:
 
-* one that is very common in imperative langauges, based on a sequence of `IO`
+* one that is very common in imperative languages, based on a sequence of `IO`
   actions
 * a recursive one, that turns out to be monadic.
 
@@ -32,7 +32,7 @@ And where `Return` behaves like a final statement.  Hence we can represent
 
 > type MonoidalIO x = [IOAction x]
 
-Let us provice a way to actually run `MonoidalIO`, since we are in *Haskell*
+Let us provide a way to actually run `MonoidalIO`, since we are in *Haskell*
 let us interpret `MonoidalIO` in the `IO` monad.
 
 > runMonoidalIO :: MonoidalIO x -> IO x
@@ -80,7 +80,7 @@ We can transform any `MonoidalIO` into `MonadicIO`.
 > fromMonoidalIO (Return x : _)            = ReturnM x
 
 We cannot transform `MonadicIO` to `MonoidalIO`, only because we did not
-provice a way to bind data read from a file in `MonoidalIO` just for
+provide a way to bind data read from a file in `MonoidalIO` just for
 simplicity of the presentation.  But the two approaches should be equivalent.
 
 We also need a way to run `MonadicIO`, again since we are in *Haskell* we'll
@@ -150,13 +150,13 @@ of an expression.
 
 At last let stress some benefits of recursive/monadic `IO`:
 
-* much easier support for actions tha return values, e.g. in `MonoidalIO` we
+* much easier support for actions the return values, e.g. in `MonoidalIO` we
   did not have access to data read from a file.  In a functional language,
   recursive / monadic IO does not require any thing more than lambdas to bind
   the return value.
 * values returned by `IO` operations are trapped inside the `MonoidalIO`
-  monad.  This gives a clear indication which functions have asscess to IO and
+  monad.  This gives a clear indication which functions have access to IO and
   which are pure.
-* For a lasy language using  a recursive data type is a compeling choice.  In
-  Haskell, the evaluation is guaided by pattern matching, every bind (as
+* For a lasy language using  a recursive data type is a compelling choice.  In
+  Haskell, the evaluation is guided by pattern matching, every bind (as
   you can consult above), evaluates just a single layer of a computation.
