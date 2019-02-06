@@ -155,13 +155,13 @@ of an expression.
 
 At last let stress some benefits of recursive/monadic `IO`:
 
-* much easier support for actions the return values, e.g. in `MonoidalIO` we
+* much easier to support the return values of actions, e.g. in `MonoidalIO` we
   did not have access to data read from a file.  In a functional language,
   recursive / monadic IO does not require any thing more than lambdas to bind
   the return value.
 * values returned by `IO` operations are trapped inside the `MonoidalIO`
   monad.  This gives a clear indication which functions have access to IO and
   which are pure.
-* For a lasy language using  a recursive data type is a compelling choice.  In
-  Haskell, the evaluation is guided by pattern matching, every bind (as
-  you can consult above), evaluates just a single layer of a computation.
+* For a lasy language using a recursive data type it is a compelling choice.
+  In Haskell, the evaluation is guided by pattern matching, every bind (as you
+  can consult above), evaluates just a single layer of a computation.
