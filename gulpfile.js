@@ -68,48 +68,26 @@ gulp.task("css", () => {
 
 gulp.task("fonts", () => {
     return gulp.src("assets/*.ttf")
-        .pipe(gulp.dest("dist/assets"))
-})
+        .pipe(gulp.dest("dist/assets"));
+});
 
-function execPromise(cmd, obj, cb) {
-    return new Promise((resolve, reject) => {
-        child_process.exec(cmd, obj, (error, stdout, stderr) => {
-            if (error) {
-                reject({stdout, stderr})
-            } else {
-                resolve({stdout, stderr})
-            }
-        })
-    })
-}
+gulp.task("images:pdflatex", (cb) => {
+    gulp.src("latex/*.tex")
+        .pipe(gexec("pdflatex -interaction=nonstopmode -shell-escape <%= file.path %> -output-directory=./latex", {cwd: "latex"}))
+        .pipe(gexec.reporter());
+});
 
-gulp.task("images:latex", (cb) => {
-    let opts = {cwd: "latex"}
-    let file = "free-cat-morphism.tex"
-    let cmd = "pdflatex -interaction=nonstopmode -shell-escape "
-    let log = ({stdout, stderr}) => {
-        console.log(stdout)
-        console.log(stderr)
-    }
-    execPromise(cmd + file, opts)
-        .then((args) => {
-            log(args)
-            cb()
-        })
-        .catch((args) => {
-            log(args)
-            cb()
-            throw Error("free-cat-morphism.tex failed")
-        })
+/* run `gulp images:pdflatex && gulp images:latex && gulp images` */
+gulp.task("images:latex", () => {
     gulp.src("latex/*.svg")
-        .pipe(gulp.dest("images"))
-})
+        .pipe(gulp.dest("images"));
+});
 
 gulp.task("images", () => {
     return gulp.src("images/*.{png,jpg,svg}")
         .pipe(imagemin())
-        .pipe(gulp.dest("dist/images"))
-})
+        .pipe(gulp.dest("dist/images"));
+});
 
 gulp.task("manifest", () => {
     gulp.src("./manifest.json")
