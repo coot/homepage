@@ -1,9 +1,8 @@
 Why Monadic IO?
 ===============
 
-Have you every wondered why monads turns out to be the abstraction behind
-`IO`?  To find an answer we will build a two (very incomplete) models for
-`IO`:
+Have you every wondered why monads turn out to be the abstraction behind `IO`?
+To find an answer we will build a two (very incomplete) models for `IO`:
 
 * one that is very common in imperative languages, based on a sequence of `IO`
   actions
@@ -27,10 +26,24 @@ Monoidal IO
 
 
 Mostly found in imperative languages, where IO is a sequence of operations.
-And where `Return` behaves like a final statement.  Hence we can represent
-`MonoidalIO` as an list of actions:
+And where `Return` has the semantics of a final statement.  There are many
+algebras that provide a sequences.  The most general one we could pick are non
+associative semigroups (also called
+[magmas](https://en.wikipedia.org/wiki/Magma_%28algebra%29)).  It would have two problems:
+
+* since it's non associative we could interpret sequences depending on the
+  bracketing, but this is too much freedom for us.  We want all expression
+  build by putting brackets differently be always have the same semantics
+* it's not strictly necessary but, having a unit for the binary operation
+  might be convienient
+
+For that reason, we'd like to use associative unital magmas, e.g. a monoid.
+The good choice should be the most general such object, i.e. a free monoid
 
 > type MonoidalIO x = [IOAction x]
+
+For a side note: `DList` is a free monoid, while `[]` is free in the class
+of left strict monoids, e.g. monoids satisfying: `undefined <> == undefined`.
 
 Let us provide a way to actually run `MonoidalIO`, since we are in *Haskell*
 let us interpret `MonoidalIO` in the `IO` monad.
@@ -41,14 +54,6 @@ let us interpret `MonoidalIO` in the `IO` monad.
 >   IO.writeFile path str >> runMonoidalIO next
 > runMonoidalIO ((Read path) : next)      =
 >   IO.readFile path >> runMonoidalIO next
-
-For `MonoidalIO` we really want that it is associative, e.g. the bracketing does not
-matter when we build an expression.  This is guaranteed here by the
-implementation, since we used lists which are associative monoids, i.e. the
-following law is satisfied:
-```
-(ioA <> (ioB <> ioC)) = (ioA <> ioB) <> ioC
-```
 
 Monadic IO
 ----------
@@ -114,8 +119,8 @@ or
 > assoc2 = joinMonadicIO . fmap joinMonadicIO
 
 We really want both `assoc1` and `assoc2` to be equal.  This way the way that
-we build an expression of type `MonadicIO x` does not matter.  This is nothing
-than associativity law for monads.  And indeed `MonadicIO` is a monad, and
+we build an expression of type `MonadicIO x` does not matter.  This is exactly
+the associativity law for monads.  And indeed `MonadicIO` is a monad, and
 `joinMonadicIO` is its `join` operator.  This is in analogy to the
 associativity law of monoids in `MonoidalIO`.
 
@@ -132,7 +137,7 @@ associativity law of monoids in `MonoidalIO`.
 Let me note, that Haskell `IO` monad is build differently though, to give much
 more flexibility for building `IO` actions for many different operations
 supported by OS.  In the recursive style we need to built-in all the
-operations that are possible to run.  This would be to restrictive for
+operations that are possible to run.  This would be too restrictive for
 a general purpose language.  Haskell abstracts over a state monad, e.g. a type
 `s -> (s, a)` (where `s` is a [state of the
 world](https://hackage.haskell.org/package/ghc-prim-0.5.3/docs/GHC-Types.html#v:IO)),
