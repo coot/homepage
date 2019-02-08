@@ -10,17 +10,8 @@ const cleanCSS = require("gulp-clean-css")
 const imagemin = require("gulp-imagemin")
 const workbox = require("workbox-build")
 
-function renderTemplate(path) {
-    nunjucks.render(path, {}, (err, res) => {
-        if (err != null) {
-            console.error(err)
-            return
-        }
-        fs.writeFileSync("dist/" + path, res);
-    })
-}
 
-let env = new nunjucks.Environment(new nunjucks.FileSystemLoader("templates"), { autoescape: false });
+const env = new nunjucks.Environment(new nunjucks.FileSystemLoader("templates"), { autoescape: false });
 
 function html () {
     return gulp.src([
@@ -32,7 +23,7 @@ function html () {
             { wrapperClass: ""},
             { env }
         ))
-        // .pipe(htmlmin({ collapseWhitespace: true }))
+        .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest("dist"))
 }
 
@@ -57,7 +48,6 @@ function posts() {
             { wrapperClass: "post" },
             { env }
         ))
-        // .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest("dist/posts"))
 }
 
