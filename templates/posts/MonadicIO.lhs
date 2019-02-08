@@ -33,18 +33,19 @@ associative semigroups (also called
 [magmas](https://en.wikipedia.org/wiki/Magma_%28algebra%29)).  It would have two problems:
 
 * since it's non associative we could interpret sequences depending on the
-  bracketing, but this is too much freedom for us.  We want all expression
-  build by putting brackets differently be always have the same semantics
+  bracketing, but this is too much freedom for us.  We want that all expression
+  build by putting brackets differently have always the same semantics;
 * it's not strictly necessary but, having a unit for the binary operation
   might be convenient
 
-For that reason, we'd like to use associative unital magmas, e.g. a monoid.
+For that reasons, we will use associative unital magmas, e.g. a monoid.
 The good choice should be the most general such object, i.e. a free monoid
 
 > type MonoidalIO x = [IOAction x]
 
-For a side note: `DList` is a free monoid, while `[]` is free in the class
-of left strict monoids, e.g. monoids satisfying: `undefined <> == undefined`.
+<small>For a side note: `DList` is a free monoid, while `[]` is free in the class
+of left strict monoids, e.g. monoids satisfying: `undefined <> == undefined`,
+but let's not focus on these differences here ...</small>
 
 Let us provide a way to actually run `MonoidalIO`, since we are in *Haskell*
 let us interpret `MonoidalIO` in the `IO` monad.
@@ -165,11 +166,11 @@ GHC IO
 
 Let me note, GHC's `IO` monad is build differently; to give much more
 flexibility for building `IO` actions for many different operations supported
-by many different platforms.  In the recursive style we need to built-in all
+by many different platforms.  In the recursive style we need to built in all
 the operations that are possible to run.  This would be too restrictive for
 a general purpose language.  And also for performance reasons its much better
 to build `IO` from native types (e.g. lambdas and types that require
-`MagicHash`).  This avoids memory overhead  of terms of kind `Type` (to be
+`MagicHash`).  This avoids memory overhead of terms of kind `Type` (to be
 precise: allocation rate in case of running a recursive type).  Haskell
 abstracts over a state monad, e.g. a type `s -> (s, a)` (where `s` is a [state
 of the
@@ -199,3 +200,6 @@ At last let us point out some benefits of recursive/monadic `IO`:
 * For a lasy language using a recursive data type it is a compelling choice.
   In Haskell, the evaluation is guided by pattern matching, every bind (as you
   can consult above), evaluates just a single layer of a computation.
+* Finally, functional programming has a deep connection with the roots of
+  computability and logic, which are closely related to Church's lambda
+  calculus and recursive functions, through the work of Gödel.
