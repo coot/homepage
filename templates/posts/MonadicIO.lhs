@@ -6,7 +6,8 @@ To find an answer we will build a two (very incomplete) models for `IO`:
 
 * one that is very common in imperative languages, based on a sequence of `IO`
   actions
-* a recursive one, that turns out to be monadic.
+* a recursive one (hence in a functional programming style), that turns out to
+  be monadic.
 
 > {-# LANGUAGE GADTs #-}
 > module MonadicIO where
@@ -35,7 +36,7 @@ associative semigroups (also called
   bracketing, but this is too much freedom for us.  We want all expression
   build by putting brackets differently be always have the same semantics
 * it's not strictly necessary but, having a unit for the binary operation
-  might be convienient
+  might be convenient
 
 For that reason, we'd like to use associative unital magmas, e.g. a monoid.
 The good choice should be the most general such object, i.e. a free monoid
@@ -97,18 +98,21 @@ provide a map to `IO`:
 > runMonadicIO (WriteM path str io) = IO.writeFile path str >> runMonadicIO io
 
 But this allows only to run expressions of type `MonadicIO x`, we still need
-a way to run expressions of type `MonadicIO (MonadicIO (... x))`.  Thus we
-need:
+a way to run expressions of type `MonadicIO (MonadicIO (... x))`.  This 
+proves that the `MonadicIO` can be run (if we'd end up with a functor that
+would not have a natural transformation to Haskell's `IO` we'd be in troubles)
+
+In `MonoidalIO` we relied on associativity of the list concatenation,
+a similar requirements is needed here.  We want that the end result is
+independent of how it was build using `>>=` or equivalently how we `join`
+a value of type `MonadicIO (MonadicIO (MonadicIO a)` into `MonadicIO a`).
+If we have an expression of type `x :: MonadicIO (MonadicIO (MonadicIO x))` there
+are two ways of running it, by using of the two maps:
 
 > joinMonadicIO :: MonadicIO (MonadicIO x) -> MonadicIO x
 > joinMonadicIO (ReturnM io)       = io
 > joinMonadicIO (WriteM fp str io) = WriteM fp str (joinMonadicIO io)
 > joinMonadicIO (ReadM path io)    = ReadM path (joinMonadicIO . io)
-
-In `MonoidalIO` we relied on associativity of the list concatenation,
-a similar requirements is needed here.  If we have an expression of type `x ::
-MonadicIO (MonadicIO (MonadicIO x))` there are two ways of running it, by
-using of the two maps:
 
 > assoc1 :: MonadicIO (MonadicIO (MonadicIO x)) -> MonadicIO x
 > assoc1 = joinMonadicIO . joinMonadicIO
@@ -118,11 +122,33 @@ or
 > assoc2 :: MonadicIO (MonadicIO (MonadicIO x)) -> MonadicIO x
 > assoc2 = joinMonadicIO . fmap joinMonadicIO
 
-We really want both `assoc1` and `assoc2` to be equal.  This way the way that
-we build an expression of type `MonadicIO x` does not matter.  This is exactly
-the associativity law for monads.  And indeed `MonadicIO` is a monad, and
-`joinMonadicIO` is its `join` operator.  This is in analogy to the
+We really want both `assoc1` and `assoc2` to be equal, what guarantees that
+the way we build an expression of type `MonadicIO x` does not matter.  This is
+exactly the associativity law for monads.  And indeed `MonadicIO` is a monad,
+and `joinMonadicIO` is its `join` operator.  This is in a tight analogy to the
 associativity law of monoids in `MonoidalIO`.
+
+In Haskell we are more accustomed with the monadic bind operator `>>=` to
+build a monadic expression of type `m b` from `m a` and a continuation `a ->
+m b`.  There are two ways to build `m d` from `ma :: m a`, `fab :: a -> m b`
+and `fbc :: b -> m c`:: c -> m d:
+
+* either `ma >>= fab >>= fbc`
+* or `ma >>= (\a -> fab a >>= fbc)`
+
+Associativity for `>>=` tells us that these two are equal.  This is
+equivalent with associativity of `join` which we expressed above in the form
+
+```
+(join . join == join . fmap join) :: m (m (m a)) -> m a
+```
+
+Note that associativity of `>>=` bind expresses the associativity of building
+a monadic expression, while `join` expresses associativity of assembling it
+from `m (m (m a)`.  These two are equivalent: each of the associativity law
+implies the other one under the inverse correspondence: `ma >>= f = join
+$ fmap f ma` (e.g. each bind builds up `m (m a)`, but then it `join`s it into
+`m a`); the inverse is `join = (>>= id)`.
 
 > instance Applicative MonadicIO where
 >    pure  = ReturnM
@@ -134,26 +160,34 @@ associativity law of monoids in `MonoidalIO`.
 >    WriteM path str io >>= f = WriteM path str (io >>= f)
 >    ReadM path io >>= f      = ReadM path (fmap (>>= f) io)
 
-Let me note, that Haskell `IO` monad is build differently though, to give much
-more flexibility for building `IO` actions for many different operations
-supported by OS.  In the recursive style we need to built-in all the
-operations that are possible to run.  This would be too restrictive for
-a general purpose language.  Haskell abstracts over a state monad, e.g. a type
-`s -> (s, a)` (where `s` is a [state of the
+GHC IO
+------
+
+Let me note, GHC's `IO` monad is build differently; to give much more
+flexibility for building `IO` actions for many different operations supported
+by many different platforms.  In the recursive style we need to built-in all
+the operations that are possible to run.  This would be too restrictive for
+a general purpose language.  And also for performance reasons its much better
+to build `IO` from native types (e.g. lambdas and types that require
+`MagicHash`).  This avoids memory overhead  of terms of kind `Type` (to be
+precise: allocation rate in case of running a recursive type).  Haskell
+abstracts over a state monad, e.g. a type `s -> (s, a)` (where `s` is a [state
+of the
 world](https://hackage.haskell.org/package/ghc-prim-0.5.3/docs/GHC-Types.html#v:IO)),
 but it is still a monad, and monad laws guarantee that the semantic of an
-expression is independent of bracketing.  It is also a recursive type, though
-the recursiveness is hidden in the monadic `join` and `>>=` operators.
+expression is independent of bracketing of bind (and join) operators.  It is
+also a recursive type, though the recursiveness is hidden in the monadic
+`join`.
 
 Conclusions
 -----------
 
-Using a recursive `IO` we end up with a type that satisfies monad laws.  The
-monad associativity guarantees that when we build the expression using `do`
-notation (e.g. `>>=` or `join`) the bracketing will not change the semantics
-of an expression.
+By using a recursive `IO`, e.g. a usual functional style programming, we end
+up with a type that satisfies monad laws.  The monad associativity guarantees
+that when we build the expression using `do` notation (e.g. `>>=` or `join`)
+the bracketing will not change the semantics of an expression.
 
-At last let stress some benefits of recursive/monadic `IO`:
+At last let us point out some benefits of recursive/monadic `IO`:
 
 * much easier to support the return values of actions, e.g. in `MonoidalIO` we
   did not have access to data read from a file.  In a functional language,
