@@ -1,5 +1,6 @@
 const fs = require("fs")
 const gulp = require("gulp")
+const {series, parallel} = gulp
 const child_process = require("child_process")
 const gexec = require("gulp-exec")
 const nunjucksGulp = require("gulp-nunjucks")
@@ -21,7 +22,7 @@ function renderTemplate(path) {
 
 let env = new nunjucks.Environment(new nunjucks.FileSystemLoader("templates"), { autoescape: false });
 
-gulp.task("html", () => {
+function html () {
     return gulp.src([
         "templates/index.html",
         "templates/about.html",
@@ -33,17 +34,17 @@ gulp.task("html", () => {
         ))
         // .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest("dist"))
-})
+}
 
-gulp.task("posts:lhs", () => {
+function literateHaskell() {
     child_process.execSync("cabal new-build")
     return gulp.src("templates/posts/*.lhs")
         .pipe(gexec('pandoc <%= file.path %> -o <%= file.path %>.html'))
         .pipe(gexec.reporter())
-})
+}
 
-gulp.task("posts", ["posts:lhs"], () => {
-    gulp.src([
+function posts() {
+    return gulp.src([
         "templates/posts/free-monads.html",
         "templates/posts/peano-algebras-in-haskell.html",
         "templates/posts/monadicity.html",
@@ -58,43 +59,42 @@ gulp.task("posts", ["posts:lhs"], () => {
         ))
         // .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(gulp.dest("dist/posts"))
-})
+}
 
-gulp.task("css", () => {
+function css() {
     return gulp.src("assets/*.css")
         .pipe(cleanCSS())
         .pipe(gulp.dest("dist/assets"))
-})
+}
 
-gulp.task("fonts", () => {
+function fonts() {
     return gulp.src("assets/*.ttf")
         .pipe(gulp.dest("dist/assets"));
-});
+}
 
-gulp.task("images:pdflatex", (cb) => {
-    gulp.src("latex/*.tex")
+function pdflatex() {
+    return gulp.src("latex/*.tex")
         .pipe(gexec("pdflatex -interaction=nonstopmode -shell-escape <%= file.path %> -output-directory=./latex", {cwd: "latex"}))
         .pipe(gexec.reporter());
-});
+}
 
-/* run `gulp images:pdflatex && gulp images:latex && gulp images` */
-gulp.task("images:latex", () => {
-    gulp.src("latex/*.svg")
+function copyPdflatexSVGs() {
+    return gulp.src("latex/*.svg")
         .pipe(gulp.dest("images"));
-});
+}
 
-gulp.task("images", () => {
+function images() {
     return gulp.src("images/*.{png,jpg,svg}")
         .pipe(imagemin())
         .pipe(gulp.dest("dist/images"));
-});
+}
 
-gulp.task("manifest", () => {
-    gulp.src("./manifest.json")
+function copyManifest() {
+    return gulp.src("./manifest.json")
         .pipe(gulp.dest("dist"))
-})
+}
 
-gulp.task("js", () => {
+function js() {
     return gulp.src([
             "assets/*.js",
             "node_modules/workbox-sw/build/workbox-sw.js*",
@@ -103,9 +103,9 @@ gulp.task("js", () => {
             "bower_components/html5shiv/dist/html5shiv*.js"
         ])
         .pipe(gulp.dest("dist/assets"))
-})
+}
 
-gulp.task("default", ["html", "posts", "images", "css", "fonts", "js", "manifest"], () => {
+function injectManifest() {
     return workbox.injectManifest({
         globDirectory: "./dist",
         globPatterns: [
@@ -117,4 +117,10 @@ gulp.task("default", ["html", "posts", "images", "css", "fonts", "js", "manifest
         swSrc: "sw.js",
         swDest: "dist/sw.js"
     })
-})
+}
+
+exports.posts    = series(literateHaskell, posts)
+exports.html     = parallel(html, css, fonts, exports.posts)
+exports.pdflatex = series(pdflatex, copyPdflatexSVGs, images)
+exports.full     = series(parallel(html, series(exports.pdflatex, images), css, fonts, js, copyManifest, exports.posts), injectManifest)
+exports.default  = series(parallel(html, images, css, fonts, js, copyManifest, exports.posts), injectManifest)
