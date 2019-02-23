@@ -110,6 +110,7 @@ function injectManifest() {
 }
 
 exports.posts    = series(literateHaskell, posts)
+exports.css      = parallel(css, fonts)
 exports.html     = parallel(html, css, fonts, exports.posts)
 exports.pdflatex = series(pdflatex, copyPdflatexSVGs, images)
 exports.full     = series(parallel(html, series(exports.pdflatex, images), css, fonts, js, copyManifest, exports.posts), injectManifest)
