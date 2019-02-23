@@ -650,3 +650,16 @@ section {
   width: 100%;
   max-width: 200px;
 }
+
+.qed {
+  display: block;
+  position: relative;
+  top: -10px;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-weight: bold;
+}
+
+.lemma {
+  padding-left: 20px;
+}

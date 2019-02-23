@@ -29,7 +29,7 @@ function html () {
 
 function literateHaskell() {
     child_process.execSync("cabal new-build")
-    return gulp.src("templates/posts/*.lhs")
+    return gulp.src("templates/posts/**/*.lhs")
         .pipe(gexec('pandoc <%= file.path %> -o <%= file.path %>.html'))
         .pipe(gexec.reporter())
 }
@@ -43,6 +43,7 @@ function posts() {
         "templates/posts/kleisli-categories-and-free-monads.html",
         "templates/posts/categories-with-monadic-effects.html",
         "templates/posts/monadic-io.html",
+        "templates/posts/monoidal-functors.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },
@@ -109,6 +110,7 @@ function injectManifest() {
     })
 }
 
+exports.lhs      = literateHaskell
 exports.posts    = series(literateHaskell, posts)
 exports.css      = parallel(css, fonts)
 exports.html     = parallel(html, css, fonts, exports.posts)

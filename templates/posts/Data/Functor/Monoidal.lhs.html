@@ -1,0 +1,346 @@
+<h1 id="monoidal-and-applicative-functors">Monoidal and Applicative Functors</h1>
+<p>In this posts we will explore the equivalence between applicative and monoidal functors (i.e. functors which preserve cartesian product).</p>
+<div style="display: none;">
+<p>IDEA: make a framework, which typechecks all the proofs; maybe use liquid haskell for that.</p>
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">module</span> <span class="dt">Data.Functor.Monoidal</span> <span class="kw">where</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">import</span>           <span class="dt">Data.Functor</span> (($&gt;))</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">import</span>           <span class="dt">Data.Functor.Identity</span> (<span class="dt">Identity</span> (..))</a></code></pre></div>
+<h2 id="monoidal-categories">Monoidal categories</h2>
+<p>We will only focus on a basic example of a monoidal category. The prototypical example is category with products, e.g. the category <code>Hask</code> together with <code>(,)</code> type, and this is the category we will consider. A monoidal category also assumes a unit object and some laws for the monoidal product which look very familiar to those of a monoid, but slightly more general. A monoidal structure in a given category is a bit like a monoid, where you can combine any two objects of a category but the unitality and associativity laws have to be relaxed. They are satisfied up to an isomorphism. This is needed even in the simplest case as we have here where the monoidal product is simply given by the categorial product, i.e. the pair type <code>(a,b)</code>.</p>
+<p><em>associativity</em></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ot">assoc ::</span> (a, (b, c)) <span class="ot">-&gt;</span> ((a, b), c)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">assoc (a, (b, c)) <span class="fu">=</span> ((a, b), c)</a></code></pre></div>
+<p><em>left unit</em></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ot">leftUnit ::</span> a <span class="ot">-&gt;</span> ((), a)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">leftUnit a <span class="fu">=</span> ((), a)</a></code></pre></div>
+<p><em>right unit</em></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="ot">rightUnit ::</span> a <span class="ot">-&gt;</span> (a, ())</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">rightUnit a <span class="fu">=</span> (a, ())</a></code></pre></div>
+<p>And these isomorphism have to satisfy additional, so called coherence conditions. This is all done for a greater generality, where one wants the monoidal product to keep reasonable simple. Since we’re not focused here on full introduction of monoidal categories, and we won’t need its coherence laws we will not dive into the details.</p>
+<p>There are monoidal categories which monoidal product is different than the product, and this is probably more natural for many application in pure mathematics, especially in algebra (tensor product in linear algebra, smashed product in some topological context, or the category of endofunctors, …).</p>
+<h2 id="monoidal-functors---definition">Monoidal functors - definition</h2>
+<p>Since we now have a <code>Hask</code> as an example of a monoidal category, we will be interested in functors that preserve this monoidal structure. They are called monoidal functors, and they are defined by the following type class.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="ot">=&gt;</span> <span class="dt">Monoidal</span> f <span class="kw">where</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="ot">  unit  ::</span> f ()</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="ot">  (&lt;|&gt;) ::</span> f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f (a, b)</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw">infixl</span> <span class="dv">4</span> <span class="fu">&lt;|&gt;</span></a></code></pre></div>
+<p>Note that this definition expressese the notion of a monoidal endo-functors of the category <code>(-&gt;)</code> in which the monoidal product is given by the tuple type <code>(a, b)</code>.</p>
+<h2 id="monoidal-functors---laws">Monoidal functors - laws</h2>
+<p>Monoidal functors have to obey the following laws:</p>
+<p><em>left unit law</em></p>
+<pre><code>unit &lt;|&gt; fb   = (unit,) &lt;$&gt; fb</code></pre>
+<p><em>right unit law</em></p>
+<pre><code>fa  &lt;|&gt; unit  = (,unit) &lt;$&gt; fa</code></pre>
+<p><em>naturality</em></p>
+<pre><code>(f &lt;$&gt; fa) &lt;|&gt; fb = (\(a,b) -&gt; (f a, b)) &lt;$&gt; (fa &lt;|&gt; fb)
+fa &lt;|&gt; (f &lt;$&gt; fb) = (\(a,b) -&gt; (a, f b)) &lt;$&gt; (fa &lt;|&gt; fb)</code></pre>
+<p>Thus</p>
+<pre><code>unit &lt;|&gt; unit = (unit,) &lt;$&gt; unit = (,unit) &lt;$&gt; unit</code></pre>
+<h2 id="applicative-functors">Applicative functors</h2>
+<p>There’s no need to introduce <a href="https://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Applicative.html#t:Applicative">applicative functors</a>. Let me just cite the applicative functor laws, which we will use quite extensievly:</p>
+<p><em>identity law</em></p>
+<pre><code>pure id &lt;*&gt; v = v</code></pre>
+<p><em>composition law</em></p>
+<pre><code>pure (.) &lt;*&gt; u &lt;*&gt; v &lt;*&gt; w = u &lt;*&gt; (v &lt;*&gt; w)</code></pre>
+<p><em>homomorphism law</em></p>
+<pre><code>pure f &lt;*&gt; pure x = pure (f x)</code></pre>
+<p><em>interchange law</em></p>
+<pre><code>u &lt;*&gt; pure y = pure ($ y) &lt;*&gt; u</code></pre>
+<p>We will now present an argument that <em>every applicative functor</em> is a functor for which the following <em>formula</em> holds:</p>
+<pre><code>fmap f fa = pure f &lt;*&gt; fa</code></pre>
+<div class="lemma">
+<p><strong>Lemma</strong> If <code>f</code> is an applicative functor then</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="ot">liftA ::</span> <span class="dt">Applicative</span> f <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">liftA f fa <span class="fu">=</span> pure f <span class="fu">&lt;*&gt;</span> fa</a></code></pre></div>
+<p>satisfies functor laws.</p>
+</div>
+<p><strong>Proof</strong></p>
+<pre><code>liftA id fa
+  = pure id &lt;*&gt; fa
+  -- by identity law
+  = fa</code></pre>
+<pre><code>liftA (f . g) fa
+  = pure (f . g) &lt;*&gt; fa
+  = pure ((.) f g) &lt;*&gt; fa
+  = pure (.) &lt;*&gt; pure f &lt;*&gt; pure g &lt;*&gt; fa
+  -- by composition law
+  = pure f &lt;*&gt; (pure g &lt;*&gt; fa)
+  = liftA f (liftA g fa)</code></pre>
+<p><span class="qed">QED</span></p>
+<p>Any data structure has at most one functor instance, thus whenever one has a functor instance it must be the one. As a consequence for an applicative functor <code>fmap</code> and <code>liftA</code> are always equal. This allows us to use <code>liftA</code> in exchange for <code>fmap</code> in proofs. That’s very handy, since otherwise the applicative properties do not provide any compatiblity with <code>fmap</code>.</p>
+<p>It turns out that every applicative functor is a monoidal one. And this is thanks to the following standard definition of <code>monoidal</code> and a bit further down <code>monoidalUnit</code>:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="co">-- | Every applicative functor is monoidal.</span></a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="co">--</span></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="ot">monoidal ::</span> <span class="dt">Applicative</span> f</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">         <span class="ot">=&gt;</span> f a</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5">         <span class="ot">-&gt;</span> f b</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">         <span class="ot">-&gt;</span> f (a, b)</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">monoidal fa fb <span class="fu">=</span> (,) <span class="fu">&lt;$&gt;</span> fa <span class="fu">&lt;*&gt;</span> fb</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="ot">monoidalUnit ::</span> <span class="dt">Applicative</span> f</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">             <span class="ot">=&gt;</span> f ()</a>
+<a class="sourceLine" id="cb20-3" data-line-number="3">monoidalUnit <span class="fu">=</span> pure ()</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">Monoidal</span> <span class="dt">Identity</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">  unit  <span class="fu">=</span> monoidalUnit</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">  (<span class="fu">&lt;|&gt;</span>) <span class="fu">=</span> monoidal</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="kw">instance</span> <span class="dt">Monoidal</span> <span class="dt">IO</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">  unit  <span class="fu">=</span> monoidalUnit</a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">  (<span class="fu">&lt;|&gt;</span>) <span class="fu">=</span> monoidal</a></code></pre></div>
+<p>But we still need to prove the monoidal laws.</p>
+<p><strong>Monoidal laws of <code>monoidal</code> and <code>monoidalUnit</code></strong></p>
+<p><em>left unit law</em></p>
+<pre><code>monoidalUnit `monoidal` fb
+  = (,) &lt;$&gt; (pure ()) &lt;*&gt; fb
+  = pure (,) &lt;*&gt; pure () &lt;*&gt; fb
+  -- by homomorphism law
+  = pure ((),) &lt;*&gt; fb
+  = ((),) &lt;$&gt; fb</code></pre>
+<p><em>right unit law</em></p>
+<pre><code>fa `monoidal` monoidalUnit
+  = (,) &lt;$&gt; fa &lt;*&gt; pure ()
+  -- by interchange law
+  = pure ($ ()) &lt;*&gt; ((,) &lt;$&gt; fa)
+  = pure ($ ()) &lt;*&gt; (pure (,) &lt;*&gt; fa)
+  -- by composition law
+  = pure (.) &lt;*&gt; pure ($ ()) &lt;*&gt; pure (,) &lt;*&gt; pure fa
+  = pure ((.) ($ ()) (,)) &lt;*&gt; fa
+  = pure (\(a -&gt; (a, ())) &lt;*&gt; fa
+  = pure (,()) &lt;*&gt; fa
+  = (,()) &lt;$&gt; fa</code></pre>
+<div class="lemma">
+<p><strong>Lemma</strong> </br> <code>(\a b -&gt; (f a, b)) &lt;$&gt; fa &lt;*&gt; fb     = (\(a, b) -&gt; (f a, b)) &lt;$&gt; ((,) &lt;$&gt; fa &lt;$&gt; fb)</code></p>
+</div>
+<p><strong>Proof</strong> It’s probably not a surprise that we will need to use applicative composition law. A first useful observation is that</p>
+<pre><code>(\a b -&gt; (f a, b))
+  = (\g -&gt; (\(a, b) -&gt; (f a, b)) . g) . (\a b -&gt; (a, b))
+  = ((.) (\(a, b) -&gt; (f a, b))) . (\a b -&gt; (a, b))</code></pre>
+<pre><code>(\a b -&gt; (f a, b)) &lt;$&gt; fa &lt;*&gt; fb
+  -- by the above observation
+  = (((.) (\(a, b) -&gt; (f a, b))) . (\a b -&gt; (a, b))) &lt;$&gt; fa &lt;*&gt; fb
+  -- by functor law
+  = ((.) (\(a, b) -&gt; (f a, b))) &lt;$&gt; ((\a b -&gt; (a, b)) &lt;$&gt; fa) &lt;*&gt; fb
+  = pure ((.) (\(a, b) -&gt; (f a, b))) &lt;*&gt; ((\a b -&gt; (a, b)) &lt;$&gt; fa) &lt;*&gt; fb
+  -- by applicative homomorphism law
+  = pure (.) &lt;*&gt; pure (\(a, b) -&gt; (f a, b)) &lt;*&gt; ((\a b -&gt; (a, b)) &lt;$&gt; fa) &lt;*&gt; fb
+  -- by applicative composition law
+  = pure (\(a, b) -&gt; (f a, b)) &lt;*&gt; (((\a b -&gt; (a, b)) &lt;$&gt; fa) &lt;*&gt; fb)
+  -- by applicative functor lemma
+  = (\(a, b) -&gt; (f a, b)) &lt;$&gt; ((,) &lt;$&gt; fa &lt;$&gt; fb)</code></pre>
+<p><span class="qed">QED</span></p>
+<p><em>naturality laws</em></p>
+<pre><code>(f &lt;$&gt; fa) `monoidal` fb
+  = (,) &lt;$&gt; (f &lt;$&gt; fa) &lt;*&gt; fb
+  = (,) &lt;$&gt; (pure f &lt;*&gt; fa) &lt;*&gt; fb
+  = pure (,) &lt;*&gt; (pure f &lt;*&gt; fa) &lt;*&gt; fb
+  -- by composition law
+  = pure (.) &lt;*&gt; pure (,) &lt;*&gt; pure f &lt;*&gt; fa &lt;*&gt; fb
+  -- by functor lemma
+  = pure ((.) (,) f) &lt;*&gt; fa &lt;*&gt; fb
+  = pure (\a b -&gt; (f a, b)) &lt;*&gt; fa &lt;*&gt; fb
+  = (\a b -&gt; (f a, b)) &lt;$&gt; fa &lt;*&gt; fb
+  = (\(a, b) -&gt; (f a, b)) &lt;$&gt; ((\a b -&gt; (a, b)) &lt;$&gt; fa &lt;*&gt; fb)
+  -- by previous lemma
+  = (\(a, b) -&gt; (f a, b)) &lt;$&gt; ((,) &lt;$&gt; fa &lt;*&gt; fb)
+  = (\(a, b) -&gt; (f a, b)) &lt;$&gt; (fa `monoidal` fb)</code></pre>
+<pre><code>fa `monoidal` (f &lt;$&gt; fb)
+  = (,) &lt;$&gt; fa &lt;*&gt; (f &lt;$&gt; fb)
+  = ((,) &lt;$&gt; fa) &lt;*&gt; (pure f &lt;*&gt; fb)
+  -- by composition law
+  = pure (.) &lt;*&gt; ((,) &lt;$&gt; fa) &lt;*&gt; pure f &lt;*&gt; fb
+  = (.) &lt;$&gt; ((,) &lt;$&gt; fa)) &lt;*&gt; pure f &lt;*&gt; fb
+  -- by functor law
+  = (.) . (,) &lt;$&gt; fa &lt;*&gt; pure f &lt;*&gt; fb
+  -- by interchange law
+  = pure ($ f) &lt;*&gt; ((.) . (,) &lt;$&gt; fa) &lt;*&gt; fb
+  = pure ($ f) &lt;*&gt; (pure ((.) . (,)) &lt;*&gt; fa) &lt;*&gt; fb
+  -- by composition law
+  = pure (.) &lt;*&gt; pure ($ f) &lt;*&gt; pure ((.) . (,)) &lt;*&gt; fa &lt;*&gt; fb
+  = pure ((.) ($ f) ((.) . (,))) &lt;*&gt; fa &lt;*&gt; fb
+  = pure (\(a,b) -&gt; (a, f b)) &lt;*&gt; fa &lt;*&gt; fb
+  = (\a b -&gt; (a, f b)) &lt;$&gt; fa &lt;*&gt; fb
+  = (\(a, b) -&gt; (a, f b)) . (,) &lt;$&gt; fa &lt;*&gt; fb)
+  -- by composition law
+  = (\(a, b) -&gt; (a, f b)) &lt;$&gt; ((,) &lt;$&gt; fa &lt;*&gt; fb)</code></pre>
+<h2 id="from-monoidal-to-applicative-functors">From Monoidal to Applicative functors</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co">-- | And conversely every monoidal functor is applicative.</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="co">--</span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="ot">monoidalAp ::</span> <span class="dt">Monoidal</span> f</a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">           <span class="ot">=&gt;</span> f (a <span class="ot">-&gt;</span> b)</a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">           <span class="ot">-&gt;</span> f a</a>
+<a class="sourceLine" id="cb28-6" data-line-number="6">           <span class="ot">-&gt;</span> f b</a>
+<a class="sourceLine" id="cb28-7" data-line-number="7">monoidalAp fab fa <span class="fu">=</span></a>
+<a class="sourceLine" id="cb28-8" data-line-number="8">  uncurry (<span class="fu">$</span>) <span class="fu">&lt;$&gt;</span> (fab <span class="fu">&lt;|&gt;</span> fa)</a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode literate haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="ot">monoidalPure ::</span> <span class="dt">Monoidal</span> f</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">             <span class="ot">=&gt;</span> a</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">             <span class="ot">-&gt;</span> f a</a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">monoidalPure a <span class="fu">=</span> unit <span class="fu">$&gt;</span> a</a></code></pre></div>
+<p><strong>Applicative laws of <code>monoidalAp</code> and <code>monoidalPure</code></strong></p>
+<p><em>homomorphism law</em></p>
+<pre><code> monoidalPure ab `monoidalAp` monoidalPure a
+  = uncurry ($) &lt;$&gt; ((unit $&gt; ab) &lt;|&gt; (unit $&gt; a))
+  = uncurry ($) &lt;$&gt; ((const ab &lt;$&gt; unit) &lt;|&gt; ((const a &lt;$&gt; unit)))
+  = uncurry ($) &lt;$&gt; (\_ -&gt; (ab, a)) &lt;$&gt; (unit &lt;|&gt; unit)
+  = uncurry ($) . (\_ -&gt; (ab, a)) &lt;$&gt; (unit &lt;|&gt; unit)
+  = const (ab a) &lt;$&gt; (unit &lt;|&gt; unit)
+  by the fact that that (const a) &lt;$&gt; f == (const b) &lt;$&gt; g for any
+  `f, g :: f a`
+  = const (ab a) &lt;$&gt; unit
+  by definition of ($&gt;)
+  = unit $&gt; (ab a)
+  = monoidalPure (ab a)</code></pre>
+<p><span class="qed">QED</span></p>
+<p><em>identity law</em></p>
+<pre><code> monoidalPure id `monoidalAp` f
+  = uncurry ($) &lt;$&gt; ((unit $&gt; id) &lt;|&gt; f)
+  by /naturality/ (and the definition of @&#39;$&gt;&#39;@
+  = uncurry ($) &lt;$&gt; (\(_, b) -&gt; (id, b)) &lt;$&gt; (unit &lt;|&gt; f)
+  = uncurry ($) . (\(_, b) -&gt; (id, b)) &lt;$&gt; (unit &lt;|&gt; f)
+  = (\(_, b) -&gt; b) &lt;$&gt; (unit &lt;|&gt; f)
+  by /right unit/ law
+  = (\(_, b) -&gt; b) &lt;$&gt; ((),) &lt;$&gt; f
+  = (\(_, b) -&gt; b) . ((),) &lt;$&gt; f
+  = id &lt;$&gt; f
+  = f</code></pre>
+<p><span class="qed">QED</span></p>
+<p><em>interchange law</em>, i.e. <code>u &lt;*&gt; pure y = pure ($ y) &lt;*&gt; u</code></p>
+<pre><code> u `monoidalAp` (monoidalPure y)
+  = uncurry ($) &lt;$&gt; (u &lt;|&gt; (unit $&gt; y))
+  = uncurry ($) &lt;$&gt; (\(x, ) -&gt; (x, y)) &lt;$&gt; (u &lt;|&gt; unit)
+  = uncurry ($) . (\(x, _) -&gt; (x, y)) &lt;$&gt; (u &lt;|&gt; unit)
+  = (\(x, _) -&gt; x y) &lt;$&gt; (u &lt;|&gt; unit)
+  = (\(x, _) -&gt; x y) &lt;$&gt; (,()) &lt;$&gt; u
+  = (\(x, _) -&gt; x y) . (,()) &lt;$&gt; u
+  = (\(x, _) -&gt; x y) . (,()) &lt;$&gt; (\(_, x) -&gt; x) &lt;$&gt; (unit &lt;|&gt; u)
+  = (\(x, _) -&gt; x y) . (,()) . (\(_, x) -&gt; x) &lt;$&gt; (unit &lt;|&gt; u)
+  = (\(_, x) -&gt; x y) &lt;$&gt; (unit &lt;|&gt; u)
+  = uncurry ($) . (\(_, x) -&gt; ($ y, x)) &lt;$&gt; (unit &lt;|&gt; u)
+  = uncurry ($) &lt;$&gt; (\(_, x) -&gt; ($ y, x)) &lt;$&gt; (unit &lt;|&gt; u)
+  = uncurry ($) &lt;$&gt; ((unit $&gt; ($ y)) &lt;|&gt; u)
+  = uncurry ($) &lt;$&gt; ((monoidalPure ($ y)) &lt;|&gt; u))
+  = (monoidalPure ($ y)) `monoidalAp` u</code></pre>
+<p><span class="qed">QED</span></p>
+<p><em>composition law</em> i.e. <code>pure (.) &lt;*&gt; u &lt;*&gt; v &lt;*&gt; w = u &lt;*&gt; (v &lt;*&gt; w)</code></p>
+<pre><code>monoidalPure (.) `monoidalAp` u `monoidalAp` v `monoidalAp` w
+  = (uncurry ($) &lt;$&gt; ((unit $&gt; (.)) &lt;|&gt; u)) `monoidalAp` v `monoidalAp` w
+  = uncurry ($)
+    &lt;$&gt; ((uncurry ($)
+           &lt;$&gt; ((unit $&gt; (.)) &lt;|&gt; u)) &lt;|&gt; v)
+    `monoidalAp` w
+  = uncurry ($)
+    &lt;$&gt; (\((x,y),z) -&gt; (x y, z))
+    &lt;$&gt; ((unit $&gt; (.)) &lt;|&gt; u &lt;|&gt; v)
+    `monoidalAp` w
+  = uncurry ($) . (\((x,y),z) -&gt; (x y, z))
+    &lt;$&gt; ((unit $&gt; (.)) &lt;|&gt; u &lt;|&gt; v)
+    `monoidalAp` w
+  = (\((x,y),z) -&gt; x y z)
+    &lt;$&gt; ((unit $&gt; (.)) &lt;|&gt; u &lt;|&gt; v)
+    `monoidalAp` w
+  = (\(x,y) -&gt; x . y)
+    &lt;$&gt; (u &lt;|&gt; v)
+    `monoidalAp` w
+  = uncurry (.) &lt;$&gt; (u &lt;|&gt; v) `monoidalAp w
+  = uncurry ($)
+    &lt;$&gt; (uncurry (.) &lt;$&gt; (u &lt;|&gt; v)) &lt;|&gt; w
+  = uncurry ($) . (\((x,y),z) -&gt; (x . y, z))
+    &lt;$&gt; (u &lt;|&gt; v &lt;|&gt; w)
+  = (\((x,y),z) -&gt; x . y $ z)
+    &lt;$&gt; (u &lt;|&gt; v &lt;|&gt; w)
+  = (\((x,y),z) -&gt; x (y z))
+    &lt;$&gt; (u &lt;|&gt; v &lt;|&gt; w)
+  = uncurry (.)
+    &lt;$&gt; (u &lt;|&gt; v &lt;|&gt; w)</code></pre>
+<p>And from the other side:</p>
+<pre><code>u `monoidalAp` (v `monoidalAp` w)
+  = uncurry ($) &lt;$&gt; (u &lt;|&gt; (v `monoidalAp` w))
+  = uncurry ($) &lt;$&gt; (u &lt;|&gt; (uncurry ($) &lt;$&gt; (u &lt;|&gt; w)))
+  = uncurry ($) &lt;$&gt; (\((x,y) -&gt; (x, uncurry ($) y)))
+    &lt;$&gt; (u &lt;|&gt; (u &lt;|&gt; w))
+  = uncurry ($) . (\((x,y) -&gt; (x, uncurry ($) y))
+    &lt;$&gt; (u &lt;|&gt; (v &lt;|&gt; w))
+  = (\((x, y) -&gt; x (uncurry ($) y)))
+    &lt;$&gt; (u &lt;|&gt; (v &lt;|&gt; w))
+  = (\(x, (y, z) -&gt; x (y z))
+    &lt;$&gt; (u &lt;|&gt; (v &lt;|&gt; w))
+  = (\(x, (y, z) -&gt; x (y z)) . (\((x,y),z) -&gt; (x,(y,z)))
+    &lt;$&gt; (u &lt;|&gt; v &lt;|&gt; w)
+  = (\((x,y),z) -&gt; x (y z))
+    &lt;$&gt; (u &lt;|&gt; v &lt;|&gt; w)
+  = uncurry (.)
+    &lt;$&gt; (u &lt;|&gt; v &lt;|&gt; w)</code></pre>
+<p><span class="qed">QED</span></p>
+<h1 id="equivalence-between-applicative-and-monoidal-functors">Equivalence between Applicative and Monoidal functors</h1>
+<h2 id="from-applicative-functor-to-monoidal-and-back">From applicative functor to monoidal and back</h2>
+<p>In this section we consider an applicative functor <code>f</code> and we consider tha applicative <code>monoidalAp</code> and <code>monoidalUnit</code> obtained from the associated monoidal functor. We show that these are equal to what we start with <code>&lt;*&gt;</code> and <code>pure</code> of <code>f</code>.</p>
+<p>The strategy of the proof transform all <code>&lt;$&gt;</code> into <code>&lt;*&gt;</code> using <code>f &lt;$&gt; x = pure f &lt;*&gt; x</code> and mobe all brackets to the left using the composition law of applicative functors.</p>
+<p>When we’ll get to the above canonical form (brackets grouped to the left) this will be all based on:</p>
+<div class="lemma">
+<p><strong>Lemma 1</strong></p>
+<pre><code> (.) (uncurry ($)) . (,) = ($)</code></pre>
+</div>
+<p><strong>Proof</strong></p>
+<pre><code>  ((.) (uncurry ($)) . (,)) f a =
+    by definition of (.)
+    = (\x -&gt; (.) (uncurry ($)) (x,)) f a
+    = (\x -&gt; (uncurry ($)) . (x,)) f a
+    by definiiton of (.)
+    = (\x y -&gt; (uncurry ($)) (x, y)) f a
+    by eta reduction
+    = uncurry ($) (f, a)
+    = ($) f a
+    = f a</code></pre>
+<p><span class="qed">QED</span></p>
+<p>Below we show that if we take <code>monoidalAp</code> defined via <code>&lt;|&gt;</code> which is defined by <code>monoidalAp</code> (which we denote by <code>&lt;*&gt;</code> to make all the expressions shorter), then we will recover our original applicative <code>&lt;*&gt;</code> (e.g. <code>monoidalAp</code>):</p>
+<pre><code>monoidalAp fab fa
+  -- by definition of `monoidalAp`
+  = uncurry ($) &lt;$&gt; (fab &lt;|&gt; fa)
+  -- by defintion of `&lt;|&gt;` 
+  = uncurry ($) &lt;$&gt; ((,) &lt;$&gt; fab &lt;*&gt; fa)
+  = uncurry ($) &lt;$&gt; (pure (,) &lt;*&gt; fab &lt;*&gt; fa)
+  = pure (uncurry ($)) &lt;*&gt; ((pure (,) &lt;*&gt; fab) &lt;*&gt; fa)
+  by composition
+  = pure (.) &lt;*&gt; pure (uncurry ($)) &lt;*&gt; (pure (,) &lt;*&gt; fab) &lt;*&gt; fa
+  = pure ((.) (uncurry ($))) &lt;*&gt; (pure (,) &lt;*&gt; fab) &lt;*&gt; fa
+  by lemma 2
+  = fab &lt;*&gt; fb</code></pre>
+<div class="lemma">
+<p><strong>Lemma 2</strong></p>
+<pre><code>pure ((.) (uncurry ($))) &lt;*&gt; (pure (,) &lt;*&gt; fab) = fab</code></pre>
+</div>
+<p><strong>Proof</strong></p>
+<pre><code>pure ((.) (uncurry ($))) &lt;*&gt; (pure (,) &lt;*&gt; fab)
+  by /composition law/ of applicative functors
+  = pure (.) &lt;*&gt; pure ((.) (uncurry ($))) &lt;*&gt; pure (,) &lt;*&gt; fab
+  = pure ((.) ((.) (uncurry ($)))) &lt;*&gt; pure (,) &lt;*&gt; fab
+  = pure ((.) ((.) (uncurry ($))) (,)) &lt;*&gt; fab
+  = pure (((.) (uncurry ($))) . (,)) &lt;*&gt; ab
+  by lemma 1
+  = pure ($) &lt;*&gt; fab
+  since ($) = (id :: (a -&gt; b) -&gt; (a -&gt; b)
+  and (pure id) &lt;*&gt; x = x
+  = fab</code></pre>
+<p><span class="qed">QED</span></p>
+<h2 id="from-monoidal-to-applicative-and-back">From monoidal to applicative and back</h2>
+<p>In this section we consider a monoidal functor <code>f</code>, and then we consisder tha monoidal functor obtained from the associated applicative functor by means of <code>monoidalAp</code> and <code>monoidalUnit</code>. We prove that what we end with is the initial monoidal functor <code>f</code>. We use <code>&lt;|&gt;</code> and <code>unit</code> to denote the initial monoidal structer of <code>f</code>, <code>&lt;*&gt;</code> and <code>pure</code> is the associated applicative instance, and we will show that <code>monoidal</code> is equal to <code>&lt;|&gt;</code></p>
+<pre><code>monoidal fa fb
+  = (,) &lt;$&gt; fa &lt;*&gt; fb
+  = ((,) &lt;$&gt; fa) &lt;|&gt; fb)
+  = uncurry ($) &lt;$&gt; ((,) &lt;$&gt; fa) &lt;|&gt; fb
+  = uncurry ($) &lt;$&gt; (fmap (\(a, b) -&gt; ((a,),b)) &lt;$&gt; (fa &lt;|&gt; fb))
+  = uncurry ($) . (\(a, b) -&gt; ((a,),b) &lt;$&gt; (fa &lt;|&gt; fb)
+  = id &lt;$&gt; (fa &lt;|&gt; fb)
+  = fa &lt;|&gt; fb</code></pre>
+<pre><code>monoidalUnit
+  = pure ()
+  -- by definition of pure for the associated applicative functor
+  = monoidalPure ()
+  = unit $&gt; ()
+  = unit</code></pre>
+<h1 id="references">References</h1>
+<ul>
+<li><p><a href="https://ncatlab.org/nlab/show/monoidal+category">Monoidal Categories in ncatlab.org</a></p></li>
+<li><p><a href="https://www.staff.city.ac.uk/~ross/papers/Applicative.html">Applicative Programming with Effects</a>, Conor McBride and Ross Peterson, Journal of Functional Programming, 2008.</p>
+<p>There is a final section which briefly mentions equivalnce between strict lax monoidal functors and applicative ones (without all the details we went through here). It touches some subtle difference between categorical formulation and a higher order functional perspective (also used here), which are byond this blog post.</p></li>
+</ul>
