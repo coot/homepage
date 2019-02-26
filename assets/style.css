@@ -216,7 +216,7 @@ pre.haskell a {
 .info-hdr #name {
     color: #222;
     font-weight: 300;
-    font-size: 1.8em;
+    font-size: 2em;
     text-align: center;
 }
 
@@ -250,7 +250,7 @@ article {
     .info-hdr {
 	float: left;
 	width: 380px;
-	height: 100vh;
+	/* height: 100vh; */
 	position: fixed;
     }
 
@@ -399,16 +399,14 @@ address {
 }
 
 address .personal {
-    float: left;
 }
 
 address .social {
-    margin-right: 20px;
-    float: right;
+  margin-top: 10px;
 }
 
 .social a {
-    display: block;
+    display: inline-block;
 }
 
 a .icon {
@@ -501,7 +499,7 @@ section {
 
 .section_h {
     width: 40%;
-    border-bottom: 1px solid #aaa;
+    /* border-bottom: 1px solid #aaa; */
     font-weight: 300;
 }
 
