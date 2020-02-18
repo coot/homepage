@@ -91,7 +91,8 @@ function js() {
             "node_modules/workbox-sw/build/workbox-sw.js*",
             "node_modules/workbox-routing/build/workbox-routing.prod.js*",
             "node_modules/workbox-precaching/build/workbox-precaching.prod.js*",
-            "bower_components/html5shiv/dist/html5shiv*.js"
+            "node_modules/html5shiv/dist/html5shiv.min.js",
+            "node_modules/html5shiv/dist/html5shiv-printshiv.min.js",
         ])
         .pipe(gulp.dest("dist/assets"))
 }
