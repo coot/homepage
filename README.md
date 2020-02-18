@@ -1,8 +1,7 @@
 My Homepage
 ===========
 
-This repo contains my static [homepage](https://marcinszamotulski.me).
-It is hosted by [IndieHosters](https://indiehosters.net).
+This repo contains my static [homepage](https://coot.me).
 
 Browser Support
 ---------------
