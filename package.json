@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "@coot homepage",
   "dependencies": {
-    "bower": "^1.8.8",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^3.10.0",
     "gulp-exec": "^3.0.2",
