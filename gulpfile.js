@@ -44,6 +44,7 @@ function posts() {
         "templates/posts/categories-with-monadic-effects.html",
         "templates/posts/monadic-io.html",
         "templates/posts/monoidal-functors.html",
+        "templates/posts/ghc-tags-plugin.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },
