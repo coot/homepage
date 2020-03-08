@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "@coot homepage",
   "dependencies": {
-    "bower": "^1.8.8",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^3.10.0",
     "gulp-exec": "^3.0.2",
@@ -27,8 +26,7 @@
     "hs:test": "doctest -XDataKinds -XFlexibleContexts -XFlexibleInstances -XTypeApplications -fdiagnostics-color=never haskell/free-garden.hs",
     "haddock": "haddock --optghc=\"-no-link\" --optghc=\"-no-hs-main\" -o haskell/html -h --no-print-missing-docs --hyperlinked-source haskell/*.hs",
     "build": "gulp",
-    "start": "http-server -c0 dist",
-    "postinstall": "bower install"
+    "start": "http-server -c0 dist"
   },
   "repository": {
     "type": "git",
