@@ -16,9 +16,7 @@ see how usefull is the __Kleisli category__.
 > module FiniteStateMachines where
 
 > import           Prelude hiding (id, foldMap, (.))
-> -- ^ Note that we're imporing `id` and `.`
-> --   from `Control.Category`
-> import           Control.Category (Category (id, (.)), (<<<))
+> import           Control.Category (Category (..), (<<<))
 > import           Control.Monad ((>=>))
 > import           Data.List.NonEmpty (NonEmpty (..), (<|))
 > import           Data.Void (Void)

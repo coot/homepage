@@ -43,7 +43,7 @@ posts on [finite state machines and categories](/posts/finite-state-machines.htm
 > import           Data.List.NonEmpty (NonEmpty (..))
 > import qualified Data.List.NonEmpty as NE
 
-> import           Control.Algebra.Free (AlgebraType, AlgebraType0, proof)
+> import           Control.Algebra.Free (AlgebraType, AlgebraType0, Proof (..))
 > import           Control.Algebra.Free2 (FreeAlgebra2 (..))
 
 > import           Test.QuickCheck
@@ -99,8 +99,8 @@ functors.
 >   foldNatFree2 _   Id          = id
 >   foldNatFree2 fun (bc :.: ab) = fun bc . foldNatFree2 fun ab
 > 
->   codom2  = proof
->   forget2 = proof
+>   codom2  = Proof
+>   forget2 = Proof
 
 Let us check that `foldNatFree2` indeed preserves identity morphisms and
 composition.  The first one is obvious, since this is how we defined
@@ -228,8 +228,8 @@ a free category with effects.
 >   foldNatFree2 nat (Base cab)  = nat cab
 >   foldNatFree2 nat (Lift mcab) = lift $ foldNatFree2 nat <$> mcab
 >
->   codom2  = proof
->   forget2 = proof
+>   codom2  = Proof
+>   forget2 = Proof
 
 There is one law that we need to prove, that `foldNatFree2` is a morphism
 between categories with monadic effects, i.e.
