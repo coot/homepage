@@ -27,7 +27,7 @@ body {
 
 .info-hdr {
     position: relative;  /* absolute h1 */
-    min-width: 300px;
+    min-width: 450;
     padding-left: 10px;
     padding-right: 10px;
     box-sizing: border-box;
@@ -250,8 +250,11 @@ article {
     .info-hdr {
 	float: left;
 	width: 380px;
-	/* height: 100vh; */
 	position: fixed;
+    }
+
+    .info-hdr #name {
+        text-align: left;
     }
 
     .post .info-hdr {
@@ -297,10 +300,14 @@ article {
     }
 
     .info-hdr {
-	max-width: 380px;
+	max-width: 450px;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 10px;
+    }
+
+    .info-hdr #name {
+      text-align: left;
     }
 
     .post .info-hdr {
@@ -434,6 +441,16 @@ a .icon {
   top: 4px;
 }
 
+.contents h3 {
+  margin-bottom: 5px;
+}
+
+.contents ol {
+  margin-top: 5px;
+  padding-left: 15px;
+}
+
+
 #twitter i.fa.animate {
     -webkit-animation: fly 1s ease 0s 1;
     -moz-animation: fly 1s ease 0s 1;
@@ -459,7 +476,7 @@ a .icon {
     font-weight: 300;
 }
 
-.badge.fr {
+.badge {
     color: #222;
     background-color: #e6e6e6;
     font-weight: 600;
@@ -498,7 +515,6 @@ section {
 }
 
 .section_h {
-    width: 40%;
     /* border-bottom: 1px solid #aaa; */
     font-weight: 300;
 }

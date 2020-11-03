@@ -1,3 +1,7 @@
+html, body {
+  font-size: 12px;
+}
+
 main,
 .info-hdr,
 footer {
@@ -14,7 +18,7 @@ footer {
 }
 
 #img_container p {
-    padding-left: 30px;
+    padding-left: 15px;
     margin-top: 0;
 }
 
@@ -55,6 +59,7 @@ address .personal {
 
 address .social {
     float: right;
+    margin-top: 0px;
     margin-right: 20px;
 }
 
@@ -76,6 +81,7 @@ footer .indie-footer {
 
 .badge,
 .badge.fr{
+    padding: 0px;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     -ms-box-shadow: none;

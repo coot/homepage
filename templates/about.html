@@ -2,27 +2,29 @@
 
 {% block header %}
     {% include "header.html" %}
+    <div class="contents">
+      <h3>Contents</h3>
+      <ol>
+        <li><a href="#intro">Intro</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#papers">Publications</a></li>
+      </ol>
+    </div>
 {% endblock %}
 
 {% block main %}
 <section class="bio">
-    <h2 class="section_h">Intro</h2>
+    <h2 class="section_h" id="intro">Intro</h2>
     <p>
-	I am an experienced full stack web developer and have
-	proven myself across a variety of challenges involving
-	designs, implementations, and minimum viable products. 
+        I am an experienced full stack web developer and I have proven myself
+        across a variety of challenges involving designs, implementations, and
+        minimum viable products. 
     </p>
 
     <p>
 	I understand what business needs are and can translate
 	these into prototypes, frameworks and, well, code ;)
-    </p>
-
-    <p>
-	I am particularly strong in building applications that
-	need to run on real-world mobile networks where LTE
-	speeds are not always available, which is nearly
-	everywhere!
     </p>
 
     <p>
@@ -35,29 +37,6 @@
 	however, my code is easily comprehensible for others
 	who join the team. This is super important in agile
 	development with teams that (may) rotate quickly. 
-    </p>
-
-    <p>
-	<h4>web performance</h4>
-	I have a thorough understanding of web. I have experience
-	pursuing memory leaks, track performance issues in hot code
-	and can code high-performing css animations that run at
-	60FPS on mobile. 
-    </p>
-
-    <p>
-	<h4>usability, ui & accessibility</h4>
-	Web should be as inclusive as its interactive. Both
-	usability and accessibility is key. Often, good design
-	calls for accessible UI that is easy to navigate with
-	keyboard only input for people with disabilities. I have
-	experience with HTML5 and ARIA (Accessible Reach Internet
-	Applications). 
-
-	I keeping the original semantic of native elements, this is
-	really important in building usable components by variety
-	of people with different habits from ‘all parts of the
-	web’.
     </p>
 
     <p>
@@ -75,6 +54,13 @@
     </p>
 
     <p>
+        By using modern property testing techniques and simulations I was able
+        to deliver complex network components which worked flawlessly on
+        various platforms, from the developer loved Linux and MacOs machines to
+        user friendly environments on Windows.
+    </p>
+
+    <p>
 	<h4>functional programming</h4>
 	I am an advocate for functional programming.  It often
 	brings clarity, projects become easier to comprehend and
@@ -83,6 +69,7 @@
 
     <div class="badges langs">
 	<a class="badge" href="https://www.haskell.org/" target="_blank">Haskell</a>
+	<a class="badge" href="https://www.wikiwand.com/en/Computer_network_programming" target="_blank">network programming</a>
 	<a class="badge" href="https://nodejs.org" target="_blank">Node.js</a>
 	<a class="badge" href="https://python.org" target="_blank">Python</a>
 	<span class="badge">C</span></br>
@@ -94,7 +81,7 @@
 	<span class="badge fr">html5</span> <span class="badge fr">css</span> <span class="badge fr">SASS</span>
     </div>
 </section>
-<section class="education print_only">
+<section class="education" id="education">
     <h2 class="section_h">Education</h2>
     <div class="row">
 	<b>PhD</b>: Research in Abstract Algebra and
@@ -121,19 +108,127 @@
 	<b>2009-2013</b>: PhD in Mathematics, IST, Lisbon.
     </div>
 </section>
-<section class="portfolio">
+<section class="portfolio" id="portfolio">
     <h2 class="section_h">Portfolio</h2>
     <p>Some of the most recent projects I worked for or trainings I took part
 	of:</p>
     <article>
 	<h3><a class="title" id="iohk" href="https://iohk.io" target="_blank">IOHK</a></h3>
 	<p>
-	    Currently I work at <a href="https://iohk.io">IOHK</a> as the team lead for the Haskell
-	    networking team.  I also held a teaching assistance position for
-	    <a href="https://iohk.io">IOHK</a> / <a
+            Currently I work at <a href="https://iohk.io">IOHK</a> as the team
+            lead for the Haskell networking team.  I also held a teaching
+            assistance position for <a href="https://iohk.io">IOHK</a> / <a
 		href="https://www.well-typed.com">Well-Typed's</a> Haskell
 	    course which took place in Barbados.
 	</p>
+        <p>
+            Majority of my work at <a href="https://iohk.io">IOHK</a> is
+            available as open source.  I mostly contributed to <a
+              href="https://github.com/input-output-hk/ouroboros-network">ouroboros-network</a>
+            repository.  I contributed to the <a
+              href="https://hydra.iohk.io/job/Cardano/ouroboros-network/native.docs.x86_64-linux/latest/download/1">design
+              document</a> and <a href="https://hydra.iohk.io/job/Cardano/ouroboros-network/native.docs.x86_64-linux/latest/download/2">technical documentation</a>
+
+            Here are some main achievements:
+            <ul>
+              <li>
+                I contributed to session type framework <a href="https://input-output-hk.github.io/ouroboros-network/typed-protocols/Network-TypedProtocol.html">typed-protocols</a>.
+
+                Using type level description of a protocol not only turned
+                protocol errors into type errors but also made it much easier
+                to share and discuss ideas:  using <code>typed-protocols</code>
+                protocol state machines become the primiary focus point.  It
+                allowed us to reason about protocol behaviour, especially about 
+                adversarial behaviour.  The novelity of
+                <code>typed-protocols</code> is using 
+                <a
+                                 href="https://www.wikiwand.com/en/Protocol_pipelining">
+                  protocol pipelining</a> in the context of session types.
+              </li>
+              <li>
+                <p>
+                  I authored <a href="https://github.com/input-output-hk/ouroboros-network/tree/master/Win32-network">Win32-network</a>
+                library.
+                <p>
+
+                <p>
+                One of IOHK's products the <a
+                  href="https://daedaluswallet.io/">Deadalus wallet</a> is
+                a primary Windows application, with thousands of users.  This
+                library, together with a small abstraction layer allowed us to
+                write platform independent code (which runs primarily on Linux,
+                Windows and MacOs).  With <code>Win32-network</code> we ware
+                able to achieve throuput comparable to what Linux does and we
+                never heard back complains from Windows users regarding
+                networking!
+                </p>
+
+                <small>
+                  <p>
+                  <code>Win32-network</code> is a low level library which solves some
+                  outstanding problems when writing Haskell networking code on
+                  Windows.  The original Haskell <code>IO</code> calls on Windows
+                  can block when one tries to kill a thread which executes them,
+                  which can lead to leaking resrouces (sockets) or unresponsive
+                  behaviour when a user is trying to shut down application.   We
+                  also discovered that IO calls on Windows can deadlock without
+                  making progress when done concurrently.
+                  <code>Win32-network</code> library solves both problems.
+                  </p>
+
+
+                  <p>
+                  <code>Win32-network</code> was designed based on <a
+                                                                     href="https://hackage.haskell.org/package/winio">winio</a>
+                  library.  Unlike the original, it uses very little
+                  <code>C</code> code (just a single header file).  It
+                  implemented an asynchronous <code>IO</code> manager using
+                  <a
+                    href="https://docs.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports">IO
+                    completion ports</a>.  Very similar design was picked by
+                  <code>GHC</code> team for the <code>GHC</code> implementation
+                  of <code>IO manager</code> on Windows which will be available
+                  in one of future versions of <code>GHC</code>.
+                  </p>
+                </small>
+              </li>
+              <li>
+                I contributed to <a href="https://input-output-hk.github.io/ouroboros-network/io-sim/Control-Monad-IOSim.html">io-sim</a> a simulator and a drop
+                in replacement for <code>IO</code> monad.  <code>IOSim</code>
+                is a pure monad (free monad) which supports: <ul>
+                  <li><code>Haskell</code> thread interface</li>
+                  <li><code>Haskell</code> synchronous and asynchronous exceptions</li>
+                  <li><a href="https://hackage.haskell.org/package/async"><code>async</code></a> interface</li>
+                  <li><a href="https://hackage.haskell.org/package/stm"><code>stm</code></a> (software transaction memory) interface</li>
+                  <li>time primitives, which are important for writing network simulations</li>
+                  <li>and more ...</li>
+                </ul>
+                It allows us to write production components that can run both
+                in real <code>IO</code> and in simulation.  Testing components
+                in simulation using property testing proved to be a very
+                efficient way of checking correctness and discovering possible
+                bugs that could only surface in very specific scenarios.  This
+                allows to test internal state changes.
+              </li>
+              <li>
+                I wrote and maintained several <a
+                                                 href="https://github.com/input-output-hk/ouroboros-network/tree/master/ouroboros-network/src/Ouroboros/Network/Protocol">protocols</a>
+                using <a
+                  href="https://input-output-hk.github.io/ouroboros-network/typed-protocols/Network-TypedProtocol.html">typed-protocols</a>
+                package.
+              </li>
+              <li>
+                I also helpped to mainain CI using <code>github-actions</code>,
+                and an early version of CI using <a
+                href="https://nix.dev/index.html">nix</a>.
+              </li>
+            </ul>
+        </p>
+        <div class="badges">
+          <span class="badge">Haskell</span>
+          <span class="badge">network programming</span>
+          <span class="badge">nix</span>
+        </div>
     </article>
     <article>
 	<h3><a class="title" id="well-typed-performance-training" href="https://skillsmatter.com/courses/542-well-typed-guide-to-haskell-performance-and-optimization" target="_blank">Well-Typed Guide to Haskell Performance and Optimization</a></h3>
@@ -151,6 +246,9 @@
 	    on real bugs found by Well-Typed engineers while doing Haskell
 	    consulting around the world.
 	</p>
+        <div class="badges">
+          <span class="badge">Haskell</span>
+        </div>
     </article>
     <article>
 	<h3><span class="title" id="praxis-training">Functional Correctness Training</span></h3>
@@ -165,6 +263,10 @@
 	    The training covered advanced usage of QuickCheck and property based
 	    testing, semi-formal specifications.
 	</p>
+        <div class="badges">
+          <span class="badge">Haskell</span>
+          <span class="badge">QuickCheck</span>
+        </div>
     </article>
     <article>
 	<h3><a class="title" id="gravicus" href="http://gravicus.com" target="_blank">Gravicus</a></h3>
@@ -216,16 +318,16 @@
 	href="https://github.com/coot/purescript-cofree-react-router"><code>cofree-react-router</code></a>.
 	</p>
 	<div class="badges">
-	<span class="badge fr">Progressive Web App</span>
-	<span class="badge fr">PureScript</span>
-	<span class="badge fr">React</span>
-	<span class="badge fr">Redox</span>
-	<span class="badge fr">HTML5/CSS3</span>
-	<span class="badge fr">CssModules</span>
-	<span class="badge fr">WebPack</span>
-	<span class="badge fr">karma</span>
-	<span class="badge fr">purescript-enzyme</span>
-	<span class="badge fr">purescript-unit-test</span>
+          <span class="badge fr">Progressive Web App</span>
+          <span class="badge fr">PureScript</span>
+          <span class="badge fr">React</span>
+          <span class="badge fr">Redox</span>
+          <span class="badge fr">HTML5/CSS3</span>
+          <span class="badge fr">CssModules</span>
+          <span class="badge fr">WebPack</span>
+          <span class="badge fr">karma</span>
+          <span class="badge fr">purescript-enzyme</span>
+          <span class="badge fr">purescript-unit-test</span>
 	</div>
     </article>
     <article>
@@ -242,9 +344,8 @@
 	<code>PureScript</code> ecosystem.
 	</p>
 	<div class="badges">
-	<span class="badge fr">Haskell</span>
-	<span class="badge fr">PureScript</span>
-	<span class="badge fr">Stack</span>
+	<span class="badge">Haskell</span>
+	<span class="badge">PureScript</span>
 	</div>
     </article>
     <article>
@@ -551,10 +652,27 @@
 	</div>
     </article>
 </section>
-<section class="papers">
-    <h2 class="section_h">Scientific Articles</h2>
+<section class="papers" id="papers">
+    <h2 class="section_h">Scientific Publications</h2>
     <p>Some papers and preprints that I authored or coauthored:</p>
     <ul>
+    <li>
+      <a href="https://link.springer.com/chapter/10.1007/978-3-030-57761-2_5">Flexible Formality Practical Experience with Agile Formal Methods</a>
+      <div class="journal">Trends in Functional Programming <span>21st International Symposium, TFP 2020</span></div>
+      <ul class="authors">
+        <li>Philipp Kant</li>
+        <li>Kevin Hammond</li>
+        <li>Duncan Coutts</li>
+        <li>James Chapman</li>
+        <li>Nicholas Clark</li>
+        <li>Jared Courdan</li>
+        <li>Neil Davis</li>
+        <li>Javier Diaz</li>
+        <li>Wolfgang Jeltsch</li>
+        <li>Marcin Szamotulski</li>
+        <li>Polina Vinogradova</li>
+      </ul>
+    </li>
     <li>
 	<a href="http://www.ifaamas.org/Proceedings/aamas2010/pdf/01%20Full%20Papers/02_03_FP_0227.pdf">A Logic-Based Representation
 for Coalitional Games with Externalities</a>
@@ -620,7 +738,4 @@ for Coalitional Games with Externalities</a>
     </li>
     </ul>
 </section>
-<footer>
-    <span class="indie-footer">Hosted with love by <a class="indie-link" href="http://indiehosters.net">IndieHosters.</a></span>
-</footer>
 {% endblock %}
