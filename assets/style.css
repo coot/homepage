@@ -526,11 +526,15 @@ section {
 }
 
 .post h2 {
-    font-weight: 300;
+  font-weight: 300;
 }
 
 .post h3 {
-    font-weight: 300;
+  font-weight: 300;
+}
+
+.post h4 {
+  font-weight: 200;
 }
 
 .post #img_container {
@@ -676,4 +680,10 @@ section {
 
 .lemma {
   padding-left: 20px;
+}
+
+blockquote {
+  background-color: #f0f0f0;
+  padding: 1px 0px;
+  margin: 10px 20px;
 }

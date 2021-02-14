@@ -28,7 +28,7 @@ function html () {
 }
 
 function literateHaskell() {
-    child_process.execSync("cabal new-build")
+    child_process.execSync("cabal build")
     return gulp.src("templates/posts/**/*.lhs")
         .pipe(gexec('pandoc <%= file.path %> -o <%= file.path %>.html'))
         .pipe(gexec.reporter())
@@ -45,6 +45,7 @@ function posts() {
         "templates/posts/monadic-io.html",
         "templates/posts/monoidal-functors.html",
         "templates/posts/ghc-tags-plugin.html",
+        "templates/posts/mask.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },

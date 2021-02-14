@@ -7,6 +7,7 @@
 *.log
 *.pdf
 /dist
+/dist.tar.gz
 /haskell/free-garden
 todo.md
 /latex/*.dvi
