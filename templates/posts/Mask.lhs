@@ -12,7 +12,7 @@ Masking Asynchronous Exceptions
 The base library explains asynchronous exceptions and masking quite well, but
 still this is one of the topics that is often misunderstood and some of its
 crucial parts like interruptible operations are not well enough documented to
-slip under the rader too often.
+slip under the radar too often.
 
 Synchronous vs Asynchronous exceptions
 --------------------------------------
