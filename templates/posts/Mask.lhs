@@ -142,14 +142,14 @@ analyse which operations are blocking / interruptible.  As specified in
 [Asynchronous Exceptions in
 Haskell](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/07/asynch-exns.pdf),
 <code>takeMVar</code> is blocking only if <code>v :: MVar ()</code> is
-non-empty. We have two cases:
+empty. We have two cases:
 
-* *<code>v</code> is empty:* neither of the two can raise
+* *<code>v</code> is non-empty:* neither of the two can raise
   asynchronous exception while executing <code>takeMVar</code>.  This means that
   both implementations will install the exception handler before an asynchronous
   exception is raised, and this is what we wanted.
 
-* *if <code>v</code> is non-empty:* the semantics of <code>MVar</code> ensures that
+* *if <code>v</code> is empty:* the semantics of <code>MVar</code> ensures that
   <code>takeMVar</code> is interruptible until it is empty, once
   <code>takeMVar</code> takes the value it becomes non-blocking.  This ensure
   that asynchronous exceptions can be raised by
