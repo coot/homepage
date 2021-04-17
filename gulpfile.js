@@ -46,6 +46,7 @@ function posts() {
         "templates/posts/monoidal-functors.html",
         "templates/posts/ghc-tags-plugin.html",
         "templates/posts/mask.html",
+        "templates/posts/haddock-multi-component-support.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },
