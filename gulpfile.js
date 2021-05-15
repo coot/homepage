@@ -47,6 +47,7 @@ function posts() {
         "templates/posts/ghc-tags-plugin.html",
         "templates/posts/mask.html",
         "templates/posts/haddock-multi-component-support.html",
+        "templates/posts/typed-protocol.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },
@@ -73,7 +74,7 @@ function pdflatex() {
 }
 
 function copyPdflatexSVGs() {
-    return gulp.src("latex/*.svg")
+    return gulp.src("latex/*.svg", "latex/*.png")
         .pipe(gulp.dest("images"));
 }
 

@@ -53,6 +53,11 @@ footer .license {
     padding-top: 0px;
 }
 
+.small * {
+  font-size: 0.6em;
+  line-height: 2.8em;
+}
+
 ul {
   list-style: circle;
 }
@@ -188,6 +193,21 @@ pre.haskell a {
   max-width: 100%;
   display: block;
   margin: 0 auto;
+}
+
+.post figure {
+  padding-left: 0;
+  padding-right: 0;
+  margin: 0 auto;
+  min-width: 100%;
+}
+
+.post figure.small img {
+  max-width: 350px
+}
+
+.post figure.large img {
+  width: 100%;
 }
 
 .post .video iframe {
@@ -364,12 +384,17 @@ footer {
 }
 
 .post_footer .home {
-  flex: 1 0 50%;
+  flex: 1 0 10%;
+  text-align: left;
+}
+
+.post_footer .comment {
+  flex: 1 0 30%;
   text-align: left;
 }
 
 .post_footer .twitter {
-  flex: 1 0 50%;
+  flex: 1 0 60%;
   font-style: italic;
   text-align: right;
 }
