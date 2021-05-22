@@ -24,4 +24,4 @@ library
     MonadicIO
     Data.Functor.Monoidal
     Mask
-    TypedProtocol
+    TypedProtocolPipelining

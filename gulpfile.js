@@ -47,7 +47,7 @@ function posts() {
         "templates/posts/ghc-tags-plugin.html",
         "templates/posts/mask.html",
         "templates/posts/haddock-multi-component-support.html",
-        "templates/posts/typed-protocol.html",
+        "templates/posts/typed-protocol-pipelining.html",
     ])
         .pipe(nunjucksGulp.compile(
             { wrapperClass: "post" },
