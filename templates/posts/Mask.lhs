@@ -388,11 +388,12 @@ catch exceptions which you care about not all of them.  To avoid catching
 asynchronous exceptions one can always use the following snippet (though it's
 still recommended to be more specific than any synchronous exception!):
 
-```
+```haskell
 catchJust (\e ->
             case fromException e :: Maybe SomeAsyncException of
               Just _  -> Nothing
-              Nothing -> Just e)
+              Nothing -> Just e
+          )
 ```
 
 Above all, use your best judgement how to handle exceptions.  In some

@@ -44,7 +44,7 @@ main > header .section_h {
   width: 100%;
 }
 
-footer .license {
+.license {
   font-variant: small-caps;
 }
 
@@ -55,7 +55,7 @@ footer .license {
 
 .small * {
   font-size: 0.6em;
-  line-height: 2.8em;
+  line-height: 12pt;
 }
 
 ul {
@@ -153,19 +153,33 @@ img {
 
 pre {
     padding: 10px;
-    background-color: rgba(78, 44, 251, 0.1);
+    /* background-color: rgba(78, 44, 251, 0.1); */
     color: #505050;
     border-radius: 1px;
 }
 
 pre.haskell {
-    background-color: rgba(44, 127, 251, 0.2);
+    /* background-color: rgba(44, 127, 251, 0.2); */
     border-radius: 1px;
     white-space: pre;
 }
 
 pre.haskell a {
   color: inherit;
+}
+
+.haskell .dt,
+.haskell .kw {
+  font-weight: bold;
+}
+
+.haskell .op {
+  color: #3f51b5;
+}
+
+.haskell .co {
+  font-family: 'Open Sans', sans-serif;
+  color: #707070;
 }
 
 .mjx-chtml.MathJax_CHTML {
@@ -511,7 +525,7 @@ a .icon {
     box-shadow: 1px 1px 3px #f0f0f0;
 }
 
-.cv {
+.hidden, .cv {
   display: none;
 }
 

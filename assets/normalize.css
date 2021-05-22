@@ -230,7 +230,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: 'Oxygen Mono', monospace;
+  font-family: monospace;
   font-size: .95em;
   line-height: 1.5em;
 }

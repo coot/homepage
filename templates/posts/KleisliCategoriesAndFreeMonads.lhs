@@ -104,7 +104,7 @@ This particular instance satisfies rather interesting laws:
 ![liftFree natural transformation](/images/liftFree-nat.svg)
 
 or as an equation:
-```
+```haskell
 fmap g . liftFree == liftFree . fmap g
 ```
 
@@ -115,13 +115,13 @@ This is more or less streightforward, just take a look at the definition of
 
 or as an equation:
 
-```
+```haskell
 fmap g . foldNatFree nat == foldNatFree nat . fmap g
 ```
 
 This one is slightly more involved, and lets prove it:
 
-```
+```haskell
 (foldNatFree nat . fmap g) (Return a)
   = foldNatFree nat (Return (g a))
   = return (g a)
@@ -132,7 +132,7 @@ This one is slightly more involved, and lets prove it:
 
 and
 
-```
+```haskell
 (foldNatFree nat . fmap g) (Free ff)
   = foldNatFree nat (fmap g (Free ff))
   = foldNatFree nat (Free (fmap (fmap g) ff))
@@ -161,7 +161,7 @@ hold):
 
 or as an equation:
 
-```
+```haskell
 return = return . foldNatFree nat
 ```
 
@@ -172,14 +172,14 @@ following diagram commutes:
 
 or as an equation:
 
-```
+```haskell
 join . (foldNatFree nat . fmap (foldNatFree nat))
   == foldNatFree nat . join
 ```
 
 Let us prove this it:
 
-```
+```haskell
 join . (foldNatFree nat . fmap (foldNatFree nat)) (Return (Return a))
   == join (foldNatFree nat (Return (foldNatFree nat (Retrun a))))
   == join (foldNatFree nat (Return (return a))
@@ -190,7 +190,7 @@ join . (foldNatFree nat . fmap (foldNatFree nat)) (Return (Return a))
 ```
 
 And the other one, which we prove starting from the right hand side:
-```
+```haskell
 foldNatFree nat (join (Free ff)))
   -- by definition of join
   = foldNatFree nat (Free (fmap join ff))
@@ -217,7 +217,7 @@ foldNatFree nat (join (Free ff)))
 
 Note that by the natural transformation law for `foldNatFree` we have:
 
-```
+```haskell
 foldNatFree nat . fmap (foldNatFree nat)
   == fmap (foldNatFree nat) . foldNatFree nat
 ```
@@ -225,11 +225,13 @@ foldNatFree nat . fmap (foldNatFree nat)
 For any monad morphism `fn :: (Monad m, Monad n) => m a -> n a`, we will show
 that:
 
-```fn . (f <=< g) == (fn . f) <=< (fn . g)```
+```haskell
+fn . (f <=< g) == (fn . f) <=< (fn . g)
+```
 
 in particular this is true for `foldNatFree nat`.
 
-```
+```haskell
 (fn . f <=< fn . g)
   == \a -> fn . f =<< (fn . g) a
   == \a -> fn . f =<< fn (g a)
@@ -275,14 +277,16 @@ Kleisli categories for free monads
 This means that `Kleisli (Free f)` is a free category for the class of graphs
 of type
 
-```Functor f => Kleisli f```
+```haskell
+Functor f => Kleisli f
+```
 
 (`Keisli f` is a category only when `f` is a monad).  Both morphisms:
 `liftKleisli` is marely a morphisms of graphs, while `foldKleisli` is
 a functor, which means it preserves `id` and the composition `(.) :: Category
 c => c y z -> c x y -> c x y`.
 
-```
+```haskell
 foldKleisli nat id
   == foldKleisli nat (Kleisli Return)
   == Kleisli (foldNatFree nat . Return)
@@ -290,7 +294,7 @@ foldKleisli nat id
   == id
 ```
 
-```
+```haskell
 foldKleisli nat (Kleisli f . Kleisli g)
   == foldKleisli nat (Kleisli f <=< g)
   == Kleisli (foldNatFree nat (f <=< g))

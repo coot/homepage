@@ -140,7 +140,7 @@ and `fbc :: b -> m c`:: c -> m d:
 Associativity for `>>=` tells us that these two are equal.  This is
 equivalent with associativity of `join` which we expressed above in the form
 
-```
+```haskell
 (join . join == join . fmap join) :: m (m (m a)) -> m a
 ```
 
