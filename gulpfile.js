@@ -115,6 +115,7 @@ function injectManifest() {
     })
 }
 
+exports.sw       = injectManifest
 exports.lhs      = literateHaskell
 exports.posts    = series(literateHaskell, posts)
 exports.css      = parallel(css, fonts)

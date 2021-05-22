@@ -6,80 +6,75 @@ importScripts(
 
 workbox.core.setCacheNameDetails({
   prefix: 'coot-homepage',
-  suffix: 'v1',
+  suffix: 'v2',
 });
 
 workbox.routing.registerRoute(
-    (function(args) {
-      var pathname = args.url.pathname
-      var hostname = args.url.hostname
-      if (hostname != location.hostname)
-        return null
-      if (/^\/(\?.*|#.*)?$/.test(pathname))
-        return {}
-      else if (/^\/.*\.html/.test(pathname))
-        return {}
-      else if (/^\/assets\/.*\.(css|js)/.test(pathname))
-        return {}
-      else
-        return null
+    /\/assets\//
+  , workbox.strategies.staleWhileRevalidate({
+      cacheableResponse: {
+        statuses: [0, 200]
+      }
     })
-  , workbox.strategies.networkFirst()
 )
 
+workbox.routing.registerRoute(
+    /^\.html/
+  , workbox.strategies.networkOnly()
+)
 
 workbox.routing.registerRoute(
     /\/images\//
   , workbox.strategies.staleWhileRevalidate({
-    cacheableResponse: {
-      statuses: [0, 200]
-    }
-  })
+      cacheableResponse: {
+        statuses: [0, 200]
+      }
+    })
 )
 
 workbox.routing.registerRoute(
     /^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/css\/font-awesome\.min\.css/
   , workbox.strategies.staleWhileRevalidate({
-    cacheableResponse: {
-      statuses: [0, 200, 304]
-    }
-  })
+      cacheableResponse: {
+        statuses: [0, 200, 304]
+      }
+    })
 )
 
 workbox.routing.registerRoute(
     /^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/fonts\/fontawesome-webfont\.woff.*/
   , workbox.strategies.staleWhileRevalidate({
-    cacheableResponse: {
-      statuses: [0, 200]
-    }
-  })
+      cacheableResponse: {
+        statuses: [0, 200]
+      }
+    })
 )
 
 workbox.routing.registerRoute(
     /\/assets\/.*\.ttf/
   , workbox.strategies.staleWhileRevalidate({
-    cacheableResponse: {
-      statuses: [0, 200]
-    }
-  })
+      cacheableResponse: {
+        statuses: [0, 200]
+      }
+    })
 )
 
 workbox.routing.registerRoute(
     /^https?:\/\/fonts\.gstatic.com\/s\/OpenSans\/.*/
   , workbox.strategies.staleWhileRevalidate({
-    cacheableResponse: {
-      statuses: [0, 200]
-    }
-  })
+      cacheableResponse: {
+        statuses: [0, 200]
+      }
+    })
 )
 
 workbox.routing.registerRoute(
     /^https?:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/(math)?jax\/2\.7\.4\/.*/
   , workbox.strategies.staleWhileRevalidate({
-    cacheableResponse: {
-      statuses: [0, 200]
-    }
-  })
+      cacheableResponse: {
+        statuses: [0, 200]
+      }
+    })
 )
 
 workbox.precaching.precacheAndRoute([]);
