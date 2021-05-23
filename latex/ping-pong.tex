@@ -1,4 +1,5 @@
-\documentclass[tikz,multi={tikzpicture},png={outfile=ping-pong.png,density=1000}]{standalone}
+\documentclass[tikz,multi={tikzpicture},convert={outfile=images/ping-pong.png,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex}}]{standalone}
 \usetikzlibrary{automata, positioning, arrows}
 \usepackage{xcolor}
 \newcommand{\StIdle}{\tiny\texttt{StIdle}}
@@ -12,7 +13,7 @@
 \newcommand{\StDoneX}{\tiny\texttt{StDone2}}
 \newcommand{\MsgPingX}{\tiny\texttt{MsgPing2}}
 \newcommand{\MsgPongX}{\tiny\texttt{MsgPong2}}
-\newcommand{\MsgPongDoneX}{\tiny\texttt{MsgPongDone2}}
+\newcommand{\MsgBusy}{\tiny\texttt{MsgBusy}}
 \newcommand{\MsgDoneX}{\tiny\texttt{MsgDone2}}
 \definecolor{mygreen}{rgb}{0,0.819608f,0.545098}
 \definecolor{myblue}{rgb}{0.172549,0.603922,0.984314}
@@ -87,8 +88,8 @@
 
   \draw (Idle) edge[above]            node{\MsgDoneX} (Done);
   \draw (Idle) edge[left, bend left]  node{\MsgPingX} (Busy);
-  \draw (Busy) edge[right, bend left] node{\MsgPongDoneX} (Idle);
-  \draw (Busy.120) to [out=120,in=60,looseness=10] node[above]{\MsgPongX} (Busy.60);
+  \draw (Busy) edge[right, bend left] node{\MsgPongX} (Idle);
+  \draw (Busy.120) to [out=120,in=60,looseness=10] node[above]{\MsgBusy} (Busy.60);
 \end{tikzpicture}
 
 \end{document}
