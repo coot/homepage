@@ -6,7 +6,6 @@ Masking Asynchronous Exceptions
 
 > import Control.Concurrent.MVar
 > import Control.Exception
-> import System.FilePath (FilePath)
 > import GHC.IO.Handle.Types (Handle__)
 
 The base library explains asynchronous exceptions and masking quite well, but

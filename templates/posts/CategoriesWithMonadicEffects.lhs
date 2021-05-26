@@ -29,6 +29,8 @@ posts on [finite state machines and categories](/posts/finite-state-machines.htm
 > {-# LANGUAGE ScopedTypeVariables    #-}
 > {-# LANGUAGE TypeFamilies           #-}
 
+> {-# OPTIONS_GHC -Wno-redundant-constraints #-}
+
 > module CategoriesWithMonadicEffects where
 
 > import           Prelude hiding (id, (.))
@@ -89,13 +91,13 @@ functors.
 > type instance AlgebraType  Cat c = Category c
 > 
 > instance FreeAlgebra2 Cat where
->   liftFree2 :: f x y -> Cat f x y
+>   liftFree2 :: f a b -> Cat f a b
 >   liftFree2 = (:.: Id)
 > 
 >   foldNatFree2 :: Category c
 >                => (forall x y. f x y -> c x y)
->                -> Cat f x y
->                -> c x y
+>                -> Cat f a b
+>                -> c a b
 >   foldNatFree2 _   Id          = id
 >   foldNatFree2 fun (bc :.: ab) = fun bc . foldNatFree2 fun ab
 > 
@@ -214,17 +216,16 @@ a free category with effects.
 > type instance AlgebraType  (FreeEffCat m) c  = EffCategory c m
 > instance Monad m => FreeAlgebra2 (FreeEffCat m) where
 >
->   liftFree2 :: Category c
->             => c x y
->             -> FreeEffCat m c x y
+>   liftFree2 :: c a b
+>             -> FreeEffCat m c a b
 >   liftFree2    = Base
 >
 >   foldNatFree2 :: ( Category f
 >                   , EffCategory c m
 >                   )
 >                => (forall x y. f x y -> c x y)
->                -> FreeEffCat m f x y
->                -> c x y
+>                -> FreeEffCat m f a b
+>                -> c a b
 >   foldNatFree2 nat (Base cab)  = nat cab
 >   foldNatFree2 nat (Lift mcab) = lift $ foldNatFree2 nat <$> mcab
 >

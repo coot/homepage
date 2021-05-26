@@ -14,7 +14,7 @@ start with a free monad.
 > import Prelude hiding (id, (.))
 > import Control.Category (Category (id, (.)))
 > import Control.Monad (ap, join)
-> import qualified Control.Monad.Free as Free
+> import Data.Kind (Type)
 
 Kleisli contstruction
 ---------------------
@@ -61,7 +61,7 @@ package](https://hackage.haskell.org/package/free-algebras-0.0.7.0/docs/Control-
 (I don't include all details that are not important for this blog post;  The
 details where described in this [post](/posts/free-monads.html)):
 
-> class FreeAlgebra1 (m :: (* -> *) -> * -> *) where
+> class FreeAlgebra1 (m :: (Type -> Type) -> Type -> Type) where
 >   -- | Natural transformation that embeds generators into `m`.
 >   liftFree :: Functor f => f a -> m f a
 > 

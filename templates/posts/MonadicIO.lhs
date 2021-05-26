@@ -13,8 +13,6 @@ To find an answer we will build a two (very incomplete) models for `IO`:
 > module MonadicIO where
 
 > import           Control.Monad (ap)
-> import           Data.List.NonEmpty (NonEmpty (..))
-> import qualified Data.List.NonEmpty as NE
 > import qualified System.IO as IO
 
 Monoidal IO
@@ -56,6 +54,7 @@ let us interpret `MonoidalIO` in the `IO` monad.
 >   IO.writeFile path str >> runMonoidalIO next
 > runMonoidalIO ((Read path) : next)      =
 >   IO.readFile path >> runMonoidalIO next
+> runMonoidalIO [] = error "error: no action"
 
 Monadic IO
 ----------
@@ -85,6 +84,7 @@ We can transform any `MonoidalIO` into `MonadicIO`.
 > fromMonoidalIO ((Read path) : next)      = ReadM path (\_ -> fromMonoidalIO next)
 > fromMonoidalIO ((Write path str) : next) = WriteM path str (fromMonoidalIO next)
 > fromMonoidalIO (Return x : _)            = ReturnM x
+> fromMonoidalIO []                        = error "error: no action"
 
 We cannot transform `MonadicIO` to `MonoidalIO`, only because we did not
 provide a way to bind data read from a file in `MonoidalIO` just for
