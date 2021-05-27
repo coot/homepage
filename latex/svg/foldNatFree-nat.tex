@@ -1,0 +1,17 @@
+\documentclass[tikz,convert={outfile=images/foldNatFree-nat.svg,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/svg}}]{standalone}
+\begin{document}
+\tikzstyle{every node}=[font=\footnotesize]
+\begin{tikzpicture}
+    \node (A) at (0,2) {\texttt{$m\;f\;a$}};
+    \node (B) at (4,2) {\texttt{$d\;a$}};
+    \node (C) at (0,0) {\texttt{$m\;f\;b$}};
+    \node (D) at (4,0) {\texttt{$d\;b$}};
+    \draw[->] (A) -- node[left] {\textcolor{black!80}{$\texttt{fmap}\;g$}} (C);
+    \draw[->] (B) -- node[right] {\textcolor{black!80}{$\texttt{fmap}\;g$}} (D);
+    \draw[->] (A) -- node [above]
+    {\textcolor{black!80}{$\texttt{foldNatFree}\;\texttt{nat}$}} (B);
+    \draw[->] (C) -- node [below]
+    {\textcolor{black!80}{$\texttt{foldNatFree}\;\texttt{nat}$}} (D);
+\end{tikzpicture}
+\end{document}

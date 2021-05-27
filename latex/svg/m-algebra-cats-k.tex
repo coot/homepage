@@ -1,0 +1,18 @@
+\documentclass[tikz,convert={outfile=images/m-algebra-cats-k.svg,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/svg}}]{standalone}
+\begin{document}
+\begin{tikzpicture}
+    \node (A) at (0,2) {\textcolor{black!80}{\(\mathrm{Alg}\)}};
+    \node (B) at (6,2) {\textcolor{black!80}{\(\mathrm{M\-Alg}\)}};
+    \node (C) at (3,0) {\textcolor{black!80}{\(\mathrm{Hask}\)}};
+    \node (A') at (0.3, 2.0) {};
+    \node (B') at (5.6, 1.9) {};
+    \node (C') at (2.8, 0.3) {};
+    \node (C'') at (3.2, 0.3) {};
+    \draw [->] (A)  -- node [above]       {\(\mathrm{k}\)} (B);
+    \draw [->] (A') -- node [above right] {\(\mathrm{U}\)} (C'); 
+    \draw [<-] (A) -- node [below left]   {\(\mathrm{F}\)} (C); 
+    \draw [<-] (B) -- node [above left]   {\(\mathrm{U}_{\mathrm{MAlg}}\)} (C);
+    \draw [->] (B') -- node [below right] {\(\mathrm{FreeMAlg\; m}\)} (C'');
+\end{tikzpicture}
+\end{document}

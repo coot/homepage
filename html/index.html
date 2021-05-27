@@ -1,0 +1,178 @@
+{% extends "templates/base.html" %}
+
+{% block header %}
+    {% include "templates/header.html" %}
+{% endblock %}
+
+{% block main %}
+    <header>
+	<h1 class="section_h">Blog Posts & Events</h1>
+    </header>
+    <ul class="blog-posts">
+        <li>
+          <a href="/posts/haddock-multi-component-support.html"><h1>Haddock: better support for multiple components</h1></a>
+          <div class="date">Published 17 IV 2021</div>
+        </li>
+        <li>
+          <a href="/posts/mask.html"><h1>Masking asynchronous exceptions</h1></a>
+          <div class="date">Published 14 II 2021</div>
+          <p>
+            Interruptible operations in Haskell and masking asychnronous
+            exceptions.
+          </p>
+        </li>
+	<li>
+	    <a href="/posts/ghc-tags-plugin.html"><h1>Ghc Tags Plugin</h1></a>
+	    <div class="date">Published 7 III 2020</div>
+	    <p>
+                Generating vim tags file using a <a href="https://hackage.haskell.org/package/ghc-tags-plugin">GHC plugin</a>.
+	    </p>
+	</li>
+	<li>
+	    <a href="/posts/monoidal-functors.html"><h1>Monoidal and applicative functors</h1></a>
+	    <div class="date">Published 1 III 2019</div>
+	    <p>
+		In this post we explore the equivalence between monoidal and
+		applicative functors.  Monoidal functors in Hask are functors
+		which preserve the product (in some relaxed way), while
+		applicative functors are ones that preserve application of
+		lambdas.  Monoidal functors have much more conincise laws, but
+		at the end it turned out that the applicative formulation was
+		very successful.
+	    </p>
+	    <ul class="links">
+		<li><a href="https://github.com/coot/homepage/blob/master/templates/posts/Data/Functor/Monoidal.lhs">code <small>(literate haskell)</small></a></li>
+	    </ul>
+	</li>
+	<li>
+	    <a href="/posts/monadic-io.html"><h1>Why Monadic IO?</h1></a>
+	    <div class="date">Published 8 II 2019</div>
+	    <p>
+		In this post we will discover that the imperative programming
+		style leads to monoidal IO, while using recursive style, which
+		is more natural for functional programming, leads to monadic
+		IO.
+	    </p>
+	    <ul class="links">
+		<li><a href="https://github.com/coot/homepage/blob/master/templates/posts/MonadicIO.lhs">code <small>(literate haskell)</small></a></li>
+	    </ul>
+	</li>
+	<li>
+	    <a href="/posts/categories-with-monadic-effects.html"><h1>Categories with Monadic Effects and State Machines</h1></a>
+	    <div class="date">Published 1 II 2019</div>
+	    <p>
+		In this post we will discover and describe categories which
+		admits monadic effects, we will build a free object of this
+		type and show how to use it to build a typed safe state machine
+		that was presented by Edwin Brady.
+	    </p>
+	    <ul class="links">
+		<li><a href="https://github.com/coot/homepage/blob/master/templates/posts/CategoriesWithEffects.lhs">code <small>(literate haskell)</small></a></li>
+	    </ul>
+	</li>
+	<li>
+	    <a href="/posts/kleisli-categories-and-free-monads.html"><h1>Kleisli categories and free monads</h1></a>
+	    <div class="date">Published 20 XII 2018</div>
+	    <p>
+		In this short post we explore the interplay of free monads and
+		Kleisli categories.
+	    </p>
+	    <ul class="links">
+		<li><a href="https://github.com/coot/homepage/blob/master/templates/posts/KleisliCategoriesAndFreeMonads.lhs">code <small>(literate haskell)</small></a></li>
+	    </ul>
+	</li>
+	<li>
+	    <a href="/posts/finite-state-machines.html"><h1>Typed transitions, finite state machines and free categories</h1></a>
+	    <div class="date">Published 25 VIII 2018</div>
+	    <p>
+                In this post I model finite state machines using free
+                categories; you will also get a gentle introduction to Kleisli
+                categories, folds on free categories and finally tagless
+                style.  Based on a simple example of an FSM by
+                <a href="https://wickstrom.tech/finite-state-machines/2017/11/19/finite-state-machines-part-2.html">Oscar Wickström</a>.
+	    </p>
+	    <ul class="links">
+                <li><a href="https://github.com/coot/homepage/blob/master/templates/posts/FiniteStateMachines.lhs">code <small>(literate haskell)</small></a></li>
+	    </ul>
+	</li>
+	<li>
+	    <a href="/posts/monadicity.html"><h1>Monadicity</h1> <i>from algebras to monads and back to algebras</i></a>
+	    <div class="date">Published 9 VIII 2018</div>
+	    <p>
+		Introduction to the monadicity theory based on <a
+		    href="https://hackage.haskell.org/package/free-algebras">free-algebras</a>
+		Haskell package.
+	    </p>
+	    <ul class="links">
+		<li><a href="https://github.com/coot/free-algebras/blob/master/examples/src/Data/Algebra/Free/Monadicity.hs">code</a></li>
+	    </ul>
+	</li>
+	<li>
+	    <a href="https://hackage.haskell.org/package/free-algebras"><h1>Free algebras</h1> <i>haddock documentation</i></a>
+	    <p>
+		Link to <code>free-algebra</code> package on hackage.
+	    </p>
+	</li>
+	<li>
+	    <a href="/posts/free-monads.html"><h1>From free algebras to free monads</h1></a>
+	    <div class="date">Published 30 VII 2018</div>
+	    <p>
+		<small>The post was re-published on
+		    <a href="https://iohk.io/blog/from-free-algebras-to-free-monads/">iohk blog</a>.</small>
+	    </p>
+	    <p>
+		Introduction to <i>Universal Algebra</i>, a mathematical discipline
+		that is hidden under many constructions in Haskell ecosystem.
+		It is more concrete than <i>Category Theory</i>, and hence often
+		easier to understand.  It is also a very useful source of
+		examples in <i>Category Theory</i>.
+	    </p>
+	</li>
+	<li>
+	    <a href="https://www.youtube.com/watch?v=klpKIs84_bU"><h1>Composing cofree intepreters</h1></a>
+	    <div class="date">Published: 30 VIII 2018</div>
+	    <p>
+		My talk at <a href="https://www.meetup.com/Monadic-Warsaw/">Monadic Warsaw</a> Haskell meetup on <a
+		    href="http://www.purescript.org">PureScript</a> type system
+		and composition of cofree comonads.
+	    </p>
+	    <ul class="links">
+		<li><a href="https://www.youtube.com/watch?v=klpKIs84_bU">youtube</a></li>
+		<li><a href="https://coot.github.io/talk-composing-cofree-comonads/#/">slides</a></li>
+		<li><a href="https://gist.github.com/coot/6bac5a9839403f65c40e8494031c9a00">gist</a></li>
+	    </ul>
+	</li>
+	<li>
+	    <h1>Workshop on Category Theory</h1>
+	    <div class="date">Published: 12 VI 2018</div>
+	    <p>
+		Workshop I gave at <a href="">Monadic Party</a>.  <small>Unfortunatelly, first 30 minutes of the recording was lost...</small>
+	    </p>
+	    <ul class="links">
+		<li><a href="https://www.youtube.com/watch?v=-WdBFLyTHGw&t=2990s">youtube: lectures 1 & 2</a></li>
+		<li><a href="https://www.youtube.com/watch?v=zko2fRRLyPQ&t=79s">youtube: lectures 3 & 4</a></li>
+	    </ul>
+	</li>
+	<li>
+	    <a href="https://www.youtube.com/watch?v=O78UOsKAXsc"><h1>Routing with cofree comonad</h1></a>
+	    <div class="date">Published: 14 X 2017</div>
+	    <p>
+		My talk at PureScript Conf 2017 (<small>a satelite event of Lambda
+		    Conf 2017</small>) about routing frontend applications using coffree
+		comonad and modelling DOM with <code>Coffree []</code>.
+	    </p>
+	    <ul class="links">
+		<li><a href="https://www.youtube.com/watch?v=O78UOsKAXsc">youtube</a></li>
+		<li><a href="https://coot.github.io/routing-with-cofree-comonad/#/">slides</a></li>
+		<li><a href="https://github.com/coot/purescript-cofree-react-router">code</a></li>
+	    </ul>
+	</li>
+	<li>
+	    <a href="/posts/peano-algebras-in-haskell.html"><h1>Peano Algebras in Haskell</h1></a>
+	    <div class="date">Published: 2017</div>
+	    <p>
+		Fun with Peano axioms in Haskell.
+	    </p>
+	</li>
+    </ul>
+{% endblock %}

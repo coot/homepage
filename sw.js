@@ -10,17 +10,17 @@ workbox.core.setCacheNameDetails({
 });
 
 workbox.routing.registerRoute(
+    /^\.html/
+  , workbox.strategies.networkOnly()
+)
+
+workbox.routing.registerRoute(
     /\/assets\//
   , workbox.strategies.staleWhileRevalidate({
       cacheableResponse: {
         statuses: [0, 200]
       }
     })
-)
-
-workbox.routing.registerRoute(
-    /^\.html/
-  , workbox.strategies.networkOnly()
 )
 
 workbox.routing.registerRoute(
@@ -43,15 +43,6 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
     /^http:\/\/netdna\.bootstrapcdn\.com\/font-awesome\/4\.1\.0\/fonts\/fontawesome-webfont\.woff.*/
-  , workbox.strategies.staleWhileRevalidate({
-      cacheableResponse: {
-        statuses: [0, 200]
-      }
-    })
-)
-
-workbox.routing.registerRoute(
-    /\/assets\/.*\.ttf/
   , workbox.strategies.staleWhileRevalidate({
       cacheableResponse: {
         statuses: [0, 200]

@@ -16,4 +16,4 @@ todo.md
 /latex/*.aux
 /latex/*.ps
 /latex/*.pdf
-/templates/posts/**/*.lhs.html
+/posts/lhs/.build

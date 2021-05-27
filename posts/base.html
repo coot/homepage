@@ -1,0 +1,42 @@
+{% extends "templates/base.html" %}
+
+{% block headExtra %}
+	<script type="text/javascript" async
+	    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+	</script>
+	<script type="text/x-mathjax-config">
+	    MathJax.Hub.Config({
+		tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+		TeX: {
+		    extensions: ["AMSmath.js"]
+		},
+	    });
+	</script>
+{% endblock %}
+
+{% block header %}
+		<ul class="links">
+		    <li class="home">
+			<a href="/">Home</a>
+		    </li>
+		    <li class="right">
+			<small>by <a href="https://twitter.com/coot">@me_coot</a></small>
+		    </li>
+		    {% block headerentries %}
+		    {% endblock %}
+		</ul>
+{% endblock %}
+
+{% block footer %}
+<footer class="post_footer">
+    <div class="home">
+	<a href="/">Home</a>
+    </div>
+    <div class="comment">
+      <a href="https://github.com/coot/homepage/issues/">Comment on GitHub</a>
+    </div>
+    <div class="twitter">
+	Follow me on twitter <a href="https://twitter.com/me_coot">@me_coot</a>
+    </div>
+</footer>
+{% endblock %}

@@ -12,7 +12,7 @@
     "gulp-nunjucks": "^4.0.0",
     "handlebars": "^4.7.7",
     "html5shiv": "^3.7.3",
-    "nunjucks": "^3.2.0",
+    "nunjucks": "^3.2.3",
     "workbox-cli": "^3.6.3"
   },
   "devDependencies": {

@@ -1,0 +1,11 @@
+\documentclass[tikz,convert={outfile=images/one-object-cat.svg,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/svg}}]{standalone}
+\begin{document}
+\tikzstyle{every node}=[font=\footnotesize]
+\begin{tikzpicture}
+    \node at (0,0) {\texttt{*}};
+    \node at (0,0) [below] {\textcolor{black!80}{\texttt{v}}};
+    \node at (0,1.1) [above] {\textcolor{black!80}{\texttt{[e]}}};
+    \draw[->] (-0.1,0.1) .. controls (-1.7,1.5) and (1.7,1.5) .. (0.1,0.1);
+\end{tikzpicture}
+\end{document}
