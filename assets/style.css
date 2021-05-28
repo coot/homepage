@@ -134,6 +134,10 @@ img {
   padding-inline-start: 0;
 }
 
+.info-hdr .links li.rss {
+  margin-left: 15px;
+}
+
 .info-hdr .links li {
   margin-left: 5px;
   display: inline-block;
@@ -252,10 +256,6 @@ pre.haskell a {
     font-weight: 300;
     font-size: 2em;
     text-align: center;
-}
-
-.info-hdr a i.fa {
-    color: #333;
 }
 
 .info-hdr p {
@@ -394,7 +394,6 @@ footer {
 .post_footer {
   display: flex;
   margin-top: 40px;
-  font-size: 1.05em;
 }
 
 .post_footer .home {
@@ -408,7 +407,13 @@ footer {
 }
 
 .post_footer .twitter {
-  flex: 1 0 60%;
+  flex: 1 0 40%;
+  font-style: italic;
+  text-align: right;
+}
+
+.post_footer .rss {
+  flex: 1 0 10%;
   font-style: italic;
   text-align: right;
 }
@@ -467,15 +472,11 @@ a .icon {
 
 .social > a {
   position: relative;
-  padding-left: 20px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
-.social > a .icon {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
+.social > a #rss_i,
 .social > a #twitter_i {
   top: 4px;
 }

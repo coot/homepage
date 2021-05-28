@@ -101,7 +101,7 @@ The complete list of interruptible operations is astonishingly short:
   <li><code>putMVar</code> when the <code>MVar</code> is non-empty,</li>
   <li><a
 href="https://hackage.haskell.org/package/stm/docs/Control-Monad-STM.html#v:retry"><code>retry :: STM a</code></a>,</li>
-  <li><a href=""><code>throwTo</code></a>
+  <li><a href=""><code>throwTo</code></a></li>
   <li><a
 href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/exts/ffi.html#interruptible-foreign-calls">interrutible ffi calls</a>.</li>
   <li style="display: none">there are also some primitive operations in non-threaded RTS, which are interruptible, but this will be eventually fixed.</li>

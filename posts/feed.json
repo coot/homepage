@@ -1,0 +1,45 @@
+{ "pubDate":   "28 May 2021 00:00 GMT"
+, "entries":
+  [ { "title": "Pipelining in Typed Protocols"
+    , "url":   "https://coot.me/posts/typed-protocol-pipelining.html"
+    , "date":  "27 May 2021 00:00 GMT"
+    , "data":  "posts/lhs/.build/TypedProtocolPipelining.html"
+    }
+  , { "title": "Masking Asynchronous Exceptions"
+    , "url":   "https://coot.me/posts/mask.html"
+    , "date":  "14 Feb 2021 00:00 GMT"
+    , "data":  "posts/lhs/.build/Mask.html"
+    }
+  , { "title": "Monoidal and Applicative Functors"
+    , "url":   "https://coot.me/posts/monoidal-functors.html"
+    , "date":  "01 Mar 2019 00:00 GMT"
+    , "data":  "posts/lhs/.build/Data/Functor/Monoidal.html"
+    }
+  , { "title": "Why Monadic IO?"
+    , "url":   "https://coot.me/posts/monadic-io.html"
+    , "date":  "08 Feb 2019 00:00 GMT"
+    , "data":  "posts/lhs/.build/MonadicIO.html"
+    }
+  , { "title": "Categories with Monadic Effects and State Machines"
+    , "url":   "https://coot.me/posts/categories-with-monadic-effects.html"
+    , "date":  "01 Feb 2019 00:00 GMT"
+    , "data":  "posts/lhs/.build/CategoriesWithMonadicEffects.html"
+    }
+  , { "title": "Ghc Tags Plugin"
+    , "url":   "https://coot.me/posts/ghc-tags-plugin.html"
+    , "date":  "09 Aug 2018 00:00 GMT"
+    , "data":  "posts/html/ghc-tags-plugin.htm"
+    }
+  , { "title": "From free algebras to free monads"
+    , "url":   "https://coot.me/posts/free-monads.html"
+    , "date":  "30 Jul 2018 00:00 GMT"
+    , "data":  "posts/html/free-monads.htm"
+    }
+  , { "title": "Typed Transitions, Finite State Machines and Free Categories"
+    , "url":   "https://coot.me/posts/finite-state-machines.html"
+    , "date":  "25 Jul 2018 00:00 GMT"
+    , "data":  "posts/lhs/.build/FiniteStateMachines.html"
+    }
+  ]
+}
+

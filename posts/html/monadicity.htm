@@ -1,0 +1,574 @@
+<header>
+    <h1 class="section_h" id="monadicity">Monadicity</h1>
+    <h3>From Algebras to Monads and back to Algebras</h3>
+</header>
+    <p>
+        In this post I'd like to introduce you to how mathematicians think
+        about monads, and how they are useful.  We will study a general case
+        alongside with a simple example of the category of monoids.  I hope you
+        will get from this post how a monad describes category of monoids.  We
+        will need some simple category theory tools like: adjoint functors,
+        f-algebras, free algebras (or just free monoids) and monads.
+
+        This blog post is based on a <a
+            href="https://hackage.haskell.org/package/free-algebras">library</a>
+        I recently wrote, and it will use snippets of code from it.
+    </p>
+    Let <code>Hask</code> be
+    the category of Haskell types and <code>Monoid</code> be the category of
+    monoids in <code>Hask</code>.  There are two functors that connect this two
+    categories:
+    $$U:\mathrm{Monoid}\rightarrow\mathrm{Hask}$$
+    which sends a monoid $m$ to its underlying type forgetting the $Monad$
+    constraint; and the free monoid functor:
+    $$F:\mathrm{Hask}\rightarrow\mathrm{Monoid}$$
+    which takes a type $a$ and sends it to the list monoid: $[a]$.  Let's try
+    to analyse the relationship between the two functors.  If you read
+    my previous post on
+    <a href="https://coot.me/posts/free-algebras">free algebras</a> 
+    it won't be a surprise to you that there is a close relationship
+    between these two constructions.
+<pre class="haskell"><code>-- |
+-- Type family which for each free algebra @m@ returns a type level
+-- lambda from types to constraints.  It is describe the class of
+-- algebras for which this free algebra is free. 
+type family AlgebraType  (f :: k) (a :: l) :: Constraint
+
+-- |
+-- Type family which limits Hask to its full subcategory which
+-- satisfies a given constraints.  Some free algebras, like free
+-- groups, or free abelian semigroups have additional constraints on
+-- on generators, like @Eq@ or @Ord@.
+type family AlgebraType0 (f :: k) (a :: l) :: Constraint
+
+-- |
+-- A proof that constraint @c@ holds for type @a@.
+newtype Proof (c :: Constraint) (a :: l) = Proof (Dict c)
+
+-- |
+-- A lawful instance has to guarantee that @'unFoldFree'@ is an inverse
+-- of @'foldMapFree'@.
+-- 
+-- This in turn guaranties that @m@ is a left adjoint functor from Hask
+-- to algebras of type @'AlgebraType m'@.  The right adjoint is the
+-- forgetful functor.  The composition of left adjoin and the right one
+-- is always a monad, this is why we will be able to build monad instance
+-- for @m@.
+class FreeAlgebra (m :: Type -> Type)  where
+    -- | Injective map that embeds generators @a@ into @m@.
+    returnFree :: a -> m a
+    -- | The freeness property.
+    foldMapFree
+	:: forall d a
+	 . ( AlgebraType m d
+	   , AlgebraType0 m a
+	   )
+	=> (a -> d)   -- ^ map generators of @m@ into @d@
+	-> (m a -> d) -- ^ returns a homomorphism from @m a@ to @d@
+
+    -- |
+    -- Proof that @AlgebraType0 m a => m a@ is an algebra of type
+    -- @AlgebraType m@.  This proves that @m@ is a mapping from the full
+    -- subcategory of @Hask@ of types satisfyling @AlgebraType0 m a@
+    -- constraint to the full subcategory satisfying @AlgebraType m a@,
+    -- @fmapFree@ below proves that it's a functor.
+    proof :: forall a. AlgebraType0 m a
+	  => Proof (AlgebraType m (m a)) (m a)
+    -- |
+    -- Proof that the forgetful functor from types @a@ satisfying
+    -- @AgelbraType m a@ to @AlgebraType0 m a@ is well defiend.
+    forget :: forall a. AlgebraType  m a
+	   => Proof (AlgebraType0 m a) (m a)
+
+-- |
+-- All types which satisfy @'FreeAlgebra'@ constraint are foldable.
+--
+-- prop> foldFree . returnFree == id
+--
+foldFree
+    :: forall m a .
+       ( FreeAlgebra  m
+       , AlgebraType  m a
+       )
+    => m a
+    -> a
+foldFree ma = case forget @m @a of
+    Proof Dict -> foldMapFree id ma
+
+type instance AlgebraType0 [] a = ()
+type instance AlgebraType  [] m = Monoid m
+instance FreeAlgebra [] where
+    returnFree a = [a]
+    foldMapFree = foldMap
+    proof  = Proof Dict
+    forget = Proof Dict
+</code></pre>
+    The type class <a
+	href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra</code></a>
+    has many more instances, e.g. for semigroups, groups, idempotent semigroups
+    (semi-lattices), abelian
+    semigroups / monoids / groups, and there is even a version for functors,
+    applicative functors and monads.  For simplicity, in this post we will not
+    touch the higher kinded types, but all of this works perfectly well for
+    such data types too.
+
+    You may ask what this type instance mean for monoids? We have two maps
+<pre class="haskell"><code>returnFree @[] :: a -> [a]</code></pre>
+    and a bijective map
+<pre class="haskell"><code>foldMapFree @[] :: forall m a. Monoid m => (a -> m) -> ([a] -> m)</code></pre>
+    given by <code>Prelude.foldMap</code> with inverse
+<pre class="haskell"><code>unFoldMapFree
+    :: FreeAlgebra m
+    => (m a -> d)
+    -> (a -> d)
+unFoldMapFree f = f . returnFree
+</code></pre>
+Note that <code>foldMap</code> (also
+<a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>)
+has some nice properties:
+    <ul>
+        <li>
+            For each <code>f :: Monoid m => a -> m</code> the map <code>foldMap
+            f :: Monoid m => [a] -> m</code> is a homomorphism of monoids, i.e.
+<pre class="haskell"><code>foldMap f (as <> bs) = foldMap f as <> foldMap f bs</code></pre>
+            This is simply because <code>foldMap</code> maps the elements of <code>as ::
+                [a]</code> to a list of type <code>[m]</code> and then folds them using
+            monoid multiplication.  Being a monoid homomorphism in this case just means
+            that we can take two lists <code>as :: [a]</code> and <code>bs ::
+            [a]</code> and <code>foldMap</code> over both of them and then multiply the
+            results in <code>m</code> and we will get the same result as computing
+            <code>foldMap f (as ++ bs :: [a])</code>.  The result will be the same because
+            monoids (and list concatenation) satisfy the associativity law.
+            <p>
+		When you will define an instance of
+		<a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra</code></a>
+                you should check that this law is obeyed.  Otherwise
+                all the theory that we are uncovering here will fail.
+            </p>
+            <p>
+                You may think that it will fail to hold for non-associative
+                monoids, since we used associativity here; but we used in two
+                places at the same time: associativity of list concatenation
+                and monoids, and this is crucial.  For non associative monoids,
+                the functor which will appear instead of a list will not obey
+                the associativity law and it will not be required to prove that
+		<a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>
+		preserves non associative multiplication.
+            </p>
+        </li>
+        <li>
+            <code>foldMap :: Monoid m => (a -> m) -> ([a] -> m)</code> is
+            natural in <code>m</code> which in turn means that
+<pre class="haskell"><code>foldMap (f . g) = f . foldMap g</code></pre>
+            For any map <code>g :: Monoid m => a -> m</code> and any monoid
+            homomorphisms: <code>f :: (Monoid m, Monoid n) =>
+                m -> n</code>.
+        </li>
+        <li>
+            <code>foldMap :: Monoid m => (a -> m) -> ([a] -> m)</code> is
+            natural in <code>d</code> which means that
+<pre class="haskell"><code>foldMap (g . h) = foldMap g . map h</code></pre>
+            For any map <code>h :: b -> a</code> and
+            <code>g :: Monoid m => a -> m</code>.
+        </li>
+    </ul>
+    <p>
+	The last two properties mean that
+	<a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>
+	(and <a href="https://hackage.haskell.org/package/base/docs/Data-Foldable.html#v:foldMap"><code>foldMap</code></a>)
+	is a natural transformation of bifunctors
+	from
+	<a href="#Hom"><code>Hom m</code></a> to <a
+	href="#AlgHom"><code>AlgHom m</code></a> which we define below.
+<pre class="haskell" id="Hom"><code>data Hom m a b where
+    Hom :: (AlgebraType0 m a, AlgebraType0 m b)
+         => (a -> b)
+         -> Hom m a b
+
+bimapHom :: forall m a' a b b'.
+            ( AlgebraType0 m a'
+            , AlgebraType0 m b'
+            )
+         => (a' -> a)
+         -> (b  -> b')
+         -> Hom m a b
+         -> Hom m a' b'
+bimapHom f g (Hom ab) = Hom (g . ab . f)
+</code></pre>
+<pre class="haskell" id="AlgHom"><code>data AlgHom m a b where
+    AlgHom :: ( AlgebraType  m a
+              , AlgebraType  m b
+              )
+           => (a -> b)
+           -> AlgHom m a b
+
+unAlgHom :: AlgHom m a b -> a -> b
+unAlgHom (AlgHom f) = f
+
+bimapAlgHom :: forall m a' a b b'.
+               ( AlgebraType  m a'
+               , AlgebraType  m b'
+               )
+            => (a' -> a)
+            -> (b  -> b')
+            -> AlgHom m a b
+            -> AlgHom m a' b'
+bimapAlgHom f g (AlgHom ab) = AlgHom (g . ab . f)
+</code></pre>
+    </p>
+    <p>
+	Note that you could define (full sub-) categories of <code>Hask</code>
+	using these bifunctors.
+    </p>
+    We can put all four properties (together with
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>
+    being a bijection), into single statement:
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:foldMapFree"><code>foldMapFree</code></a>
+    is a natural isomorphism between <a href="#Hom"><code>Hom m</code></a>
+    and <a href="#AlgHom"><code>AlgHom m</code></a>:
+<pre class="haskell"><code>-- |
+ψ :: forall m a d .
+         ( FreeAlgebra  m
+         , AlgebraType0 m a
+         )
+      => AlgHom m (m a) d
+      -> Hom m a d
+ψ (AlgHom f) = case forget @m @d of
+    Proof Dict -> Hom $ unFoldMapFree f
+</code></pre>
+    with inverse
+<pre class="haskell"><code>-- |
+φ :: forall m a d .
+        ( FreeAlgebra  m
+        , AlgebraType  m d
+        , AlgebraType0 m a
+        )
+     => Hom m a d
+     -> AlgHom m (m a) d
+φ (Hom f) = case proof @m @a of
+    Proof Dict -> case forget @m @(m a) of
+        Proof Dict -> AlgHom $ foldMapFree f
+</code></pre>
+    Such natural bijections arising for a pair of functors <code>F</code> and
+    <code>U</code> are called <b>adjoint functors</b>.  In case of monoids the
+    functor <code>F</code> is simply the list functor: <code>[]</code>
+    and it is the left adjoin (it appears in the left argument of
+    <a href="#AlgHom"><code>AlgHom</code></a>) to the forgetful functor from
+    the category of monoids
+    to <code>Hask</code> (it's on the right hand since of
+    <a href="#Hom"><code>Hom m a d</code></a> though in an invisible way,
+    only because we are dropping a constraint).
+    </p>
+
+    <h2>Unit and counit of an adjunction</h2>
+    <p>
+        Every adjunction can be characterised by two maps called
+	<a href ="https://en.wikipedia.org/wiki/Adjoint_functors#Definition_via_counit%E2%80%93unit_adjunction">unit and counit</a>.  The unit is defined as
+<pre class="haskell"><code>unit :: forall m a .
+        ( FreeAlgebra  m
+        , AlgebraType0 m a
+        )
+     => Hom m a (m a)
+unit = case proof @m @a of
+    Proof Dict -> case forget @m @(m a) of
+        Proof Dict -> ψ (AlgHom id)
+</code></pre>
+and
+<pre class="haskell"><code>counit :: forall m d .
+          ( FreeAlgebra  m
+          , AlgebraType  m d
+          )
+       => AlgHom m (m d) d
+counit = case forget @m @d of
+    Proof Dict -> φ (Hom id)
+</code></pre>
+    Let us decipher these morphisms.  Let's start with <code>counit</code>
+<pre class="haskell"><code>counit = φ (Hom id)
+       = AlgHom (foldMapFree id)
+       = AlgHom foldFree
+</code></pre>
+    So this looks familiar!  In case of monoids this is just the good old
+    friend <code>fold</code>. The <code>unit</code> is even simpler:
+<pre class="haskell"><code>unit = ψ (AlgHom id)
+     = Hom (unFoldMapFree id)
+     = Hom returnFree
+</code></pre>
+    In case of monoids the unit is just <code>(:[]) :: a -> [a]</code>.
+
+    <!-- TODO: Unit and counit satisfy two laws -->
+    <h2>Monad associated with an adjunction</h2>
+    Every adjunction gives rise to a monad.  The left adjoint functor followed
+    by the right adjoint functor is an endofunctor and a monad.  In our case
+    the left adjoin functor is the list functor <code>[]</code> from the
+    <code>Hask</code> category to the category of monoids in <code>Hask</code>,
+    while the right adjoin is the functor that forgets the <code>Monoid</code>
+    constraint.  So the composition is simply the list endo-functor on
+    <code>Hask</code>: <code>(:[]) :: a -> [a]</code>
+
+    I am sure you know that list is a monad, and it's the same monad as one
+    given by the <code>(unAlgHom counit) @[] :: [[a]] = [a]</code>.   Note that
+    the map <code>unAlgHo counit = foldFree</code> and it can be recasted to
+    a monad's <code>join</code>:
+<pre class="haskell"><code>-- |
+-- @'FreeAlgebra'@ constraint implies @Monad@ constraint.
+joinFree :: forall m a .
+          ( FreeAlgebra  m
+          , AlgebraType0 m a
+          )
+         => m (m a)
+         -> m a
+joinFree mma = case proof @m @a of
+    Proof Dict -> foldFree mma
+</code></pre>    
+    From a join you can get the bind operator in a standard way:
+<pre class="haskell"><code>-- |
+-- |
+-- The monadic @'bind'@ operator.  @'returnFree'@ is the corresponding
+-- @'return'@ for this monad.
+bindFree :: forall m a b .
+            ( FreeAlgebra  m
+            , AlgebraType0 m a
+            , AlgebraType0 m b
+            )
+         => m a
+         -> (a -> m b)
+         -> m b
+bindFree ma f = case proof @m @b of
+    Proof Dict -> foldMapFree f ma
+</code></pre>    
+    Together with
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:returnFree"><code>returnFree :: FreeAlgebra m => a -> m a</code></a>
+    we have a a very general formula for constructing monads; actually any
+    monad arise in this way: from a pair of adjoint functors; the
+    <code>counit</code> morphism defines
+    <a href="https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:join"/><code>join</code></a>
+    and the <code>unit</code> defines
+    <a href="https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:return"><code>return</code></a>.
+
+    Let us put this monad in a wrapper type, we are using <code>GADTs</code> to
+    capture the
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra m</code></a>
+	constraint.
+<pre class="haskell" id="FreeMAlg"><code>-- |
+-- The composition of @Free@ followed by @U@
+data FreeMAlg (m :: * -> *) (a :: *) where
+    FreeMAlg :: ( FreeAlgebra m, AlgebraType m a ) => m a -> FreeMAlg m a
+
+runFreeMAlg :: FreeMAlg m a -> m a
+runFreeMAlg (FreeMAlg ma) = ma
+
+-- |
+-- @FreeMAlg@ is a functor in the category @Hom m@.
+fmapF :: forall m a b .
+         Hom m a b
+      -> FreeMAlg m a
+      -> FreeMAlg m b
+fmapF (Hom fn) (FreeMAlg ma) = FreeMAlg $ fmapFree fn ma
+
+-- |
+-- unit of the @FreeMAlg@ monad (i.e. @return@ in Haskell)
+returnF :: forall m a .
+           ( FreeAlgebra  m
+           , AlgebraType0 m a
+           , AlgebraType0 m (FreeMAlg m a)
+           )
+        => Hom m a (FreeMAlg m a)
+returnF = case unit :: Hom m a (m a) of Hom f -> Hom (FreeMAlg . f)
+
+-- |
+-- join of the @FreeMAlg@ monad
+joinF :: forall  m a .
+         ( FreeAlgebra  m
+         , AlgebraType0 m a
+         , AlgebraType0 m (FreeMAlg m a)
+         , AlgebraType0 m (FreeMAlg m (FreeMAlg m a))
+         )
+      => Hom m (FreeMAlg m (FreeMAlg m a)) (FreeMAlg m a)
+joinF = case proof @m @a of
+    Proof Dict -> case forget @m @(m a) of
+        Proof Dict ->
+	    Hom $ \(FreeMAlg mma)
+		-> FreeMAlg $ joinFree $ fmapFree runFreeMAlg mma
+
+-- |
+-- bind of the @'FreeMAlg'@ monad
+bindF :: forall m a b .
+         ( FreeAlgebra  m
+         , AlgebraType0 m b
+         )
+      => FreeMAlg m a
+      -> Hom m a (FreeMAlg m b)
+      -> FreeMAlg m b
+bindF (FreeMAlg ma) (Hom f) = case proof @m @a of
+    Proof Dict -> case forget @m @(m a) of
+        Proof Dict -> FreeMAlg $ ma `bindFree` (runFreeMAlg . f)
+</code></pre>
+    <h2>Algebras for a monad</h2>
+    If <code>m</code> is a monad then an <code>m</code>-algebra is a map:
+    <code>m a -> a</code>.  <code>m</code>-algebras form a category where
+    arrows are commutative squares.
+    <div class="diagram">
+        <img src="/images/m-algebra-morphism.svg" width="200px" />
+    </div>
+    The category of such algebras is called Eilenberg-Moore category, in was
+    coined as a solution to the question: can every monad be defined through an
+    adjunction?
+
+    In Haskell this category will fit into a simple type class:
+<pre class="haskell" id="MAlg"><code>class MAlg m a where
+    alg :: m a -> a
+
+instance MAlg [] [a] where
+    alg = concat
+
+instance MAlg NonEmpty (NonEmpty a) where
+    alg = NE.fromList . concatMap NE.toList
+</code></pre>
+We can define <a href="#MAlg"><code>MAlg</code></a> instance for <a href="#FreeMAlg"><code>FreeMAlg</code></a>:
+<pre class="haskell"><code>instance ( FreeAlgebra m
+         , AlgebraType0 m a
+         , AlgebraType0 m (FreeMAlg m a)
+         ) => MAlg m (FreeMAlg m a) where
+    alg ma = case proof @m @a of
+        Proof Dict -> FreeMAlg $ joinFree $ fmapFree runFreeMAlg ma
+</code></pre>
+    <small>Note that this is an undecidable instance, since the
+	constraints are not smaller than the instance head.</small>
+
+    It turns out that <a href="#FreeMAlg"><code>FreeMAlg m</code></a> is
+    a left adjoin functor to the forgetful functor $\mathrm{U_{MAlg}}$ from the
+    category of <code>m</code>-algebras to $\mathrm{Hask}$ which sends an
+    <code>m</code>-algebra <code>f :: m a -> a</code> to <code>a</code>.  This
+    is simply because we can write
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra</code></a>
+    instance for this type.  Well, not quite, only because Haskell computes
+    types families in a lazy way, but we can define all the morphisms we need
+    (we leave checking all the necessary properties though to the curious
+    reader):
+<pre class="haskell"><code>returnFreeMAlg
+    :: FreeAlgebra m
+    => a
+    -> FreeMAlg m a
+returnFreeMAlg = FreeMAlg . returnFree
+
+foldMapFreeMAlg
+    :: ( AlgebraType0 m a
+       , AlgebraType0 m d
+       , MAlg m d
+       )
+    => (a -> d)
+    -> (FreeMAlg m a -> d)
+foldMapFreeMAlg fn (FreeMAlg ma) = alg $ fmapFree fn ma
+
+foldFreeMAlg
+    :: ( AlgebraType0 m a
+       , MAlg m a
+       ) 
+    => FreeMAlg m a -> a
+foldFreeMAlg = foldMapFreeMAlg id
+</code></pre>
+    We're kind of at the starting point of this post again.  Since we have an
+    instance of
+    <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#t:FreeAlgebra"><code>FreeAlgebra</code></a>
+    we can define an adjunction in the same way, but for the class
+    <a href="#MAlg"><code>MAlg</code></a>.
+
+    So we end up with the following picture:
+    <div class="diagram">
+        <img src="/images/m-algebra-cats.svg" width="400px" />
+    </div>
+
+    There is also a comparison functor which fills the diagram at the top.  It
+    is usually denoted by <code>k</code> and it takes an object in <code>Alg</code>
+    (which is the category of monoids in our example case).  <code>k</code> can
+    be defined as follows:
+<pre class="haskell"><code>k :: ( FreeAlgebra  m
+     , AlgebraType  m a
+     )
+  => Proxy a
+  -> (m a -> a)
+k _ = foldFree
+</code></pre>
+    At the end we have a commutative diagram
+    <div class="diagram">
+        <img src="/images/m-algebra-cats-k.svg" width="400px" />
+    </div>
+    <h2>Monadicity</h2>
+    <p>
+        A right adjoin functor $\mathrm{U}$ is called monadic iff the
+        comparison functor is an equivalence of categories.  This means that
+	the two categories <code>Alg</code> and
+	<a href="#MAlg"><code>MAlg</code></a> have exactly the same
+	categorical properties.  It turns out that all algebraic theories which
+	have free algebras (equivalently equational theories) are monadic.
+	This includes the categories of semigroups, monoids, groups, etc are
+	all monadic, but also the categories of functors, applicative functors
+	and monads on <code>Hask</code> are monadic too.
+
+	From technical point of view, maybe the most important fact is that the
+	free monad encodes algebraic operations that the initial category was
+	using.  So in out example, we should be able to define
+	<a href="https://hackage.haskell.org/package/base/docs/Data-Semigroup.html#v:-60--62-"><code><></code></a>
+	and
+	<a href="https://hackage.haskell.org/package/base/docs/Data-Monoid.html#v:mempty"><code>mempty</code></a>
+	only using the list monad.  And it's quite trivial:
+
+<pre class="haskell"><code>-- |
+-- @'mempty'@ deduced from @FreeMAlg []@ @MAlg@ instance.
+k_inv_monoid_mempty :: MAlg [] a => a
+k_inv_monoid_mempty = foldFreeAlg (FreeMAlg [])
+
+-- |
+-- @'mappend'@ deduced from @FreeMAlg []@ @MAlg@ instance.
+k_inv_monoid_mappend :: MAlg [] a => a -> a -> a
+k_inv_monoid_mappend a b = foldFreeAlg (FreeMAlg [a, b])
+
+-- |
+-- @'<>'@ deduced from @FreeMAlg NonEmpty@ @MAAlg@ instance.
+k_inv_semigroup_append :: MAlg NonEmpty a => a -> a -> a
+k_inv_semigroup_append a b = foldFreeAlg (FreeMAlg (a :| [b]))
+
+k_inv_pointed :: MAlg Maybe a => a
+k_inv_pointed = foldFreeAlg (FreeMAlg Nothing)
+
+-- |
+-- @'invert'@ deduced from @FreeMAlg FreeGroup@ @MAlg@ instance.
+k_inv_group_invert :: (MAlg FreeGroup a, Eq a) => a -> a
+k_inv_group_invert a
+    = foldFreeAlg (FreeMAlg (FreeGroup.fromList [Left a]))
+
+-- |
+-- @'act'@ deduced from @FreeMAlg FreeMSet@ @MAlg@ instance.
+k_inv_act :: (MAlg (FreeMSet m) a, Monoid m) => m -> a -> a
+k_inv_act m a = foldFreeAlg $ FreeMAlg $ FreeMSet (m, a)
+</code></pre>
+    <small>A reference for <a
+    href="https://hackage.haskell.org/package/free-algebras/docs/Data-Group-Free.html">free
+    group</a>: <code>newtype FreeGroup a = FreeGroup [Either
+    a a]</code>.</small>
+    </p>
+
+    <h3>Laws</h3>
+    <p>
+        There is one more interesting thing here.  Not only the operations are
+        deduced from <code>FreeMAlg m</code>, but also the laws.  For example,
+        we use <code>FreeMAlg []</code> for monoids and it encodes both
+        associativity of the multiplication and unit law for
+        <code>mempty</code> and this is simply cerried by the free
+	monoid <code>[a]</code>.  The same will hold for any other
+	free algebra and thus by the monad <code>FreeAlgebra m =>
+	m</code>.  This is just because the free algebra carries all
+	the laws of the category of given algebra types (monoids
+	/ semigroups / lattices, ...) and no other equality is built
+	in.
+    </p>
+
+    <h2>Final remarks</h2>
+    A working example on which this post is based is published on <a
+    href="https://github.com/coot/free-algebras/tree/master/examples/src/Data/Algebra/Free/Monadicity.hs">github</a>.
+    This monadicity works well for higher kinded algebras, e.g. functors,
+    applicative functors or monads.  The changes that one needs to make are
+    really minimal: use <a
+    href="https://hackage.haskell.org/package/free-algebras/docs/Control-Algebra-Free.html#t:FreeAlgebra1"><code>FreeAlgebra1</code></a>
+    type class of <code>FreeAlgebra</code>.  Please check the <a
+    href="https://github.com/coot/free-algebras/blob/master/examples/src/Control/Algebra/Free/Monadicity.hs">code</code>.

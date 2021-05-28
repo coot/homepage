@@ -78,24 +78,24 @@ Monoidal functors - laws
 Monoidal functors have to obey the following laws:
 
 _left unit law_
-```
+```haskell
 unit <|> fb   = (unit,) <$> fb
 ```
 _right unit law_
-```
+```haskell
 fa  <|> unit  = (,unit) <$> fa
 ```
 
 _naturality_
 
-```
+```haskell
 (f <$> fa) <|> fb = (\(a,b) -> (f a, b)) <$> (fa <|> fb)
 fa <|> (f <$> fb) = (\(a,b) -> (a, f b)) <$> (fa <|> fb)
 ```
 
 Thus
 
-```
+```haskell
 unit <|> unit = (unit,) <$> unit = (,unit) <$> unit
 ```
 
@@ -109,29 +109,29 @@ Let me just cite the applicative functor laws, which we will use quite
 extensievly:
 
 _identity law_
-```
+```haskell
 pure id <*> v = v
 ```
 
 _composition law_
-```
+```haskell
 pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
 ```
 
 _homomorphism law_
-```
+```haskell
 pure f <*> pure x = pure (f x)
 ```
 
 _interchange law_
-```
+```haskell
 u <*> pure y = pure ($ y) <*> u
 ```
 
 We will now present an argument that _every applicative functor_ is
 a functor for which the following _formula_ holds:
 
-```
+```haskell
 fmap f fa = pure f <*> fa
 ```
 
@@ -146,14 +146,14 @@ satisfies functor laws.
 </div>
 
 **Proof**
-```
+```haskell
 liftA id fa
   = pure id <*> fa
   -- by identity law
   = fa
 ```
 
-```
+```haskell
 liftA (f . g) fa
   = pure (f . g) <*> fa
   = pure ((.) f g) <*> fa
@@ -200,7 +200,7 @@ But we still need to prove the monoidal laws.
 **Monoidal laws of `monoidal` and `monoidalUnit`**
 
 _left unit law_
-```
+```haskell
 monoidalUnit `monoidal` fb
   = (,) <$> (pure ()) <*> fb
   = pure (,) <*> pure () <*> fb
@@ -210,7 +210,7 @@ monoidalUnit `monoidal` fb
 ```
 
 _right unit law_
-```
+```haskell
 fa `monoidal` monoidalUnit
   = (,) <$> fa <*> pure ()
   -- by interchange law
@@ -226,23 +226,23 @@ fa `monoidal` monoidalUnit
 
 <div class="lemma">
   **Lemma**
-  </br>
-  ```
-  (\a b -> (f a, b)) <$> fa <*> fb
-    = (\(a, b) -> (f a, b)) <$> ((,) <$> fa <$> fb)
-  ```
+
+```haskell
+(\a b -> (f a, b)) <$> fa <*> fb
+  = (\(a, b) -> (f a, b)) <$> ((,) <$> fa <$> fb)
+```
 </div>
 
 **Proof**
 It's probably not a surprise that we will need to use applicative composition
 law.  A first useful observation is that
-```
+```haskell
 (\a b -> (f a, b))
   = (\g -> (\(a, b) -> (f a, b)) . g) . (\a b -> (a, b))
   = ((.) (\(a, b) -> (f a, b))) . (\a b -> (a, b))
 ```
 
-```
+```haskell
 (\a b -> (f a, b)) <$> fa <*> fb
   -- by the above observation
   = (((.) (\(a, b) -> (f a, b))) . (\a b -> (a, b))) <$> fa <*> fb
@@ -259,7 +259,7 @@ law.  A first useful observation is that
 <span class="qed">QED</span>
 
 _naturality laws_
-```
+```haskell
 (f <$> fa) `monoidal` fb
   = (,) <$> (f <$> fa) <*> fb
   = (,) <$> (pure f <*> fa) <*> fb
@@ -276,7 +276,7 @@ _naturality laws_
   = (\(a, b) -> (f a, b)) <$> (fa `monoidal` fb)
 ```
 
-```
+```haskell
 fa `monoidal` (f <$> fb)
   = (,) <$> fa <*> (f <$> fb)
   = ((,) <$> fa) <*> (pure f <*> fb)
@@ -319,7 +319,7 @@ From Monoidal to Applicative functors
 **Applicative laws of `monoidalAp` and `monoidalPure`**
 
 _homomorphism law_
-```
+```haskell
  monoidalPure ab `monoidalAp` monoidalPure a
   = uncurry ($) <$> ((unit $> ab) <|> (unit $> a))
   = uncurry ($) <$> ((const ab <$> unit) <|> ((const a <$> unit)))
@@ -336,7 +336,7 @@ _homomorphism law_
 <span class="qed">QED</span>
 
 _identity law_
-```
+```haskell
  monoidalPure id `monoidalAp` f
   = uncurry ($) <$> ((unit $> id) <|> f)
   by /naturality/ (and the definition of @'$>'@
@@ -352,7 +352,7 @@ _identity law_
 <span class="qed">QED</span>
 
 _interchange law_, i.e.  `u <*> pure y = pure ($ y) <*> u`
-```
+```haskell
  u `monoidalAp` (monoidalPure y)
   = uncurry ($) <$> (u <|> (unit $> y))
   = uncurry ($) <$> (\(x, ) -> (x, y)) <$> (u <|> unit)
@@ -373,7 +373,7 @@ _interchange law_, i.e.  `u <*> pure y = pure ($ y) <*> u`
 
 _composition law_ i.e. `pure (.) <*> u <*> v <*> w = u <*> (v <*> w)`
 
-```
+```haskell
 monoidalPure (.) `monoidalAp` u `monoidalAp` v `monoidalAp` w
   = (uncurry ($) <$> ((unit $> (.)) <|> u)) `monoidalAp` v `monoidalAp` w
   = uncurry ($)
@@ -406,7 +406,7 @@ monoidalPure (.) `monoidalAp` u `monoidalAp` v `monoidalAp` w
     <$> (u <|> v <|> w)
 ```
 And from the other side:
-```
+```haskell
 u `monoidalAp` (v `monoidalAp` w)
   = uncurry ($) <$> (u <|> (v `monoidalAp` w))
   = uncurry ($) <$> (u <|> (uncurry ($) <$> (u <|> w)))
@@ -447,13 +447,13 @@ this will be all based on:
 
 <div class="lemma">
 **Lemma 1**
-```
+```haskell
  (.) (uncurry ($)) . (,) = ($)
 ```
 </div>
 
 **Proof**
-```
+```haskell
   ((.) (uncurry ($)) . (,)) f a =
     by definition of (.)
     = (\x -> (.) (uncurry ($)) (x,)) f a
@@ -472,7 +472,7 @@ by `monoidalAp` (which we denote by `<*>` to make all the expressions
 shorter), then we will recover our original applicative `<*>` (e.g.
 `monoidalAp`):
 
-```
+```haskell
 monoidalAp fab fa
   -- by definition of `monoidalAp`
   = uncurry ($) <$> (fab <|> fa)
@@ -495,7 +495,7 @@ monoidalAp fab fa
   ```
 </div>
 **Proof**
-```
+```haskell
 pure ((.) (uncurry ($))) <*> (pure (,) <*> fab)
   by /composition law/ of applicative functors
   = pure (.) <*> pure ((.) (uncurry ($))) <*> pure (,) <*> fab
@@ -520,7 +520,7 @@ initial monoidal functor `f`.  We use `<|>` and `unit` to denote the initial
 monoidal structer of `f`, `<*>` and `pure` is the associated applicative
 instance, and we will show that `monoidal` is equal to `<|>`
 
-```
+```haskell
 monoidal fa fb
   = (,) <$> fa <*> fb
   = ((,) <$> fa) <|> fb)
@@ -531,7 +531,7 @@ monoidal fa fb
   = fa <|> fb
 ```
 
-```
+```haskell
 monoidalUnit
   = pure ()
   -- by definition of pure for the associated applicative functor

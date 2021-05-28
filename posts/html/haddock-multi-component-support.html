@@ -7,54 +7,5 @@
 {% endblock %}
 
 {% block main %}
-<header>
-    <h1 class="section_h" id="haddock-multi-component-support">Haddock: better support for multiple components</h1>
-</header>
-<p>
-Recently I enhanced support for publishing haddocks of multiple
-components (see
-<a href="https://github.com/haskell/haddock/pull/1277">this pull request</a>).
-It will be available in next release of <code>GHC</code>
-(<code>GHC-9.0.2</code>).  Note that there is still room for improvement (e.g.
-external links to hackage). Currently, there's no tooling support, so it might
-still feel a bit hacky.
-</p>
-
-<p>
-First one needs to compile haddocks of all the components, which can be done
-with either <code>cabal</code> or <code>stack</code>:
-
-<pre class="bash"><code>cabal haddock --haddock-html \
-              --haddock-quickjump \
-              --haddock-option="--use-index=../doc-index.html" \
-              --haddock-option="--use-contents=../index.html" \
-              --haddock-option="--base-url=.." \
-              all
-</code></pre>
-</p>
-
-
-<p>
-The second step is to copy all the haddocks to a common directory, e.g.
-<code>docs</code> folder.  To compile the contents page (the haddock entry
-page), index with support of <emph>quickjump</emph> one can run:
-<pre class="bash"><code>haddock -o docs \
-        --quickjump \
-        --gen-index \
-        --gen-contents \
-        --read-interface=package-a,docs/package-a/package-a.haddock
-</code></pre>
-where one needs to list each component with <code>--read-interface</code>
-pointing to the compiled <code>*.haddock</code> interface file.
-</p>
-
-<p>
-The docs directory can be served with a local http server or
-<code>github-pages</code>.  Check out an example project
-<a href="https://github.com/coot/haddock-example">here</a>.  Note that some
-settings are hidden in its
-<a href="https://github.com/coot/haddock-example/blob/development/cabal.project"><code>cabal.project</code></a>
-file.  Its haddocks, which also include haddocks of <code>base</code> library
-are available <a href="https://coot.github.io/haddock-example">here</a>.
-</p>
+{% include "posts/html/haddock-multi-component-support.htm" %}
 {% endblock main %}

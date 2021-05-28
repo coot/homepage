@@ -1,7 +1,7 @@
 pandoc_outputs := \
 		$(patsubst posts/lhs/%.lhs, posts/lhs/.build/%.html, $(wildcard posts/lhs/*.lhs)) \
 		$(patsubst posts/lhs/Data/Functor/%.lhs, posts/lhs/.build/Data/Functor/%.html, $(wildcard posts/lhs/Data/Functor/*.lhs))
-				
+
 
 lhs_posts := $(patsubst posts/lhs/%, dist/posts/%, $(wildcard posts/lhs/*.html))
 
@@ -69,7 +69,6 @@ cabal:
 
 $(pandoc_outputs): posts/lhs/.build/%.html: posts/lhs/%.lhs posts/base.html
 	pandoc $< -o $@
-.PHONY: $(pandoc_outputs)
 
 pandoc_dir:
 	mkdir -p posts/lhs/.build
@@ -157,7 +156,10 @@ images_dir:
 images: images_dir $(images)
 .PHONY: images
 
-all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js
+dist/feed.rss: posts/feed.json $(pandoc_outputs)
+	cabal run -v0 exe:rssbuilder -- $< - | j2 -f json templates/feed.rss -o $@
+
+all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js dist/feed.rss
 .PHONY: all
 
 clean:

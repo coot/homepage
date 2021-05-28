@@ -1,34 +1,30 @@
 Pipelining in TypedProtocols
 ============================
 
-<div class=small>
-
-> {-# LANGUAGE BangPatterns,
->              DataKinds,
->              DerivingStrategies,
->              DerivingVia,
->              EmptyCase,
->              FlexibleInstances,
->              GADTs,
->              PatternSynonyms,
->              PolyKinds,
->              RankNTypes,
->              ScopedTypeVariables,
->              StandaloneDeriving,
->              StandaloneKindSignatures,
->              TypeApplications,
->              TypeFamilies,
->              TypeFamilyDependencies,
->              TypeOperators,
->              UndecidableInstances,
->              ViewPatterns
-> #-}
-
-</div>
+> {-# LANGUAGE BangPatterns             #-}
+> {-# LANGUAGE DataKinds                #-}
+> {-# LANGUAGE DerivingStrategies       #-}
+> {-# LANGUAGE DerivingVia              #-}
+> {-# LANGUAGE EmptyCase                #-}
+> {-# LANGUAGE FlexibleInstances        #-}
+> {-# LANGUAGE GADTs                    #-}
+> {-# LANGUAGE PatternSynonyms          #-}
+> {-# LANGUAGE PolyKinds                #-}
+> {-# LANGUAGE RankNTypes               #-}
+> {-# LANGUAGE ScopedTypeVariables      #-}
+> {-# LANGUAGE StandaloneDeriving       #-}
+> {-# LANGUAGE StandaloneKindSignatures #-}
+> {-# LANGUAGE TypeApplications         #-}
+> {-# LANGUAGE TypeFamilies             #-}
+> {-# LANGUAGE TypeFamilyDependencies   #-}
+> {-# LANGUAGE TypeOperators            #-}
+> {-# LANGUAGE UndecidableInstances     #-}
+> {-# LANGUAGE ViewPatterns             #-}
 
 > module TypedProtocolPipelining where
 >
-> import           Prelude hiding (last)
+> import           Prelude hiding (id, last, (.))
+> import           Control.Category
 > import           Data.Function ((&))
 > import           Data.Kind (Type)
 > import           Data.Void
@@ -97,7 +93,7 @@ Our current implementation of pipelining in typed-protocols, which in
 simplified form we will reconstruct for the purpose of this blog post, is using
 a pair of threads communicating through a pair of queues.  The mix of
 concurrency and type level programming was a neat idea by Duncan Coutts.
- 
+
 In this post we will explore how to re-implement pipelining which does not
 require concurrent thread which synchronise through a pair of queues, and and
 instead use a single type level queue to faithfuly represent the state of the
@@ -146,7 +142,7 @@ written as:
 > simplePingPongClient :: a -> SimplePingPongClient StSimpleIdle a
 > simplePingPongClient a =
 >     SendMsg MsgSimplePing
->   $ RecvMsg $ \MsgSimplePong ->  
+>   $ RecvMsg $ \MsgSimplePong ->
 >     SendMsg MsgSimplePing
 >   $ RecvMsg $ \MsgSimplePong ->
 >     SendMsg MsgSimplePing
@@ -168,7 +164,7 @@ number of outstanding pipelined messages.  For this we use an inductive
 natural numbers:
 
 > -- | Type level inductive natural numbers.
-> -- 
+> --
 > data N = Z | S N
 
 > data SimplePipelinedPingPongClient (st :: SimplePingPong) (n :: N) c a where
@@ -182,7 +178,7 @@ natural numbers:
 >
 >   -- | Collect the receiver result.  The continuation subtracts from
 >   -- outstanding pipelined message counter.
->   -- 
+>   --
 >   CollectResponse  :: (c -> SimplePipelinedPingPongClient StSimpleIdle n c a)
 >                    -> SimplePipelinedPingPongClient StSimpleIdle (S n) c a
 >
@@ -205,7 +201,7 @@ natural numbers:
 >                    -> PingPongReceiver StSimpleBusy StSimpleIdle c
 
 > -- | Pipelined ping pong client, which for simplicty pipelines two messages
-> -- 
+> --
 > simplePipelinedPingPongClient
 >    :: a -- ^ fixed result, for simplicity
 >    -> c -- ^ fixed collected value, for simplicity
@@ -219,7 +215,7 @@ natural numbers:
 >                        (CollectResponse $ \_c0 ->
 >                           CollectResponse $ \_c1 ->
 >                             SendMsgDone MsgSimpleDone $
->                               PipelinedDone a        
+>                               PipelinedDone a
 >                        )
 >      )
 
@@ -238,7 +234,7 @@ messages.  Let's envision its interface as:
 
 > data PingPongChannel m = PingPongChannel {
 >     sendMsg :: forall st st'. MessageSimplePingPong st st' -> m (),
->     readMsg :: forall st st'. m (MessageSimplePingPong st st') 
+>     readMsg :: forall st st'. m (MessageSimplePingPong st st')
 >   }
 
 For the real implementation look
@@ -299,27 +295,27 @@ data instances.  The details of this go byoned this blog post.
 
 >
 > class Protocol ps where
-> 
+>
 >   -- | The messages for this protocol. It is expected to be a GADT that is
 >   -- indexed by the @from@ and @to@ protocol states. That is the protocol state
 >   -- the message transitions from, and the protocol state it transitions into.
 >   -- These are the edges of the protocol state transition system.
 >   --
 >   data Message ps (st :: ps) (st' :: ps)
-> 
+>
 >   -- | Tokens for those protocol states in which the client has agency.
 >   --
 >   data ClientHasAgency (st :: ps)
-> 
+>
 >   -- | Tokens for those protocol states in which the server has agency.
 >   --
 >   data ServerHasAgency (st :: ps)
-> 
+>
 >   -- | Tokens for terminal protocol states in which neither the client nor
 >   -- server has agency.
 >   --
 >   data NobodyHasAgency (st :: ps)
-> 
+>
 >   -- | If the client has agency for a state, there are no
 >   -- cases in which the server has agency for the same state.
 >   --
@@ -328,7 +324,7 @@ data instances.  The details of this go byoned this blog post.
 >        ClientHasAgency st
 >     -> ServerHasAgency st
 >     -> Void
-> 
+>
 >   -- | If nobody has agency for a state (the state is terminating), there
 >   -- are no cases in which the client has agency for the same state.
 >   --
@@ -337,7 +333,7 @@ data instances.  The details of this go byoned this blog post.
 >        NobodyHasAgency st
 >     -> ClientHasAgency st
 >     -> Void
-> 
+>
 >   -- | If nobody has agency for a state (the state is terminating), there
 >   -- are no cases in which the server has agency for the same state.
 >   --
@@ -346,19 +342,19 @@ data instances.  The details of this go byoned this blog post.
 >        NobodyHasAgency st
 >     -> ServerHasAgency st
 >     -> Void
-> 
+>
 > data PeerRole = AsClient | AsServer
-> 
+>
 > data PeerHasAgency (pr :: PeerRole) (st :: ps) where
 >     ClientAgency :: !(ClientHasAgency st) -> PeerHasAgency AsClient st
 >     ServerAgency :: !(ServerHasAgency st) -> PeerHasAgency AsServer st
-> 
+>
 > type WeHaveAgency   (pr :: PeerRole) st = PeerHasAgency             pr  st
 > type TheyHaveAgency (pr :: PeerRole) st = PeerHasAgency (FlipAgency pr) st
 > type family FlipAgency (pr :: PeerRole) where
 >     FlipAgency AsClient = AsServer
 >     FlipAgency AsServer = AsClient
-> 
+>
 
 Pipelining with type level queue
 --------------------------------
@@ -397,11 +393,6 @@ push elements onto the queue.
 > type a <| as = Cons a as
 > infixr 5 <|
 >
-> -- | Singleton queue
-> --
-> type Singleton :: Trans ps -> Queue ps
-> type Singleton a = Cons a Empty
->
 > -- | Snoc operation
 > --
 > type (|>) :: Queue ps -> Trans ps -> Queue ps
@@ -420,7 +411,7 @@ It also supports any monad and can embed any monadic computations.
 
 > -- | Promoted data type which indicates if 'PeerPipelined' is used in
 > -- pipelined mode or not.
-> -- 
+> --
 > data Pipelined = NonPipelined | Pipelined
 
 > type PeerPipelined :: forall ps
@@ -432,13 +423,13 @@ It also supports any monad and can embed any monadic computations.
 >                    -> Type
 >                    -> Type
 > data PeerPipelined ps pr pl st q m a where
-> 
+>
 >     -- | 'Effect' allows to introduce monadic effects.
 >     --
 >     Effect
 >       :: m (PeerPipelined ps pr pl q st m a)
 >       ->    PeerPipelined ps pr pl q st m a
-> 
+>
 >     -- | Non-pipelined send.  One needs to present proof of agency, message
 >     -- to be send and a continuation.  One cannot send
 >     -- non-pipelined messages when there are outstanding requests.  This is
@@ -449,7 +440,7 @@ It also supports any monad and can embed any monadic computations.
 >       -> Message ps st st'
 >       -> PeerPipelined ps pr pl Empty st' m a
 >       -> PeerPipelined ps pr pl Empty st  m a
-> 
+>
 >     -- | Await for a non-pipelined message.  One has to present a proof that
 >     -- one does not have agency and a continuation function which can deal
 >     -- with any messge that might arrive from the network.
@@ -459,7 +450,7 @@ It also supports any monad and can embed any monadic computations.
 >       -> (forall st'. Message ps st st'
 >           -> PeerPipelined ps pr pl Empty st' m a)
 >       -> PeerPipelined     ps pr pl Empty st  m a
-> 
+>
 >     -- | Terminate the protocol.
 >     --
 >     Done
@@ -480,7 +471,7 @@ It also supports any monad and can embed any monadic computations.
 >       -> Message ps st st'
 >       -> PeerPipelined ps pr 'Pipelined (q |> Tr st' st'') st'' m a
 >       -> PeerPipelined ps pr 'Pipelined  q                 st   m a
-> 
+>
 >     -- | Parially collect pushed @Tr@.
 >     --
 >     Collect
@@ -489,7 +480,7 @@ It also supports any monad and can embed any monadic computations.
 >       -> (forall stNext. Message ps st' stNext
 >           -> PeerPipelined ps pr 'Pipelined (Tr stNext st'' <| q) st m a)
 >       -> PeerPipelined     ps pr 'Pipelined (Tr st'    st'' <| q) st m a
-> 
+>
 >     -- | Pop identity 'Tr' from the pipelining queue.
 >     --
 >     -- 'CollectDone' allows to defer poping @Tr ps st st@ from the queue after
@@ -497,7 +488,7 @@ It also supports any monad and can embed any monadic computations.
 >     -- which needs to know the transition type at compile time.
 >     --
 >     CollectDone
->       :: PeerPipelined ps pr 'Pipelined              q  st m a 
+>       :: PeerPipelined ps pr 'Pipelined              q  st m a
 >       -> PeerPipelined ps pr 'Pipelined (Tr st st <| q) st m a
 
 `PingPong` protocol
@@ -524,16 +515,16 @@ In this section we will formalise the ping pong protocol by providing
 >     MsgPing :: Message PingPong StIdle StBusy
 >     MsgPong :: Message PingPong StBusy StIdle
 >     MsgDone :: Message PingPong StIdle StDone
-> 
+>
 >   data ClientHasAgency st where
 >     TokIdle :: ClientHasAgency StIdle
-> 
+>
 >   data ServerHasAgency st where
 >     TokBusy :: ServerHasAgency StBusy
-> 
+>
 >   data NobodyHasAgency st where
 >     TokDone :: NobodyHasAgency StDone
-> 
+>
 >   -- exclusion lemmas, which proove that n each state at most one of server, or
 >   -- client has agency.
 >   exclusionLemma_ClientAndServerHaveAgency TokIdle tok = case tok of {}
@@ -628,19 +619,19 @@ that we can pipeline multiple `MsgPing` messages and collect all the replies.
 >                  -> Message PingPong2 (Wrap st)     (Wrap st')
 >     -- | new message
 >     MsgBusy      :: Message PingPong2 (Wrap StBusy) (Wrap StBusy)
-> 
+>
 >   data ClientHasAgency st where
 >     WrapClient :: ClientHasAgency       st
 >                -> ClientHasAgency (Wrap st)
-> 
+>
 >   data ServerHasAgency st where
 >     WrapServer :: ServerHasAgency       st
 >                -> ServerHasAgency (Wrap st)
-> 
+>
 >   data NobodyHasAgency st where
 >     WrapDone   :: NobodyHasAgency       st
 >                -> NobodyHasAgency (Wrap st)
-> 
+>
 >   -- We haven't changed the states and their agancies, so we can reuse
 >   -- 'PingPong' lemmas.
 >   exclusionLemma_ClientAndServerHaveAgency (WrapClient tok) (WrapServer tok') =
@@ -682,7 +673,7 @@ Some auxiliary instances:
 >     collect :: PeerPipelined PingPong2 AsClient 'Pipelined q  StIdle2 m a
 >             -- ^ continuation after removing @Tr StBusy2 StIdle2@ from the
 >             -- queue
->             -> PeerPipelined PingPong2 AsClient 'Pipelined    
+>             -> PeerPipelined PingPong2 AsClient 'Pipelined
 >                                     (Tr StBusy2 StIdle2 <| q) StIdle2 m a
 >     collect k =
 >         Collect Nothing (ServerAgency (WrapServer TokBusy))
@@ -715,7 +706,7 @@ Next example is similar to the previous one but it counts the number of
 >                                                          q  StIdle2 m Int)
 >         -- ^ continuation after removing @Tr StBusy2 StIdle2@ from the
 >         -- queue
->         -> PeerPipelined PingPong2 AsClient 'Pipelined    
+>         -> PeerPipelined PingPong2 AsClient 'Pipelined
 >                                   (Tr StBusy2 StIdle2 <| q) StIdle2 m Int
 >     collect !n k =
 >         Collect Nothing (ServerAgency (WrapServer TokBusy))
@@ -763,44 +754,44 @@ a bit simpler.  The code below is copy-past from [typed-protocols] package.
 >     go  a              (Effect b)      = b >>= \b' -> go a  b'
 >     go (Yield _ msg a) (Await _ b)     = go  a     (b msg)
 >     go (Await _ a)     (Yield _ msg b) = go (a msg) b
->  
+>
 >     -- By appealing to the proofs about agency for this protocol we can
 >     -- show that these other cases are impossible
 >     go (Yield (ClientAgency stA) _ _) (Yield (ServerAgency stB) _ _) =
 >       absurd (exclusionLemma_ClientAndServerHaveAgency stA stB)
->  
+>
 >     go (Yield (ServerAgency stA) _ _) (Yield (ClientAgency stB) _ _) =
 >       absurd (exclusionLemma_ClientAndServerHaveAgency stB stA)
->  
->     go (Await (ServerAgency stA) _)   (Await (ClientAgency stB) _)   =
->       absurd (exclusionLemma_ClientAndServerHaveAgency stB stA)
->  
+>
 >     go (Await (ClientAgency stA) _)   (Await (ServerAgency stB) _)   =
 >       absurd (exclusionLemma_ClientAndServerHaveAgency stA stB)
->  
+>
+>     go (Await (ServerAgency stA) _)   (Await (ClientAgency stB) _)   =
+>       absurd (exclusionLemma_ClientAndServerHaveAgency stB stA)
+>
 >     go (Done  stA _)            (Yield (ServerAgency stB) _ _) =
 >       absurd (exclusionLemma_NobodyAndServerHaveAgency stA stB)
->  
+>
 >     go (Done  stA _)            (Yield (ClientAgency stB) _ _) =
 >       absurd (exclusionLemma_NobodyAndClientHaveAgency stA stB)
->  
->     go (Done  stA _)            (Await (ClientAgency stB) _)   =
->       absurd (exclusionLemma_NobodyAndClientHaveAgency stA stB)
->  
+>
 >     go (Done  stA _)            (Await (ServerAgency stB) _)   =
 >       absurd (exclusionLemma_NobodyAndServerHaveAgency stA stB)
->  
+>
+>     go (Done  stA _)            (Await (ClientAgency stB) _)   =
+>       absurd (exclusionLemma_NobodyAndClientHaveAgency stA stB)
+>
 >     go (Yield (ClientAgency stA) _ _) (Done stB _)    =
 >       absurd (exclusionLemma_NobodyAndClientHaveAgency stB stA)
->  
+>
 >     go (Yield (ServerAgency stA) _ _) (Done stB _)    =
 >       absurd (exclusionLemma_NobodyAndServerHaveAgency stB stA)
->  
->     go (Await (ServerAgency stA) _)   (Done stB _)    =
->       absurd (exclusionLemma_NobodyAndServerHaveAgency stB stA)
->  
+>
 >     go (Await (ClientAgency stA) _)   (Done stB _)    =
 >       absurd (exclusionLemma_NobodyAndClientHaveAgency stB stA)
+>
+>     go (Await (ServerAgency stA) _)   (Done stB _)    =
+>       absurd (exclusionLemma_NobodyAndServerHaveAgency stB stA)
 
 
 === Removing pipelining
@@ -808,42 +799,47 @@ a bit simpler.  The code below is copy-past from [typed-protocols] package.
 We can show that any peer that is using pipeing primitives can be transformed
 into non-piplined version.   This is possible because pipelining does not
 changes the order of messages sent or received.  We just need to track this
-order with `TrQueue`.   First we define various singletons needed to
+order with `PrQueue`.   First we define various singletons needed to
 track the evolution of types.
 
 > -- | Singletons for types of kind `Trans`.
 > --
-> data STrans (tr :: Trans ps) where
+> type STrans :: Trans ps -> Type
+> data STrans tr where
 >    STr :: STrans (Tr st st')
 >
 > -- | Singleton for types of kind `Queue` kind.
 > ---
-> data SQueue (q :: Queue ps) where
+> type SQueue :: Queue ps -> Type
+> data SQueue q where
 >   SEmpty :: SQueue Empty
 >   SCons  :: STrans (Tr st st') -> SQueue q -> SQueue (Tr st st' <| queue)
 >
-> -- | `TrQueue` tracks the order of transitions.  We either have an
+> -- | `PrQueue` tracks the order of transitions.  We either have an
 > -- explicti `Message` or a `STrans` singleton, both are pushed by
 > -- `YieldPipelined` operation.
 > --
-> data TrQueue ps pr st q st' where
+> -- Note: if not the order of arguments 'PrQueue' could be given a category
+> -- instance
+> type PrQueue :: forall ps -> PeerRole -> ps -> Queue ps -> ps -> Type
+> data PrQueue ps pr st q st' where
 >   ConsMsgQ :: WeHaveAgency pr st
 >            -> Message ps st st'
->            -> TrQueue ps pr st' q st''
->            -> TrQueue ps pr st  q st''
+>            -> PrQueue ps pr st' q st''
+>            -> PrQueue ps pr st  q st''
 >
 >   ConsTrQ  :: STrans (Tr st st')
->            -> TrQueue ps pr st'               q  st''
->            -> TrQueue ps pr st  (Tr st st' <| q) st''
+>            -> PrQueue ps pr st'               q  st''
+>            -> PrQueue ps pr st  (Tr st st' <| q) st''
 >
->   EmptyQ   :: TrQueue ps pr st Empty st
+>   EmptyQ   :: PrQueue ps pr st Empty st
 >
-> -- | Push a `ConsMsgQ` to the back of `TrQueue`.
+> -- | Push a `ConsMsgQ` to the back of `PrQueue`.
 > --
 > snocMsgQ :: WeHaveAgency pr st'
 >          -> Message ps st' st''
->          -> TrQueue ps pr st q st'
->          -> TrQueue ps pr st q st''
+>          -> PrQueue ps pr st q st'
+>          -> PrQueue ps pr st q st''
 > snocMsgQ stok msg (ConsMsgQ stok' msg' pq) =
 >   ConsMsgQ stok' msg' (snocMsgQ stok msg pq)
 > snocMsgQ stok msg (ConsTrQ str pq) =
@@ -851,11 +847,11 @@ track the evolution of types.
 > snocMsgQ stok msg EmptyQ =
 >   ConsMsgQ stok msg EmptyQ
 >
-> -- | Push a `STrans (Tr st st')` to the back of `TrQueue`.
+> -- | Push a `STrans (Tr st st')` to the back of `PrQueue`.
 > --
 > snocTrQ :: STrans (Tr st' st'')
->         -> TrQueue ps pr st  q                 st'
->         -> TrQueue ps pr st (q |> Tr st' st'') st''
+>         -> PrQueue ps pr st  q                 st'
+>         -> PrQueue ps pr st (q |> Tr st' st'') st''
 > snocTrQ tr (ConsMsgQ stok msg pq) =
 >   ConsMsgQ stok msg (snocTrQ tr pq)
 > snocTrQ tr (ConsTrQ tr' pq) =
@@ -863,10 +859,10 @@ track the evolution of types.
 > snocTrQ tr EmptyQ =
 >   ConsTrQ tr EmptyQ
 >
-> -- | Derive `SQueue q` singleton from `TrQueue ps pr st q st'` by
+> -- | Derive `SQueue q` singleton from `PrQueue ps pr st q st'` by
 > -- a simple traversal.
 > --
-> promisedQueue :: TrQueue ps pr st q st' -> SQueue q 
+> promisedQueue :: PrQueue ps pr st q st' -> SQueue q
 > promisedQueue (ConsMsgQ  _ _ pq) = promisedQueue pq
 > promisedQueue (ConsTrQ tr pq)    = SCons tr (promisedQueue pq)
 > promisedQueue  EmptyQ            = SEmpty
@@ -886,7 +882,7 @@ With all the singletons at hand we are ready to prove:
 > lemma_unpipeline cs0 = go cs0 EmptyQ
 >   where
 >     go :: [Bool]
->        -> TrQueue       ps pr            st q     st'
+>        -> PrQueue       ps pr            st q     st'
 >        -> PeerPipelined ps pr pl            q     st' m a
 >        -> PeerPipelined ps pr 'NonPipelined Empty st  m a
 >
@@ -894,9 +890,9 @@ With all the singletons at hand we are ready to prove:
 >     go cs EmptyQ (Yield stok msg k) = Yield stok msg $ go cs EmptyQ k
 >     go cs EmptyQ (Await stok k)     = Await stok     $ go cs EmptyQ . k
 >     go _  EmptyQ (Done stok a)      = Done  stok a
->     
+>
 >     go cs pq     (YieldPipelined stok msg k) =
->        -- push message and promissed transition to `TrQueue`.
+>        -- push message and promissed transition to `PrQueue`.
 >        go cs ( pq
 >              & snocMsgQ stok msg
 >              & snocTrQ STr
