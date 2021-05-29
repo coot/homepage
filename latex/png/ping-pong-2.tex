@@ -1,4 +1,4 @@
-\documentclass[tikz,multi={tikzpicture},convert={outfile=images/ping-pong.png,density=1000}]{standalone}
+\documentclass[tikz,multi={tikzpicture},convert={outfile=images/ping-pong-2.png,density=1000}]{standalone}
 \usepackage[build={latexoptions={-output-directory=latex/png}}]{standalone}
 \usetikzlibrary{automata, positioning, arrows}
 \usepackage{xcolor}
@@ -29,37 +29,6 @@
     ->/.style={draw=white!40!black,-stealth}
 }
 \tikzstyle{every node}=[color=white!40!black,font=\tiny]
-
-% PingPong, v1
-\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm]
-  \node[state, mygreen, initial]      (Idle) {\StIdle};
-  \node[state, right of=Idle]         (Done) {\StDone};
-  \node[state, myblue, above of=Idle] (Busy) {\StBusy};
-
-  \draw (Idle) edge[above]            node{\MsgDone} (Done);
-  \draw (Idle) edge[left, bend left]  node{\MsgPing} (Busy);
-  \draw (Busy) edge[right, bend left] node{\MsgPong} (Idle);
-\end{tikzpicture}
-
-% Non-pipelined PingPong client
-\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm]
-  \node[state, mygreen, initial] (C0) at (0, 0) {\StIdle};
-  \node[state, myblue]           (S0) at (2.5, -0.5) {\StBusy};
-  \node[state, mygreen]          (C1) at (0, -1) {\StIdle};
-  \node[state, myblue]           (S1) at (2.5, -1.5) {\StBusy};
-  \node[state, mygreen]          (C2) at (0, -2) {\StIdle};
-  \node[state, myblue]           (S2) at (2.5, -2.5) {\StBusy};
-  \node[state, mygreen]          (C3) at (0, -3) {\StIdle};
-  \node[state]                   (D)  at (2.5, -3.5) {\StDone};
-  \draw (C0) -> node[above]{\MsgPing} (S0);
-  \draw (S0) -> node[above]{\MsgPong} (C1);
-  \draw (C1) -> node[above]{\MsgPing} (S1);
-  \draw (S1) -> node[above]{\MsgPong} (C2);
-  \draw (C2) -> node[above]{\MsgPing} (S2);
-  \draw (S2) -> node[above]{\MsgPong} (C3);
-  \draw (C3) -> node[above]{\MsgDone} (D);
-\end{tikzpicture}
-
 % Pipelined PingPong client
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm]
   \node[state, mygreen, initial] (C0)  at (0, 0)      {\StIdle};
@@ -80,17 +49,5 @@
   \draw[->] (S2.south west) -- node[above=0.07]{\MsgPong} (C3.north east);
   \draw[->] (C3) -- node[above]{\MsgDone} (D);
 \end{tikzpicture}
-
-% PingPong, v2
-\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.75cm]
-  \node[state, mygreen, initial]      (Idle) {\StIdleX};
-  \node[state, right of=Idle]         (Done) {\StDoneX};
-  \node[state, myblue, above of=Idle] (Busy) {\StBusyX};
-
-  \draw (Idle) edge[above]            node{\MsgDoneX} (Done);
-  \draw (Idle) edge[left, bend left]  node{\MsgPingX} (Busy);
-  \draw (Busy) edge[right, bend left] node{\MsgPongX} (Idle);
-  \draw (Busy.120) to [out=120,in=60,looseness=10] node[above]{\MsgBusy} (Busy.60);
-\end{tikzpicture}
-
 \end{document}
+

@@ -77,6 +77,7 @@ ul.blog-posts > li {
   display: inline;
   font-size: 1.1em;
   margin-bottom: 5px;
+  color: #b16363;
 }
 
 .blog-posts p {
@@ -445,7 +446,7 @@ footer {
 
 a {
     /* color: rgb(63,81,181); */
-    color: #536dff;
+    color: #536cff;
     text-decoration: none;
 }
 
@@ -566,20 +567,24 @@ section {
 
 .post h1 {
   width: 100%;
-  border-bottom: 1px solid #aaa;
+  border-bottom: 1px solid #e0e0e0;
   font-weight: 300;
+  color: #e0e0e0;
 }
 
 .post h2 {
   font-weight: 300;
+  color: #e0e0e0;
 }
 
 .post h3 {
   font-weight: 300;
+  color: #e0e0e0;
 }
 
 .post h4 {
   font-weight: 200;
+  color: #e0e0e0;
 }
 
 .post #img_container {
@@ -728,7 +733,12 @@ section {
 }
 
 blockquote {
-  background-color: #f0f0f0;
-  padding: 1px 0px;
-  margin: 10px 20px;
+  background-color: #4b4b4b;
+  padding: 5px 40px;
+  margin: 10px 10px;
+}
+
+blockquote ul {
+  padding-left: 0px;
+  padding-right: 0px;
 }

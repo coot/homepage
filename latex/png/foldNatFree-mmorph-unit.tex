@@ -1,0 +1,17 @@
+\documentclass[tikz,convert={outfile=images/foldNatFree-mmorph-unit.png,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/png}}]{standalone}
+\begin{document}
+\tikzstyle{every node}=[font=\footnotesize]
+\tikzset{
+  ->/.style={draw=white!50!black,-stealth}
+}
+\tikzstyle{every node}=[color=white!50!black,font=\tiny]
+\begin{tikzpicture}
+    \node (A) at (0,2) {$\mathtt{a}$};
+    \node (B) at (4,2) {$\mathtt{m}\;\mathtt{f}\;\mathtt{a}$};
+    \node (D) at (4,0) {$\mathtt{d}\;\mathtt{b}$};
+    \draw[->] (A) -- node[above] {$\mathtt{return}$} (B);
+    \draw[->] (B) -- node[right] {$\mathtt{foldNatFree}\;\texttt{nat}$} (D);
+    \draw[->] (A) -- node [below left] {$\mathtt{return}$} (D);
+\end{tikzpicture}
+\end{document}

@@ -101,7 +101,7 @@ on the right path.
 
 This particular instance satisfies rather interesting laws:
 
-![liftFree natural transformation](/images/liftFree-nat.svg)
+![liftFree natural transformation](/images/liftFree-nat.png)
 
 or as an equation:
 ```haskell
@@ -111,7 +111,7 @@ fmap g . liftFree == liftFree . fmap g
 This is more or less streightforward, just take a look at the definition of
 `liftFree`.
 
-![foldNatFree natural transformation](/images/foldNatFree-nat.svg)
+![foldNatFree natural transformation](/images/foldNatFree-nat.png)
 
 or as an equation:
 
@@ -157,7 +157,7 @@ into the category of monads.  `foldNatFree nat` has to ba monad morphism for
 any `nat`.  This means that the following diagrams commute (or equations
 hold):
 
-![foldNatFree - monad morphism: the unit law](/images/foldNatFree-mmorph-unit.svg)
+![foldNatFree - monad morphism: the unit law](/images/foldNatFree-mmorph-unit.png)
 
 or as an equation:
 
@@ -168,7 +168,7 @@ return = return . foldNatFree nat
 This should be clear from definition of `foldNatFree`.  Moreover, the
 following diagram commutes:
 
-![foldNatFree - monad morphism: the join law](/images/foldNatFree-mmorph-join.svg)
+![foldNatFree - monad morphism: the join law](/images/foldNatFree-mmorph-join.png)
 
 or as an equation:
 

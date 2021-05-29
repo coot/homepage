@@ -1,0 +1,14 @@
+\documentclass[tikz,convert={outfile=images/one-object-cat.png,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/png}}]{standalone}
+\tikzset{
+  ->/.style={draw=white!50!black,-stealth}
+}
+\tikzstyle{every node}=[color=white!50!black,font=\footnotesize]
+\begin{document}
+\begin{tikzpicture}
+    \node at (0,0) {\texttt{*}};
+    \node at (0,0) [below] {\texttt{v}};
+    \node at (0,1.1) [above] {\texttt{[e]}};
+    \draw[->] (-0.1,0.1) .. controls (-1.7,1.5) and (1.7,1.5) .. (0.1,0.1);
+\end{tikzpicture}
+\end{document}

@@ -1,7 +1,10 @@
-\documentclass[tikz,convert={outfile=images/tr-graph.svg,density=1000}]{standalone}
-\usepackage[build={latexoptions={-output-directory=latex/svg}}]{standalone}
+\documentclass[tikz,convert={outfile=images/tr-graph.png,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/png}}]{standalone}
+\tikzset{
+  ->/.style={draw=white!50!black,-stealth}
+}
+\tikzstyle{every node}=[color=white!50!black,font=\footnotesize]
 \begin{document}
-\tikzstyle{every node}=[font=\footnotesize]
 \begin{tikzpicture}
     \node (A) at (0,0) {\texttt{NoItems}};
     \node (B) at (4,0) {\texttt{HasItem}};

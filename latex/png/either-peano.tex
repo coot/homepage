@@ -1,0 +1,23 @@
+\documentclass[tikz,convert={outfile=images/either-peano.png,density=1000}]{standalone}
+\usepackage{xcolor}
+\usepackage[build={latexoptions={-output-directory=latex/png}}]{standalone}
+\tikzset{
+  ->/.style={draw=white!50!black,-stealth}
+}
+\tikzstyle{every node}=[color=white!50!black,font=\footnotesize]
+\begin{document}
+\begin{tikzpicture}
+    \node (L) at (4,4) {\(\mathrm{Left\;x}\)};
+    \node (R) at (6,4) {\(\mathrm{Right\;x}\)};
+    \node (LL) at (2,2) {\(\mathrm{Left\;(Left\;x)}\)};
+    \node (RL) at (6,2) {\(\mathrm{Right\;(Left\;x)}\)};
+    \node (LLL) at (0,0) {\(\mathrm{Left\;(Left\;(Left\;x))}\)};
+    \node (RLL) at (4,0) {\(\mathrm{Right\;(Left\;(Left\;x))}\)};
+    \draw (L) -- (LL);
+    \draw (L) -- (RL);
+    \draw (LL) -- (LLL);
+    \draw (LL) -- (RLL);
+    \draw (LLL) -- (-2,-2);
+    \draw (LLL) -- (2,-2);
+\end{tikzpicture}
+\end{document}

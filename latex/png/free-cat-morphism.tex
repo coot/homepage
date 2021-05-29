@@ -1,0 +1,20 @@
+\documentclass[tikz,convert={outfile=images/free-cat-morphism.png,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/png}}]{standalone}
+\tikzset{
+  ->/.style={draw=white!50!black,-stealth}
+}
+\tikzstyle{every node}=[color=white!50!black,font=\footnotesize]
+\begin{document}
+\begin{tikzpicture}
+    \node (A) at (0,0) {\texttt{$\mathtt{a_0}$}};
+    \node (B) at (2,0) {\texttt{$\mathtt{a_0}$}};
+    \draw[->] (A) -- node[above] {$\mathtt{Id}$} (B);
+    \node (C) at (4,0) {\texttt{$\mathtt{a_1}$}};
+    \draw[->] (B) -- node [above] {$\mathtt{f_1}$} (C);
+    \node (D) at (6,0) {\texttt{$\mathtt{a_{n-1}}$}};
+    \draw[dashed,->] (C) -- (D);
+    \node (E) at (8,0) {\texttt{$\mathtt{a_n}$}};
+    \draw[->] (D) -- node [above] {$\mathtt{f_n}$} (E);
+\end{tikzpicture}
+\end{document}
+

@@ -428,10 +428,9 @@ u `monoidalAp` (v `monoidalAp` w)
 <span class="qed">QED</span>
 
 Equivalence between Applicative and Monoidal functors
-=====================================================
+-----------------------------------------------------
 
-From applicative functor to monoidal and back
----------------------------------------------
+=== From applicative functor to monoidal and back
 
 In this section we consider an applicative functor `f` and we consider tha
 applicative `monoidalAp` and `monoidalUnit` obtained from the associated
@@ -510,8 +509,7 @@ pure ((.) (uncurry ($))) <*> (pure (,) <*> fab)
 ```
 <span class="qed">QED</span>
 
-From monoidal to applicative and back
--------------------------------------
+=== From monoidal to applicative and back
 
 In this section we consider a monoidal functor `f`, and then we consisder tha
 monoidal functor obtained from the associated applicative functor by means of
@@ -541,7 +539,7 @@ monoidalUnit
 ```
 
 References
-==========
+----------
 
 * [Monoidal Categories in
   ncatlab.org](https://ncatlab.org/nlab/show/monoidal+category)

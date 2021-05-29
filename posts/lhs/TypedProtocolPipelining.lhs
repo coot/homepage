@@ -23,8 +23,7 @@ Pipelining in TypedProtocols
 
 > module TypedProtocolPipelining where
 >
-> import           Prelude hiding (id, last, (.))
-> import           Control.Category
+> import           Prelude hiding (last)
 > import           Data.Function ((&))
 > import           Data.Kind (Type)
 > import           Data.Void
@@ -38,9 +37,8 @@ performance reasons.  Network is utilised best when constant preassure is
 applied to avoid shrinking of the tcp window (e.g. tcp flow control
 mechanism).  For these reasons, the _typed-protocol_ package allows to express
 [protocol pipelining](https://www.wikiwand.com/en/Protocol_pipelining).  In
-addition, protocol pipelining allows to make less context switches and
-improves data locality (it would be quite interesting to measure these
-claims).
+addition, protocol pipelining should in principle allow to make less context
+switches and improve data locality.
 
 In this blog post we will study pipelinging starting with a simple ping pong
 protocol:

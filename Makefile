@@ -7,6 +7,8 @@ lhs_posts := $(patsubst posts/lhs/%, dist/posts/%, $(wildcard posts/lhs/*.html))
 
 html_posts := $(patsubst posts/html/%, dist/posts/%, $(wildcard posts/html/*.html))
 
+htm := $(wildcard posts/html/*.htm)
+
 css_assets := $(patsubst %, dist/%, $(wildcard assets/*.css))
 
 font_assets := $(patsubst %, dist/%, $(wildcard assets/*.ttf))
@@ -38,14 +40,11 @@ js_html5shiv = \
 images := $(patsubst %, dist/%, $(wildcard images/*.svg)) \
           $(patsubst %, dist/%, $(wildcard images/*.png))
 
-png_images := images/ping-pong-0.png \
-	      images/ping-pong-1.png \
-	      images/ping-pong-2.png \
-	      images/ping-pong-3.png
+png_images := $(patsubst latex/png/%.tex, images/%.png, $(wildcard latex/png/*.tex))
 
 svg_images := $(patsubst latex/svg/%.tex, images/%.svg, $(wildcard latex/svg/*.tex))
 
-$(png_images) &: latex/png/ping-pong.tex
+$(png_images): images/%.png: latex/png/%.tex
 	TEXINPUTS="latex/png:${TEXINPUTS}" pdflatex -shell-escape -halt-on-error -output-directory=latex/png $<
 $(svg_images): images/%.svg: latex/svg/%.tex
 	TEXINPUTS="latex/svg:${TEXINPUTS}" pdflatex -shell-escape -halt-on-error -output-directory=latex/svg $<
@@ -88,7 +87,9 @@ $(lhs_posts): dist/posts/%: posts/lhs/% $(pandoc_outputs) $(templates)
 jinja: $(lhs_posts)
 .PHONY: jinja
 
-$(html_posts): dist/posts/%: posts/html/% $(templates)
+$(htm):
+
+$(html_posts): dist/posts/%: posts/html/% $(htm) $(templates)
 	echo '{"wrapperClass": "post"}' | j2 -f json $< -o $@
 
 html_posts: posts_dir $(html_posts)
@@ -163,6 +164,8 @@ all: posts $(html) assets latex latex_clean images templates dist/manifest.json 
 .PHONY: all
 
 clean:
+	rm     latex/png/*.{log,aux,pdf} || true
+	rm     latex/svg/*.{log,aux,pdf} || true
 	rm -rf posts/lhs/.build || true
 	rm -rf dist || true
 
