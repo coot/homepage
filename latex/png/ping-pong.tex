@@ -15,19 +15,20 @@
 \newcommand{\MsgPongX}{\tiny\texttt{MsgPong2}}
 \newcommand{\MsgBusy}{\tiny\texttt{MsgBusy}}
 \newcommand{\MsgDoneX}{\tiny\texttt{MsgDone2}}
-\definecolor{mygreen}{rgb}{0,0.819608f,0.545098}
-\definecolor{myblue}{rgb}{0.172549,0.603922,0.984314}
+\definecolor{mygreen}{rgb}{0.109804,0.698039,0.341176}
+\definecolor{myblue}{rgb}{0.360784,0.423529,255}
 \begin{document}
 \tikzset{
     state/.style={
            rectangle,
-           draw=black,
+           draw=white!40!black,
            minimum height=1em,
            inner sep=1pt,
-           text centered,
+           text centered
            },
+    ->/.style={draw=white!40!black,-stealth}
 }
-\tikzstyle{every node}=[font=\tiny]
+\tikzstyle{every node}=[color=white!40!black,font=\tiny]
 
 % PingPong, v1
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=1.5cm]
@@ -35,7 +36,7 @@
   \node[state, right of=Idle]         (Done) {\StDone};
   \node[state, myblue, above of=Idle] (Busy) {\StBusy};
 
-  \draw (Idle) edge[above]             node{\MsgDone} (Done);
+  \draw (Idle) edge[above]            node{\MsgDone} (Done);
   \draw (Idle) edge[left, bend left]  node{\MsgPing} (Busy);
   \draw (Busy) edge[right, bend left] node{\MsgPong} (Idle);
 \end{tikzpicture}
@@ -70,7 +71,7 @@
   \node[state, mygreen]          (C1') at (0, -3)     {\StIdle};
   \node[state, mygreen]          (C2') at (0, -3.5)   {\StIdle};
   \node[state, mygreen]          (C3)  at (0, -4)     {\StIdle};
-  \node[state]                   (D)   at (2.5, -4.5) {\StDone};
+  \node[state]                   (D)   at (2.5, -5.5) {\StDone};
   \draw[->] (C0.south east) -- node[above=0.07]{\MsgPing} (S0.north west);
   \draw[->] (C1.south east) -- node[above=0.07]{\MsgPing} (S1.north west);
   \draw[->] (C2.south east) -- node[above=0.07]{\MsgPing} (S2.north west);

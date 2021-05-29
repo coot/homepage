@@ -8,7 +8,9 @@ html, body {
 
 body {
     width: 100%;
-    color: #444;
+    /* color: #444; */
+    color: #b0b0b0;
+    background-color: #2b2b2b;
     overflow-x: hidden;
     margin: 0px;
 }
@@ -158,7 +160,8 @@ img {
 pre {
     padding: 10px;
     /* background-color: rgba(78, 44, 251, 0.1); */
-    color: #505050;
+    /* color: #505050; */
+    color: #a0a0a0;
     border-radius: 1px;
 }
 
@@ -178,12 +181,13 @@ pre.haskell a {
 }
 
 .haskell .op {
-  color: #3f51b5;
+  /* color: #3f51b5; */
+  color: #536dff;
 }
 
 .haskell .co {
   font-family: 'Open Sans', sans-serif;
-  color: #707070;
+  color: #787878;
 }
 
 .mjx-chtml.MathJax_CHTML {
@@ -194,7 +198,7 @@ pre.haskell a {
     display: block;
     font-size: 0.9em;
     padding: 10px 20px;
-    color: #505050;
+    color: #a0a0a0;
 }
 
 .post figure,
@@ -252,7 +256,7 @@ pre.haskell a {
 @keyframes rotate {from {-webkit-transform: rotateZ(0deg); -moz-transform: rotateZ(0deg); -ms-transform: rotateZ(0deg); -o-transform: rotateZ(0deg); transform: rotateZ(0deg);} to {-webkit-transform: rotateZ(360deg); -moz-transform: rotateZ(360deg); -ms-transform: rotateZ(360deg); -o-transform: rotateZ(360deg); transform: rotateZ(360deg);}}
 
 .info-hdr #name {
-    color: #222;
+    color: #e0e0e0;
     font-weight: 300;
     font-size: 2em;
     text-align: center;
@@ -440,7 +444,8 @@ footer {
 }
 
 a {
-    color: rgb(63,81,181);
+    /* color: rgb(63,81,181); */
+    color: #536dff;
     text-decoration: none;
 }
 
