@@ -1,0 +1,18 @@
+\documentclass[tikz,convert={outfile=images/m-algebra-morphism.png,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/png}}]{standalone}
+\tikzset{
+  ->/.style={draw=white!50!black,-stealth}
+}
+\tikzstyle{every node}=[color=white!50!black,font=\footnotesize]
+\begin{document}
+\begin{tikzpicture}
+    \node (A) at (0,2) {\(\mathrm{m\;a}\)};
+    \node (B) at (3,2) {\(\mathrm{m\;b}\)};
+    \node (C) at (0,0) {\(\mathrm{a}\)};
+    \node (D) at (3,0) {\(\mathrm{b}\)};
+    \draw [->] (A) -- node[above] {\(\mathrm{fmap\ f}\)} (B); 
+    \draw [->] (B) -- (D);
+    \draw [->] (A) -- (C);
+    \draw [->] (C) -- node[below] {\(\mathrm{f}\)} (D);
+\end{tikzpicture}
+\end{document}

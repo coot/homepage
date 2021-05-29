@@ -37,12 +37,9 @@ js_html5shiv = \
              dist/assets/html5shiv.min.js \
              dist/assets/html5shiv-printshiv.min.js
 
-images := $(patsubst %, dist/%, $(wildcard images/*.svg)) \
-          $(patsubst %, dist/%, $(wildcard images/*.png))
+images := $(patsubst %, dist/%, $(wildcard images/*.png))
 
 png_images := $(patsubst latex/png/%.tex, images/%.png, $(wildcard latex/png/*.tex))
-
-svg_images := $(patsubst latex/svg/%.tex, images/%.svg, $(wildcard latex/svg/*.tex))
 
 #
 # Latex images
@@ -50,10 +47,8 @@ svg_images := $(patsubst latex/svg/%.tex, images/%.svg, $(wildcard latex/svg/*.t
 
 $(png_images): images/%.png: latex/png/%.tex
 	TEXINPUTS="latex/png:${TEXINPUTS}" pdflatex -shell-escape -halt-on-error -output-directory=latex/png $<
-$(svg_images): images/%.svg: latex/svg/%.tex
-	TEXINPUTS="latex/svg:${TEXINPUTS}" pdflatex -shell-escape -halt-on-error -output-directory=latex/svg $<
 
-latex: $(png_images) $(svg_images)
+latex: $(png_images)
 .PHONY: latex
 
 latex_clean:
@@ -193,7 +188,6 @@ all: posts $(html) assets latex latex_clean images templates dist/manifest.json 
 
 clean:
 	rm     latex/png/*.{log,aux,pdf} || true
-	rm     latex/svg/*.{log,aux,pdf} || true
 	rm -rf posts/lhs/.build || true
 	rm -rf dist || true
 
