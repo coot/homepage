@@ -1,0 +1,57 @@
+\documentclass[tikz,convert={outfile=images/exclusion_lemmas.png,density=1000}]{standalone}
+\usepackage[build={latexoptions={-output-directory=latex/png}}]{standalone}
+\usetikzlibrary{automata, positioning, arrows}
+\usepackage{xcolor}
+\definecolor{mygreen}{rgb}{0.109804,0.698039,0.341176}
+\definecolor{myblue}{rgb}{0.360784,0.423529,255}
+\definecolor{myred}{rgb}{1,0,0}
+\newcommand{\ClientHasAgency}{\large\texttt{ClientHasAgency}}
+\newcommand{\ServerHasAgency}{\large\texttt{ServerHasAgency}}
+\newcommand{\NobodyHasAgency}{\large\texttt{NobodyHasAgency}}
+\begin{document}
+\tikzset{
+    state/.style={
+           rectangle,
+           draw=white!40!black,
+           minimum height=1em,
+           inner sep=1pt,
+           text centered
+           },
+    -/.style={draw=white!40!black}
+}
+\tikzstyle{every node}=[color=white!40!black]
+
+\begin{tikzpicture}
+  \node (ClientHasAgency) at (0,    0) {\ClientHasAgency};
+  \node (ServerHasAgency) at (12cm, 0) {\ServerHasAgency};
+  \node (NobodyHasAgency) at (5cm, -5cm) {\NobodyHasAgency};
+  % \node (NobodyHasAgency) at (5cm, -5cm) {$\cdot$};
+  \draw[-,red] (ClientHasAgency)
+            -- node[above]{\footnotesize\texttt{exclusionLemma\_ClientAndServerHaveAgency}}
+               (ServerHasAgency);
+  \draw[-,red] (ClientHasAgency)
+            -- node[ pos=0.35
+                   , rotate=-46
+                   , below=0.5
+                   ] {\footnotesize\texttt{exclusionLemma\_NobodyAndClientHaveAgency}}
+               (NobodyHasAgency);
+  \draw[-,red] (ServerHasAgency)
+            -- node[ pos=0.4
+                   , below=0.4
+                   , rotate=37
+                   ] {\footnotesize\texttt{exclusionLemma\_NobodyAndServerHaveAgency}}
+               (NobodyHasAgency);
+  % \draw[-] (ClientHasAgency)
+           % edge [out=120, in=60,  looseness=16]
+           % node [above] {\texttt{ClientHasAgency}}
+           % (ClientHasAgency);
+  % \draw[-] (ServerHasAgency)
+           % edge [out=120, in=60,  looseness=16]
+           % node [above] {\texttt{ServerHasAgency}}
+           % (ServerHasAgency);
+  \draw[-] (NobodyHasAgency)
+           edge [out=240, in=300, looseness=16]
+           node [below] {\texttt{Client \& Server Terminated}}
+           (NobodyHasAgency);
+\end{tikzpicture}
+\end{document}

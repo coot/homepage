@@ -2,24 +2,18 @@ Pipelining in TypedProtocols
 ============================
 
 > {-# LANGUAGE BangPatterns             #-}
-> {-# LANGUAGE DataKinds                #-}
-> {-# LANGUAGE DerivingStrategies       #-}
-> {-# LANGUAGE DerivingVia              #-}
-> {-# LANGUAGE EmptyCase                #-}
 > {-# LANGUAGE FlexibleInstances        #-}
-> {-# LANGUAGE GADTs                    #-}
-> {-# LANGUAGE PatternSynonyms          #-}
-> {-# LANGUAGE PolyKinds                #-}
 > {-# LANGUAGE RankNTypes               #-}
 > {-# LANGUAGE ScopedTypeVariables      #-}
 > {-# LANGUAGE StandaloneDeriving       #-}
+
+> {-# LANGUAGE DataKinds                #-}
+> {-# LANGUAGE EmptyCase                #-}
+> {-# LANGUAGE GADTs                    #-}
+> {-# LANGUAGE PolyKinds                #-}
 > {-# LANGUAGE StandaloneKindSignatures #-}
-> {-# LANGUAGE TypeApplications         #-}
 > {-# LANGUAGE TypeFamilies             #-}
-> {-# LANGUAGE TypeFamilyDependencies   #-}
 > {-# LANGUAGE TypeOperators            #-}
-> {-# LANGUAGE UndecidableInstances     #-}
-> {-# LANGUAGE ViewPatterns             #-}
 
 > module TypedProtocolPipelining where
 >
@@ -93,11 +87,12 @@ a pair of threads communicating through a pair of queues.  The mix of
 concurrency and type level programming was a neat idea by Duncan Coutts.
 
 In this post we will explore how to re-implement pipelining which does not
-require concurrent thread which synchronise through a pair of queues, and and
-instead use a single type level queue to faithfuly represent the state of the
-protocol at the type level.  As we will see this will improve the way
-pipelining can be expressed, at the expense of using advanced type level
-programming.
+involve branching and instead use type level programming to give
+a non-branching recursive api for pipelining, which can be interepreted
+without the need of concurrency.  As we will see, this will improve the way
+pipelined protocols can be expressed, at the expense of using additional
+advanced type level programming machinery (since typed-protocols already relay
+on similar techniques this is not a concern here).
 
 
 Towards non-pipelined protocol description
@@ -106,38 +101,38 @@ Towards non-pipelined protocol description
 This is our first simplest attempt to encode a non-pipelined ping-pong client.
 The client can be in either of the three states:
 
-> data SimplePingPong where
->   StSimpleIdle :: SimplePingPong
->   StSimpleBusy :: SimplePingPong
->   StSimpleDone :: SimplePingPong
+> data PingPong where
+>   StIdle :: PingPong
+>   StBusy :: PingPong
+>   StDone :: PingPong
 
 It can send either of the messages:
 
-> data MessageSimplePingPong (st :: SimplePingPong) (st' :: SimplePingPong) where
->   MsgSimplePing :: MessageSimplePingPong StSimpleIdle StSimpleBusy
->   MsgSimplePong :: MessageSimplePingPong StSimpleBusy StSimpleIdle
->   MsgSimpleDone :: MessageSimplePingPong StSimpleIdle StSimpleDone
+> data MessageSimplePingPong (st :: PingPong) (st' :: PingPong) where
+>   MsgSimplePing :: MessageSimplePingPong StIdle StBusy
+>   MsgSimplePong :: MessageSimplePingPong StBusy StIdle
+>   MsgSimpleDone :: MessageSimplePingPong StIdle StDone
 
 Now a client can be encoded as a recursive data type (although this
 representation is not very useful as it does not allow to do any IO):
 
-> data SimplePingPongClient (st :: SimplePingPong) a where
->   SendMsg    :: MessageSimplePingPong StSimpleIdle st
+> data SimplePingPongClient (st :: PingPong) a where
+>   SendMsg    :: MessageSimplePingPong StIdle st
 >              -> (SimplePingPongClient st a)
->              -> SimplePingPongClient StSimpleIdle a
+>              -> SimplePingPongClient StIdle a
 >
->   RecvMsg    :: (MessageSimplePingPong StSimpleBusy StSimpleIdle
->                   -> (SimplePingPongClient StSimpleIdle a))
->              -> SimplePingPongClient StSimpleBusy a
+>   RecvMsg    :: (MessageSimplePingPong StBusy StIdle
+>                   -> (SimplePingPongClient StIdle a))
+>              -> SimplePingPongClient StBusy a
 >
 >   ClientDone :: a
->              -> SimplePingPongClient StSimpleDone a
+>              -> SimplePingPongClient StDone a
 
 Our initial example client which sends a ping message, awaits for the
 response, loops it two more time and sends the terminating message can be
 written as:
 
-> simplePingPongClient :: a -> SimplePingPongClient StSimpleIdle a
+> simplePingPongClient :: a -> SimplePingPongClient StIdle a
 > simplePingPongClient a =
 >     SendMsg MsgSimplePing
 >   $ RecvMsg $ \MsgSimplePong ->
@@ -165,45 +160,45 @@ natural numbers:
 > --
 > data N = Z | S N
 
-> data SimplePipelinedPingPongClient (st :: SimplePingPong) (n :: N) c a where
+> data SimplePipelinedPingPongClient (st :: PingPong) (n :: N) c a where
 >   -- | Pipeline a single message, together with a receiver and a continuation
 >   -- with incremented outstanding message counter.
 >   --
->   PipelinedSendMsg :: MessageSimplePingPong StSimpleIdle st
->                    -> PingPongReceiver              StSimpleBusy StSimpleIdle c
->                    -> SimplePipelinedPingPongClient StSimpleIdle (S n) c a
->                    -> SimplePipelinedPingPongClient StSimpleIdle    n  c a
+>   PipelinedSendMsg :: MessageSimplePingPong StIdle st
+>                    -> PingPongReceiver              StBusy StIdle c
+>                    -> SimplePipelinedPingPongClient StIdle (S n) c a
+>                    -> SimplePipelinedPingPongClient StIdle    n  c a
 >
 >   -- | Collect the receiver result.  The continuation subtracts from
 >   -- outstanding pipelined message counter.
 >   --
->   CollectResponse  :: (c -> SimplePipelinedPingPongClient StSimpleIdle n c a)
->                    -> SimplePipelinedPingPongClient StSimpleIdle (S n) c a
+>   CollectResponse  :: (c -> SimplePipelinedPingPongClient StIdle n c a)
+>                    -> SimplePipelinedPingPongClient StIdle (S n) c a
 >
 >   -- | Send terminal message; it is only allowed once we collected all the
 >   -- responses.
 >   --
->   SendMsgDone      :: MessageSimplePingPong StSimpleIdle StSimpleDone
->                    -> SimplePipelinedPingPongClient StSimpleDone Z c a
->                    -> SimplePipelinedPingPongClient StSimpleIdle Z c a
+>   SendMsgDone      :: MessageSimplePingPong StIdle StDone
+>                    -> SimplePipelinedPingPongClient StDone Z c a
+>                    -> SimplePipelinedPingPongClient StIdle Z c a
 >
 >   -- | Once terminating message was sent, return.
 >   --
 >   PipelinedDone    :: a
->                    -> SimplePipelinedPingPongClient StSimpleDone Z c a
+>                    -> SimplePipelinedPingPongClient StDone Z c a
 >
 > -- | Receiver; callback which is called on each 'MsgPong' received.
 > --
-> data PingPongReceiver (st :: SimplePingPong) (st' :: SimplePingPong) c where
->   RecvPipelinedMsg :: (MessageSimplePingPong StSimpleBusy StSimpleIdle -> c)
->                    -> PingPongReceiver StSimpleBusy StSimpleIdle c
+> data PingPongReceiver (st :: PingPong) (st' :: PingPong) c where
+>   RecvPipelinedMsg :: (MessageSimplePingPong StBusy StIdle -> c)
+>                    -> PingPongReceiver StBusy StIdle c
 
 > -- | Pipelined ping pong client, which for simplicty pipelines two messages
 > --
 > simplePipelinedPingPongClient
 >    :: a -- ^ fixed result, for simplicity
 >    -> c -- ^ fixed collected value, for simplicity
->    -> SimplePipelinedPingPongClient StSimpleIdle Z c a
+>    -> SimplePipelinedPingPongClient StIdle Z c a
 > simplePipelinedPingPongClient a c =
 >    PipelinedSendMsg
 >      MsgSimplePing
@@ -283,13 +278,12 @@ protocol to be able to construct both sides: client and\/or server.  The
 following
 [Protocol](https://input-output-hk.github.io/ouroboros-network/typed-protocols/Network-TypedProtocol-Core.html#t:Protocol)
 type class together with auxiliary types `PeerRole` and `PeerHasAgency`
-defines what is needed to define a protocol and construct proofs of
-correctness for client and a server.  So far we've only used `Message` type
-from this type class.  Each protocol has to define which side has the
-agency at each state or which states are terminating; for this the type class
-has to provide `ClientHasAgency`, `ServerHasAgency` and `NobodyHasAgency`
-together with some lemmas that ensure correctness of the provided associated
-data instances.  The details of this go byoned this blog post.
+defines what is needed to construct a protocol and proofs of its correctness.
+So far we've only used `Message` type from this type class.  Each protocol has
+to define which side has the agency at each state and which states are
+terminating; for this the type class has to provide `ClientHasAgency`,
+`ServerHasAgency` and `NobodyHasAgency` together with some lemmas that ensure
+correctness of the provided associated data instances.
 
 >
 > class Protocol ps where
@@ -343,7 +337,8 @@ data instances.  The details of this go byoned this blog post.
 >
 > data PeerRole = AsClient | AsServer
 >
-> data PeerHasAgency (pr :: PeerRole) (st :: ps) where
+> type PeerHasAgency :: PeerRole -> ps -> Type
+> data PeerHasAgency    pr          st where
 >     ClientAgency :: !(ClientHasAgency st) -> PeerHasAgency AsClient st
 >     ServerAgency :: !(ServerHasAgency st) -> PeerHasAgency AsServer st
 >
@@ -354,22 +349,32 @@ data instances.  The details of this go byoned this blog post.
 >     FlipAgency AsServer = AsClient
 >
 
+<figure>
+![](/images/exclusion_lemmas.png)
+<figcaption class="left">
+We have six exlusive states: client has agency, server has agency or both
+terminated and three forbidden states by exclusion lemmas: client and server
+have agency, client has agency and server terminated, client terminated and
+server has agency.
+</figcaption>
+</figure>
+
 Pipelining with type level queue
 --------------------------------
 
 We already seen that pipelining requires a queue that allows to send more
 messages before waiting for the replies.  But it does not neccessarily needs to
 be a term level queue, equally well we could push the expected transitions on
-a type level queue, and present a way to read from the queue.  We will try with
-the simplest type level queue based on type level lists.
+a type level queue, and give a way to collect responses and thus eliminate
+from the type level queue.
 
 == `Queue` kind
 
 First let us define elements that will be pushed on to the queue. When we just
 send some `Message pt from to` and we want to pipeline next message
 `Message from' to'`, we will push `Tr to from'` onto the queue.  The
-`Tr to from' :: Trans ps` is a promoted type which allows us to track transitions
-that are delayed.
+`Tr to from' :: Trans ps` is a promoted type which allows us to track delayed
+transitions.
 
 > data Trans ps where
 >     Tr :: forall ps. ps -> ps -> Trans ps
@@ -380,12 +385,11 @@ push elements onto the queue.
 
 > -- | Queue kind
 > --
-> type Queue :: ps -> Type
 > data Queue ps where
 >   Empty :: Queue ps
 >   Cons  :: Trans ps -> Queue ps -> Queue ps
 >
-> -- | Cons type constructor
+> -- | Cons type alias
 > --
 > type  (<|) :: Trans ps -> Queue ps -> Queue ps
 > type a <| as = Cons a as
@@ -394,18 +398,18 @@ push elements onto the queue.
 > -- | Snoc operation
 > --
 > type (|>) :: Queue ps -> Trans ps -> Queue ps
-> infixr 5 |>
 > type family as |> b where
 >      Empty     |> b = Cons b Empty
 >      (a <| as) |> b = a <| (as |> b)
+> infixr 5 |>
 
 == `PeerPipelined`
 
 The `PeerPiplined` type is a general API for building protocol applications
 which satisfy the `Protocol` type class constraint.  Unlike our previous
 examples it can be used to build either client or server roles.  The client and
-server build with it are necessarily dual to each other, see 'connect' below.
-It also supports any monad and can embed any monadic computations.
+server build with it are necessarily dual to each other, see `theorem_duality`
+below.  It also supports any monad and can embed any monadic computations.
 
 > -- | Promoted data type which indicates if 'PeerPipelined' is used in
 > -- pipelined mode or not.
@@ -499,13 +503,6 @@ In this section we will formalise the ping pong protocol by providing
 ![](/images/ping-pong-0.png)
 </figure>
 
-> -- | Ping pong states
-> --
-> data PingPong where
->   StIdle :: PingPong
->   StBusy :: PingPong
->   StDone :: PingPong
-
 > instance Protocol PingPong where
 >   -- | Ping pong messages
 >   --
@@ -570,10 +567,12 @@ Some auxiliary instances:
 > pingPongClientPipelined
 >    :: a -> PeerPipelined PingPong AsClient 'Pipelined Empty StIdle m a
 > pingPongClientPipelined a =
->      -- pipeline two pings
+>      -- pipeline three pings
 >      YieldPipelined (ClientAgency TokIdle) MsgPing
 >    $ YieldPipelined (ClientAgency TokIdle) MsgPing
->      -- collect two pongs
+>    $ YieldPipelined (ClientAgency TokIdle) MsgPing
+>      -- collect three pongs
+>    $ collect
 >    $ collect
 >    $ collect
 >    $ Yield (ClientAgency TokIdle) MsgDone
@@ -593,7 +592,7 @@ Some auxiliary instances:
 
 Let us consider a variation of the ping pong protocol, in which the server
 might send multiple `MsgBusy` before transfering agency back to the client with
-'MsgPong'.  In this version by pipelining `MsgPing`, we might need to collect
+`MsgPong`.  In this version by pipelining `MsgPing`, we might need to collect
 multiple `MsgBusy` until we receive `MsgPong`.  It will help us demostrate
 that we can pipeline multiple `MsgPing` messages and collect all the replies.
 
@@ -716,17 +715,17 @@ Next example is similar to the previous one but it counts the number of
 
 Duality asures that two peers in dual roles: `AsClient` vs `AsServer` can run
 a protocol without deadlock.  We also prove that if a protocol will terminate
-it both sides will end at a common terminal state (the `NobodyHasAgency`
-state).  The proofs  holds under the assumption that the encoding of messages
-is 1-1, if this assumption is not true it is possible that an application will
-not terminate when reaching a terminal state, or that it will terminate early
-causing the other side to deadlock.  There are situations when playing with
-non 1-1 codecs is useful, but requires more care.
+both sides will end at a common terminal state (one of the states in which
+`NobodyHasAgency`).  The proofs holds under the assumption that the encoding
+of messages is 1-1, if this assumption is not true it is possible that an
+application will not terminate when reaching a terminal state, or that it will
+terminate early causing the other side to deadlock.  There are situations when
+non injective codecs are useful, and these cases require additional care.
 
 === Duality for non-pipelined protocols
 
 First we start with duality for non-pipelined protocols, as this is quite
-a bit simpler.  The code below is copy-past from [typed-protocols] package.
+a bit simpler.  The code below is copy-paste from [typed-protocols] package
 (with small adjustments).
 
 > data TerminalStates ps where
@@ -915,7 +914,7 @@ results:
 
 > theorem_duality
 >     :: forall ps (pr :: PeerRole) (pl :: Pipelined) (st :: ps) m a b.
->        ( Monad m, Protocol ps)
+>        ( Monad m, Protocol ps )
 >     => [Bool]
 >     -> [Bool]
 >     -> PeerPipelined ps             pr  pl Empty st m a
