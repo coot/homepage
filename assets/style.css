@@ -166,6 +166,10 @@ pre {
     border-radius: 1px;
 }
 
+pre.sourceCode {
+  overflow: visible;
+}
+
 pre.haskell {
     /* background-color: rgba(44, 127, 251, 0.2); */
     border-radius: 1px;
@@ -241,6 +245,10 @@ pre.haskell a {
 
 .post figure figcaption {
   text-align: center;
+}
+
+.post figure figcaption.left {
+  text-align: left;
 }
 
 .post figure img[src="/images/one-object-cat.svg"] {

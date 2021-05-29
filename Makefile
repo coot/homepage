@@ -40,6 +40,7 @@ js_html5shiv = \
 images := $(patsubst %, dist/%, $(wildcard images/*.png))
 
 png_images := $(patsubst latex/png/%.tex, images/%.png, $(wildcard latex/png/*.tex))
+png_sources := $(wildcard latex/png/*.tex)
 
 #
 # Latex images
@@ -166,7 +167,7 @@ dist/manifest.json: manifest.json
 dist/sw.js: sw.js $(css_assets) $(font_assets)
 	node ./scripts/build.js
 
-$(images): dist/images/%: images/%
+$(images): dist/images/%: images/% $(png_sources)
 	cp $< $@
 
 images_dir:
