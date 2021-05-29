@@ -44,6 +44,10 @@ png_images := $(patsubst latex/png/%.tex, images/%.png, $(wildcard latex/png/*.t
 
 svg_images := $(patsubst latex/svg/%.tex, images/%.svg, $(wildcard latex/svg/*.tex))
 
+#
+# Latex images
+#
+
 $(png_images): images/%.png: latex/png/%.tex
 	TEXINPUTS="latex/png:${TEXINPUTS}" pdflatex -shell-escape -halt-on-error -output-directory=latex/png $<
 $(svg_images): images/%.svg: latex/svg/%.tex
@@ -58,9 +62,20 @@ latex_clean:
 	rm *.pdf 2>/dev/null || true
 .PHONY: clean_latex
 
+#
+# Templates
+#
+
 $(templates):
 
 post/base.html: $(templates)
+
+templates: $(templates)
+.PHONY: templates
+
+#
+# Literate Haskell Posts
+#
 
 cabal:
 	cabal build homepage
@@ -87,6 +102,10 @@ $(lhs_posts): dist/posts/%: posts/lhs/% $(pandoc_outputs) $(templates)
 jinja: $(lhs_posts)
 .PHONY: jinja
 
+#
+# Html posts
+#
+
 $(htm):
 
 $(html_posts): dist/posts/%: posts/html/% $(htm) $(templates)
@@ -100,11 +119,16 @@ lhs_posts: posts_dir cabal pandoc jinja
 posts: posts_dir lhs_posts html_posts
 .PHONY: posts
 
+#
+# Html files
+#
+
 $(html): dist/%: html/% $(templates)
 	echo '{"wrapperClass": ""}' | j2 -f json $< -o $@
 
-templates: $(templates)
-.PHONY: templates
+#
+# Assets
+#
 
 $(css_assets): dist/assets/%: assets/%
 	cleancss -o $@ $<
@@ -159,6 +183,10 @@ images: images_dir $(images)
 
 dist/feed.rss: posts/feed.json $(pandoc_outputs)
 	cabal run -v0 exe:rssbuilder -- $< - | j2 -f json templates/feed.rss -o $@
+
+#
+# All, Clean & Deploy
+#
 
 all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js dist/feed.rss
 .PHONY: all
