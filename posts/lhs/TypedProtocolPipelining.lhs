@@ -360,7 +360,7 @@ We have six exclusive states: client has agency, server has agency or both
 terminated and three forbidden states by exclusion lemmas: client and server
 have agency, client has agency and server terminated, client terminated and
 server has agency.
-</igcaption>
+</figcaption>
 </figure>
 
 Pipelining with type level queue
