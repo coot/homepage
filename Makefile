@@ -188,6 +188,7 @@ images: images_dir $(images)
 
 dist/feed.rss: posts/feed.json $(pandoc_outputs)
 	cabal run -v0 exe:rssbuilder -- $< - | j2 -f json templates/feed.rss -o $@
+.PHONY: dist/feed.rss
 
 #
 # All, Clean & Deploy
