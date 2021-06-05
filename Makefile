@@ -17,6 +17,8 @@ templates := $(wildcard templates/*.html)
 
 html := $(patsubst html/%, dist/%, $(wildcard html/*.html))
 
+agda_html := $(patsubst posts/agda/%.agda, dist/agda/posts.agda.%.html, $(wildcard posts/agda/*.agda))
+
 js_assets = \
 	     dist/assets/index.js \
 	     dist/assets/script.js
@@ -116,6 +118,13 @@ posts: posts_dir lhs_posts html_posts
 .PHONY: posts
 
 #
+# Agda
+#
+
+$(agda_html) &: dist/agda/posts.agda.%.html: posts/agda/%.agda 
+	agda --html --html-dir dist/agda --css /assets/style.css $(wildcard posts/agda/*.agda)
+
+#
 # Html files
 #
 
@@ -184,7 +193,7 @@ dist/feed.rss: posts/feed.json $(pandoc_outputs)
 # All, Clean & Deploy
 #
 
-all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js dist/feed.rss
+all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js dist/feed.rss $(agda_html)
 .PHONY: all
 
 clean:

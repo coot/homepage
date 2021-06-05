@@ -132,7 +132,7 @@ representation is not very useful as it does not allow to do any IO):
 >              -> SimplePingPongClient StDone a
 
 Our initial example client which sends a ping message, awaits for the
-response, loops it two more time and sends the terminating message can be
+response, loops it two more times and sends the terminating message can be
 written as:
 
 > simplePingPongClient :: a -> SimplePingPongClient StIdle a
@@ -288,7 +288,8 @@ terminating; for this the type class has to provide `ClientHasAgency`,
 `ServerHasAgency` and `NobodyHasAgency` together with some lemmas that ensure
 correctness of the provided associated data instances.
 
->
+<div id="Protocol"></div>
+
 > class Protocol ps where
 >
 >   -- | The messages for this protocol. It is expected to be a GADT that is
@@ -477,7 +478,7 @@ below.  It also supports any monad and can embed any monadic computations.
 >       -> Peer ps pr 'Pipelined (q |> Tr st' st'') st'' m a
 >       -> Peer ps pr 'Pipelined  q                 st   m a
 >
->     -- | Partially collect pushed @Tr@.
+>     -- | Partially collect promissed transtion.
 >     --
 >     Collect
 >       :: Maybe (Peer ps pr 'Pipelined (Tr st' st'' <| q) st m a)
@@ -486,10 +487,10 @@ below.  It also supports any monad and can embed any monadic computations.
 >           -> Peer ps pr 'Pipelined (Tr stNext st'' <| q) st m a)
 >       -> Peer     ps pr 'Pipelined (Tr st'    st'' <| q) st m a
 >
->     -- | Pop identity 'Tr' from the pipelining queue.
+>     -- | Collect the identitty transition.
 >     --
->     -- 'CollectDone' allows to defer popping @Tr ps st st@ from the queue after
->     -- a message is received (in 'Collect' callback), unlike 'Collect'
+>     -- 'CollectDone' allows to defer popping @Tr ps st st@ from the queue
+>     -- after a message is received (in 'Collect' callback), unlike 'Collect'
 >     -- which needs to know the transition type at compile time.
 >     --
 >     CollectDone
@@ -713,7 +714,8 @@ Next example is similar to the previous one but it counts the number of
 >           MsgBusy               -> collect     (n+1) k
 >           (MsgPingPong MsgPong) -> CollectDone      (k n)
 
-== Duality
+Duality
+-------
 
 Duality assures that two peers in dual roles: `AsClient` vs `AsServer` can run
 a protocol without deadlock.  We also prove that if a protocol will terminate
@@ -736,13 +738,13 @@ a bit simpler.  The code below is copy-paste from [typed-protocols] package
 >                  -> NobodyHasAgency st'
 >                  -> TerminalStates ps
 >
-> proposition_nonpipelined_duality
+> theorem_nonpipelined_duality
 >    :: forall ps (pr :: PeerRole) (initSt :: ps) m a b.
 >       ( Monad m, Protocol ps)
 >    => Peer ps             pr  NonPipelined Empty initSt m a
 >    -> Peer ps (FlipAgency pr) NonPipelined Empty initSt m b
 >    -> m (a, b, TerminalStates ps)
-> proposition_nonpipelined_duality = go
+> theorem_nonpipelined_duality = go
 >   where
 >     go :: forall (st :: ps).
 >           Peer ps             pr  NonPipelined Empty st m a
@@ -869,7 +871,7 @@ track the evolution of types.
 
 With all the singletons at hand we are ready to prove:
 
-> lemma_unpipeline
+> theorem_unpipeline
 >     :: forall ps (pr :: PeerRole) (pl :: Pipelined) (initSt :: ps) m a.
 >        Functor m
 >     => [Bool]
@@ -878,7 +880,7 @@ With all the singletons at hand we are ready to prove:
 >     -- pipelining.
 >     -> Peer ps (pr :: PeerRole) pl           Empty initSt m a
 >     -> Peer ps  pr              NonPipelined Empty initSt m a
-> lemma_unpipeline cs0 = go cs0 EmptyQ
+> theorem_unpipeline cs0 = go cs0 EmptyQ
 >   where
 >     go :: [Bool]
 >        -> PrQueue       ps pr            st q     st'
@@ -923,8 +925,39 @@ results:
 >     -> Peer ps (FlipAgency pr) pl Empty st m b
 >     -> m (a, b, TerminalStates ps)
 > theorem_duality csA csB a b =
->     proposition_nonpipelined_duality (lemma_unpipeline csA a)
->                                      (lemma_unpipeline csB b)
+>     theorem_nonpipelined_duality (theorem_unpipeline csA a)
+>                                  (theorem_unpipeline csB b)
+
+Alternative Agda implementation
+-------------------------------
+
+There is available an alternative implementation of [typed-protocols] in
+[Agda], see [here](/agda/posts.agda.typed-protocols.html).  The Agda
+implementation has a nicer interface.  The Haskell implementation needs to
+provide <a href="#Protocol">`Protocol`</a> instance, which requires to define:
+
+* message type
+* agency singletons for each state
+* a set of three proofs that verify that a state singleton is provided for
+  only one agency type: either `ClientHasAgency`, `ServerHasAgency`,
+  `NobodyHasAgency`.
+
+The Agda implementation however makes an explicit distinction between
+objective agency (`ClientAgency`, `ServerAgency`, `NobodyAgency`) and
+a relative agency (`WeHaveAgency`, `TheyHaveAgency`, `NobodyHasAgency`), and
+is indexed over:
+
+* message type
+* a (type level) function from states to the objective agency 
+
+The exclusion lemmas are proven for all protocols which are provided with this
+interface.  One still needs to provide agency witnesses for `Peer` primitives,
+but they one only can provide them with propositional equality `_≡_` (which is
+equivalent to Haskell's `:~:`), and hence simpler to use.
+
+The simplification found in Agda implementation is a future possible
+improvement in [typed-protocols].
+
 
 [IOHK]:            https://github.com/input-output-hk
 [Well-Typed]:      https://well-typed.com
@@ -933,3 +966,4 @@ results:
 [Monadic-Party-1]: https://www.youtube.com/watch?v=j8gza2L61nM
 [Monadic-Party-2]: https://www.youtube.com/watch?v=oV6KSl1srL8
 [Monadic-Party-3]: https://www.youtube.com/watch?v=nOIQCRPwmPA
+[Agda]:            https://github.com/agda/agda

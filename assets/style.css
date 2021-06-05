@@ -176,24 +176,34 @@ pre.haskell {
     white-space: pre;
 }
 
+pre.Agda a,
 pre.haskell a {
   color: inherit;
 }
 
+.Agda .PrimitiveType,
+.Agda .Datatype,
+.Agda .InductiveConstructor,
 .haskell .dt,
 .haskell .kw {
   font-weight: bold;
 }
 
+.Agda .Keyword {
+  color: #536cff;
+}
+
+.Agda .Symbol,
 .haskell .op {
-  /* color: #3f51b5; */
   color: #536dff;
 }
 
+.Agda .Comment,
 .haskell .co {
-  font-family: 'Open Sans', sans-serif;
   color: #787878;
+  font-size: small
 }
+
 
 .mjx-chtml.MathJax_CHTML {
   font-size: 1.1em !important;
@@ -750,3 +760,4 @@ blockquote ul {
   padding-left: 0px;
   padding-right: 0px;
 }
+
