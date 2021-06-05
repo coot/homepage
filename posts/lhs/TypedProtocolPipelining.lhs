@@ -27,14 +27,17 @@ The [typed-protocols] is a framework for writing binary session types in
 Haskell.  It has been developed by [IOHK] in collaboration with [Well-Typed].
 
 For network applications it is common to use some form of latency hiding for
-performance reasons.  Network is utilised best when constant preassure is
+performance reasons.  Network is utilised best when constant pressure is
 applied to avoid shrinking of the tcp window (e.g. tcp flow control
-mechanism).  For these reasons, the _typed-protocol_ package allows to express
-[protocol pipelining](https://www.wikiwand.com/en/Protocol_pipelining).  In
-addition, protocol pipelining should in principle allow to make less context
-switches and improve data locality.
+mechanism).  Network utilisation is a balance between keeping the most
+constrained resource busy - but only just - too busy and delay increases and
+application responsiveness can drop.  For these reasons, the _typed-protocol_
+package allows to express [protocol
+pipelining](https://www.wikiwand.com/en/Protocol_pipelining).  In addition,
+protocol pipelining should in principle allow to make less context switches
+and improve data locality.
 
-In this blog post we will study pipelinging starting with a simple ping pong
+In this blog post we will study pipelining starting with a simple ping pong
 protocol:
 
 <figure class=small>
@@ -50,8 +53,8 @@ consider such an extension to the `PingPong` protocol later.
 
 The [typed-protocols] package restricts the way an application executing
 a protocol can be build and makes it _correct by construction_.  Using
-type-level programing, one can only construct applications which obey state
-machine rules faithfuly represented by types.  A detailed exposition of the
+type-level programming, one can only construct applications which obey state
+machine rules faithfully represented by types.  A detailed exposition of the
 package where given at [Haskell-eXchange] by Duncan Coutts, or my longer
 workshop at Monadic Party: [part 1][Monadic-Party-1], [part
 2][Monadic-Party-2], [part 3][Monadic-Party-3].  For example one might
@@ -72,7 +75,7 @@ look like:
 where now we don't wait for a response before sending next request.
 
 The most important difference between these two diagrams is that the pipelined
-version is no longer a continous flow.  Pipelining breaks the composition of
+version is no longer a continuous flow.  Pipelining breaks the composition of
 transitions. Instead, we promise to do some of the transitions at a later time.
 This delayed processing needs to be managed by the protocol execution
 environment.  What is worth noting that we must keep the order of transitions.
@@ -88,10 +91,10 @@ concurrency and type level programming was a neat idea by Duncan Coutts.
 
 In this post we will explore how to re-implement pipelining which does not
 involve branching and instead use type level programming to give
-a non-branching recursive api for pipelining, which can be interepreted
+a non-branching recursive api for pipelining, which can be interpreted
 without the need of concurrency.  As we will see, this will improve the way
 pipelined protocols can be expressed, at the expense of using additional
-advanced type level programming machinery (since typed-protocols already relay
+advanced type level programming machinery (since typed-protocols already rely
 on similar techniques this is not a concern here).
 
 
@@ -193,7 +196,7 @@ natural numbers:
 >   RecvPipelinedMsg :: (MessageSimplePingPong StBusy StIdle -> c)
 >                    -> PingPongReceiver StBusy StIdle c
 
-> -- | Pipelined ping pong client, which for simplicty pipelines two messages
+> -- | Pipelined ping pong client, which for simplicity pipelines two messages
 > --
 > simplePipelinedPingPongClient
 >    :: a -- ^ fixed result, for simplicity
@@ -352,18 +355,18 @@ correctness of the provided associated data instances.
 <figure>
 ![](/images/exclusion_lemmas.png)
 <figcaption class="left">
-We have six exlusive states: client has agency, server has agency or both
+We have six exclusive states: client has agency, server has agency or both
 terminated and three forbidden states by exclusion lemmas: client and server
 have agency, client has agency and server terminated, client terminated and
 server has agency.
-</figcaption>
+</igcaption>
 </figure>
 
 Pipelining with type level queue
 --------------------------------
 
 We already seen that pipelining requires a queue that allows to send more
-messages before waiting for the replies.  But it does not neccessarily needs to
+messages before waiting for the replies.  But it does not necessarily needs to
 be a term level queue, equally well we could push the expected transitions on
 a type level queue, and give a way to collect responses and thus eliminate
 from the type level queue.
@@ -395,7 +398,7 @@ push elements onto the queue.
 > type a <| as = Cons a as
 > infixr 5 <|
 >
-> -- | Snoc operation
+> -- | Snoc operator
 > --
 > type (|>) :: Queue ps -> Trans ps -> Queue ps
 > type family as |> b where
@@ -403,7 +406,7 @@ push elements onto the queue.
 >      (a <| as) |> b = a <| (as |> b)
 > infixr 5 |>
 
-== `PeerPipelined`
+== `Peer`
 
 The `PeerPiplined` type is a general API for building protocol applications
 which satisfy the `Protocol` type class constraint.  Unlike our previous
@@ -411,26 +414,26 @@ examples it can be used to build either client or server roles.  The client and
 server build with it are necessarily dual to each other, see `theorem_duality`
 below.  It also supports any monad and can embed any monadic computations.
 
-> -- | Promoted data type which indicates if 'PeerPipelined' is used in
+> -- | Promoted data type which indicates if 'Peer' is used in
 > -- pipelined mode or not.
 > --
 > data Pipelined = NonPipelined | Pipelined
 
-> type PeerPipelined :: forall ps
->                    -> PeerRole
->                    -> Pipelined
->                    -> Queue ps
->                    -> ps
->                    -> (Type -> Type)
->                    -> Type
->                    -> Type
-> data PeerPipelined ps pr pl st q m a where
+> type Peer :: forall ps
+>           -> PeerRole
+>           -> Pipelined
+>           -> Queue ps
+>           -> ps
+>           -> (Type -> Type)
+>           -> Type
+>           -> Type
+> data Peer ps pr pl st q m a where
 >
 >     -- | 'Effect' allows to introduce monadic effects.
 >     --
 >     Effect
->       :: m (PeerPipelined ps pr pl q st m a)
->       ->    PeerPipelined ps pr pl q st m a
+>       :: m (Peer ps pr pl q st m a)
+>       ->    Peer ps pr pl q st m a
 >
 >     -- | Non-pipelined send.  One needs to present proof of agency, message
 >     -- to be send and a continuation.  One cannot send
@@ -440,28 +443,28 @@ below.  It also supports any monad and can embed any monadic computations.
 >     Yield
 >       :: !(WeHaveAgency pr st)
 >       -> Message ps st st'
->       -> PeerPipelined ps pr pl Empty st' m a
->       -> PeerPipelined ps pr pl Empty st  m a
+>       -> Peer ps pr pl Empty st' m a
+>       -> Peer ps pr pl Empty st  m a
 >
 >     -- | Await for a non-pipelined message.  One has to present a proof that
 >     -- one does not have agency and a continuation function which can deal
->     -- with any messge that might arrive from the network.
+>     -- with any messege that might arrive from the network.
 >     --
 >     Await
 >       :: !(TheyHaveAgency pr st)
 >       -> (forall st'. Message ps st st'
->           -> PeerPipelined ps pr pl Empty st' m a)
->       -> PeerPipelined     ps pr pl Empty st  m a
+>           -> Peer ps pr pl Empty st' m a)
+>       -> Peer     ps pr pl Empty st  m a
 >
 >     -- | Terminate the protocol.
 >     --
 >     Done
 >       :: !(NobodyHasAgency st)
 >       -> a
->       -> PeerPipelined ps pr pl Empty st m a
+>       -> Peer ps pr pl Empty st m a
 >
 >     --
->     -- Pipelinging primitives
+>     -- Pipelining primitives
 >     --
 >
 >     -- | Pipelined send which. Note that the continuation decides from which
@@ -471,27 +474,27 @@ below.  It also supports any monad and can embed any monadic computations.
 >     YieldPipelined
 >       :: !(WeHaveAgency pr st)
 >       -> Message ps st st'
->       -> PeerPipelined ps pr 'Pipelined (q |> Tr st' st'') st'' m a
->       -> PeerPipelined ps pr 'Pipelined  q                 st   m a
+>       -> Peer ps pr 'Pipelined (q |> Tr st' st'') st'' m a
+>       -> Peer ps pr 'Pipelined  q                 st   m a
 >
->     -- | Parially collect pushed @Tr@.
+>     -- | Partially collect pushed @Tr@.
 >     --
 >     Collect
->       :: Maybe (PeerPipelined ps pr 'Pipelined (Tr st' st'' <| q) st m a)
+>       :: Maybe (Peer ps pr 'Pipelined (Tr st' st'' <| q) st m a)
 >       -> !(TheyHaveAgency pr st')
 >       -> (forall stNext. Message ps st' stNext
->           -> PeerPipelined ps pr 'Pipelined (Tr stNext st'' <| q) st m a)
->       -> PeerPipelined     ps pr 'Pipelined (Tr st'    st'' <| q) st m a
+>           -> Peer ps pr 'Pipelined (Tr stNext st'' <| q) st m a)
+>       -> Peer     ps pr 'Pipelined (Tr st'    st'' <| q) st m a
 >
 >     -- | Pop identity 'Tr' from the pipelining queue.
 >     --
->     -- 'CollectDone' allows to defer poping @Tr ps st st@ from the queue after
+>     -- 'CollectDone' allows to defer popping @Tr ps st st@ from the queue after
 >     -- a message is received (in 'Collect' callback), unlike 'Collect'
 >     -- which needs to know the transition type at compile time.
 >     --
 >     CollectDone
->       :: PeerPipelined ps pr 'Pipelined              q  st m a
->       -> PeerPipelined ps pr 'Pipelined (Tr st st <| q) st m a
+>       :: Peer ps pr 'Pipelined              q  st m a
+>       -> Peer ps pr 'Pipelined (Tr st st <| q) st m a
 
 `PingPong` protocol
 -------------------
@@ -520,7 +523,7 @@ In this section we will formalise the ping pong protocol by providing
 >   data NobodyHasAgency st where
 >     TokDone :: NobodyHasAgency StDone
 >
->   -- exclusion lemmas, which proove that n each state at most one of server, or
+>   -- exclusion lemmas, which prove that n each state at most one of server, or
 >   -- client has agency.
 >   exclusionLemma_ClientAndServerHaveAgency TokIdle tok = case tok of {}
 >   exclusionLemma_NobodyAndClientHaveAgency TokDone tok = case tok of {}
@@ -539,7 +542,7 @@ Some auxiliary instances:
 > -- A non-pipelined PingPong.
 > --
 > pingPongClient
->    :: a -> PeerPipelined PingPong AsClient NonPipelined Empty StIdle m a
+>    :: a -> Peer PingPong AsClient NonPipelined Empty StIdle m a
 > pingPongClient a =
 >      -- send ping message
 >      Yield (ClientAgency TokIdle) MsgPing
@@ -553,8 +556,8 @@ Some auxiliary instances:
 >    $ Done TokDone a
 >  where
 >   -- await for all 'MsgPong' until first 'MsgPongDone'
->   await :: PeerPipelined PingPong AsClient NonPipelined Empty StIdle m a
->         -> PeerPipelined PingPong AsClient NonPipelined Empty StBusy m a
+>   await :: Peer PingPong AsClient NonPipelined Empty StIdle m a
+>         -> Peer PingPong AsClient NonPipelined Empty StBusy m a
 >   await k =
 >     Await (ServerAgency TokBusy) $ \msg ->
 >       case msg of
@@ -565,7 +568,7 @@ Some auxiliary instances:
 > -- A pipelined 'PingPong', without partial collects.
 > --
 > pingPongClientPipelined
->    :: a -> PeerPipelined PingPong AsClient 'Pipelined Empty StIdle m a
+>    :: a -> Peer PingPong AsClient 'Pipelined Empty StIdle m a
 > pingPongClientPipelined a =
 >      -- pipeline three pings
 >      YieldPipelined (ClientAgency TokIdle) MsgPing
@@ -579,9 +582,9 @@ Some auxiliary instances:
 >      -- return from the protocol
 >    $ Done TokDone a
 >  where
->    collect :: PeerPipelined PingPong AsClient 'Pipelined q  StIdle m a
->            -> PeerPipelined PingPong AsClient 'Pipelined
->                                     (Tr StBusy StIdle <| q) StIdle m a
+>    collect :: Peer PingPong AsClient 'Pipelined q  StIdle m a
+>            -> Peer PingPong AsClient 'Pipelined
+>                            (Tr StBusy StIdle <| q) StIdle m a
 >    collect k =
 >        Collect Nothing (ServerAgency TokBusy)
 >      $ \msg -> case msg of
@@ -591,9 +594,9 @@ Some auxiliary instances:
 --------------------
 
 Let us consider a variation of the ping pong protocol, in which the server
-might send multiple `MsgBusy` before transfering agency back to the client with
+might send multiple `MsgBusy` before transferring agency back to the client with
 `MsgPong`.  In this version by pipelining `MsgPing`, we might need to collect
-multiple `MsgBusy` until we receive `MsgPong`.  It will help us demostrate
+multiple `MsgBusy` until we receive `MsgPong`.  It will help us demonstrate
 that we can pipeline multiple `MsgPing` messages and collect all the replies.
 
 <figure class=small>
@@ -611,7 +614,7 @@ that we can pipeline multiple `MsgPing` messages and collect all the replies.
 
 > instance Protocol PingPong2 where
 >   data Message PingPong2 from to where
->     -- 'PingPong' message
+>     -- | 'PingPong' message
 >     MsgPingPong  :: Message PingPong        st            st'
 >                  -> Message PingPong2 (Wrap st)     (Wrap st')
 >     -- | new message
@@ -629,7 +632,7 @@ that we can pipeline multiple `MsgPing` messages and collect all the replies.
 >     WrapDone   :: NobodyHasAgency       st
 >                -> NobodyHasAgency (Wrap st)
 >
->   -- We haven't changed the states and their agancies, so we can reuse
+>   -- We haven't changed the states and their agencies, so we can reuse
 >   -- 'PingPong' lemmas.
 >   exclusionLemma_ClientAndServerHaveAgency (WrapClient tok) (WrapServer tok') =
 >     exclusionLemma_ClientAndServerHaveAgency tok tok'
@@ -653,7 +656,7 @@ Some auxiliary instances:
 > --
 > pingPongClientPipelined2
 >   :: a
->   -> PeerPipelined PingPong2 AsClient 'Pipelined Empty StIdle2 m a
+>   -> Peer PingPong2 AsClient 'Pipelined Empty StIdle2 m a
 > pingPongClientPipelined2 a =
 >       -- pipeline three 'MsgPing'
 >       YieldPipelined (ClientAgency (WrapClient TokIdle)) (MsgPingPong MsgPing)
@@ -666,12 +669,12 @@ Some auxiliary instances:
 >     $ Yield (ClientAgency (WrapClient TokIdle)) (MsgPingPong MsgDone)
 >     $ Done (WrapDone TokDone) a
 >   where
->     -- recursievly collect responses, until 'MsgPongDone2' is received
->     collect :: PeerPipelined PingPong2 AsClient 'Pipelined q  StIdle2 m a
+>     -- recursively collect responses, until 'MsgPongDone2' is received
+>     collect :: Peer PingPong2 AsClient 'Pipelined q  StIdle2 m a
 >             -- ^ continuation after removing @Tr StBusy2 StIdle2@ from the
 >             -- queue
->             -> PeerPipelined PingPong2 AsClient 'Pipelined
->                                     (Tr StBusy2 StIdle2 <| q) StIdle2 m a
+>             -> Peer PingPong2 AsClient 'Pipelined
+>                            (Tr StBusy2 StIdle2 <| q) StIdle2 m a
 >     collect k =
 >         Collect Nothing (ServerAgency (WrapServer TokBusy))
 >       $ \msg -> case msg of
@@ -682,7 +685,7 @@ Next example is similar to the previous one but it counts the number of
 `MsgBusy` received.
 
 > pingPongClientPipelined2Counter
->     :: PeerPipelined PingPong2 AsClient 'Pipelined Empty StIdle2 m Int
+>     :: Peer PingPong2 AsClient 'Pipelined Empty StIdle2 m Int
 > pingPongClientPipelined2Counter =
 >       -- pipeline three 'MsgPing2'
 >       YieldPipelined (ClientAgency (WrapClient TokIdle)) (MsgPingPong MsgPing)
@@ -695,16 +698,15 @@ Next example is similar to the previous one but it counts the number of
 >     $ \n3 -> Yield (ClientAgency (WrapClient TokIdle)) (MsgPingPong MsgDone)
 >     $        Done (WrapDone TokDone) n3
 >   where
->     -- recursievly collect responses, until 'MsgPongDone2' is received
+>     -- recursively collect responses, until 'MsgPongDone2' is received
 >     collect
 >         :: Int
 >         -- ^ number of 'MsgBusy' received so far
->         -> (Int -> PeerPipelined PingPong2 AsClient 'Pipelined
->                                                          q  StIdle2 m Int)
+>         -> (Int -> Peer PingPong2 AsClient 'Pipelined q  StIdle2 m Int)
 >         -- ^ continuation after removing @Tr StBusy2 StIdle2@ from the
 >         -- queue
->         -> PeerPipelined PingPong2 AsClient 'Pipelined
->                                   (Tr StBusy2 StIdle2 <| q) StIdle2 m Int
+>         -> Peer PingPong2 AsClient 'Pipelined
+>                                (Tr StBusy2 StIdle2 <| q) StIdle2 m Int
 >     collect !n k =
 >         Collect Nothing (ServerAgency (WrapServer TokBusy))
 >       $ \msg -> case msg of
@@ -713,7 +715,7 @@ Next example is similar to the previous one but it counts the number of
 
 == Duality
 
-Duality asures that two peers in dual roles: `AsClient` vs `AsServer` can run
+Duality assures that two peers in dual roles: `AsClient` vs `AsServer` can run
 a protocol without deadlock.  We also prove that if a protocol will terminate
 both sides will end at a common terminal state (one of the states in which
 `NobodyHasAgency`).  The proofs holds under the assumption that the encoding
@@ -737,14 +739,14 @@ a bit simpler.  The code below is copy-paste from [typed-protocols] package
 > proposition_nonpipelined_duality
 >    :: forall ps (pr :: PeerRole) (initSt :: ps) m a b.
 >       ( Monad m, Protocol ps)
->    => PeerPipelined ps             pr  NonPipelined Empty initSt m a
->    -> PeerPipelined ps (FlipAgency pr) NonPipelined Empty initSt m b
+>    => Peer ps             pr  NonPipelined Empty initSt m a
+>    -> Peer ps (FlipAgency pr) NonPipelined Empty initSt m b
 >    -> m (a, b, TerminalStates ps)
 > proposition_nonpipelined_duality = go
 >   where
 >     go :: forall (st :: ps).
->           PeerPipelined ps             pr  NonPipelined Empty st m a
->        -> PeerPipelined ps (FlipAgency pr) NonPipelined Empty st m b
+>           Peer ps             pr  NonPipelined Empty st m a
+>        -> Peer ps (FlipAgency pr) NonPipelined Empty st m b
 >        -> m (a, b, TerminalStates ps)
 >     go (Done stA a)    (Done stB b)    = return (a, b, TerminalStates stA stB)
 >     go (Effect a )      b              = a >>= \a' -> go a' b
@@ -793,8 +795,8 @@ a bit simpler.  The code below is copy-paste from [typed-protocols] package
 
 === Removing pipelining
 
-We can show that any peer that is using pipeing primitives can be transformed
-into non-piplined version.   This is possible because pipelining does not
+We can show that any peer that is using pipelining primitives can be transformed
+into non-pipelined version.   This is possible because pipelining does not
 changes the order of messages sent or received.  We just need to track this
 order with `PrQueue`.   First we define various singletons needed to
 track the evolution of types.
@@ -813,7 +815,7 @@ track the evolution of types.
 >   SCons  :: STrans (Tr st st') -> SQueue q -> SQueue (Tr st st' <| queue)
 >
 > -- | `PrQueue` tracks the order of transitions.  We either have an
-> -- explicti `Message` or a `STrans` singleton, both are pushed by
+> -- explicit `Message` or a `STrans` singleton, both are pushed by
 > -- `YieldPipelined` operation.
 > --
 > -- Note: if not the order of arguments 'PrQueue' could be given a category
@@ -874,14 +876,14 @@ With all the singletons at hand we are ready to prove:
 >     -- ^ interleaving choices for pipelining allowed by
 >     -- `Collect` primitive. False values or `[]` give no
 >     -- pipelining.
->     -> PeerPipelined ps (pr :: PeerRole) pl           Empty initSt m a
->     -> PeerPipelined ps  pr              NonPipelined Empty initSt m a
+>     -> Peer ps (pr :: PeerRole) pl           Empty initSt m a
+>     -> Peer ps  pr              NonPipelined Empty initSt m a
 > lemma_unpipeline cs0 = go cs0 EmptyQ
 >   where
 >     go :: [Bool]
 >        -> PrQueue       ps pr            st q     st'
->        -> PeerPipelined ps pr pl            q     st' m a
->        -> PeerPipelined ps pr 'NonPipelined Empty st  m a
+>        -> Peer ps pr pl            q     st' m a
+>        -> Peer ps pr 'NonPipelined Empty st  m a
 >
 >     go cs pq     (Effect k)         = Effect         $ go cs pq <$> k
 >     go cs EmptyQ (Yield stok msg k) = Yield stok msg $ go cs EmptyQ k
@@ -889,7 +891,7 @@ With all the singletons at hand we are ready to prove:
 >     go _  EmptyQ (Done stok a)      = Done  stok a
 >
 >     go cs pq     (YieldPipelined stok msg k) =
->        -- push message and promissed transition to `PrQueue`.
+>        -- push message and promised transition to `PrQueue`.
 >        go cs ( pq
 >              & snocMsgQ stok msg
 >              & snocTrQ STr
@@ -917,8 +919,8 @@ results:
 >        ( Monad m, Protocol ps )
 >     => [Bool]
 >     -> [Bool]
->     -> PeerPipelined ps             pr  pl Empty st m a
->     -> PeerPipelined ps (FlipAgency pr) pl Empty st m b
+>     -> Peer ps             pr  pl Empty st m a
+>     -> Peer ps (FlipAgency pr) pl Empty st m b
 >     -> m (a, b, TerminalStates ps)
 > theorem_duality csA csB a b =
 >     proposition_nonpipelined_duality (lemma_unpipeline csA a)
