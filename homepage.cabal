@@ -13,6 +13,7 @@ executable rssbuilder
   build-depends:       base >=4.12,
                        bytestring,
                        aeson,
+                       time,
                        text
   hs-source-dirs:      src
   main-is:             rssbuilder.hs

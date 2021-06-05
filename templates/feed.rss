@@ -19,6 +19,7 @@
     <link>{{ entry.url }}</link>
     <guid isPermaLink="true">{{ entry.url }}</guid>
     <pubDate>{{ entry.date }}</pubDate>
+    <lastBuildDate>{{ entry.lastBuildDate }}</lastBuildDate>
     <description>
 {{ entry.data }}
     </description>
