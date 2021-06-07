@@ -289,7 +289,7 @@ pipelinedPing =
     collect : ∀ {q : List (Trans PingPong)}
             → Peer PingPongMsg pingPongAgency ClientRole ⊤ Pipelined q  StIdle
             → Peer PingPongMsg pingPongAgency ClientRole ⊤ Pipelined
-                                                    (Tr StBusy StIdle ∷ q) StIdle
+                                                 (Tr StBusy StIdle ∷ q) StIdle
     collect k = 
       Collect refl λ {MsgPong → CollectDone k}
 
