@@ -428,7 +428,7 @@ below.  It also supports any monad and can embed any monadic computations.
 >           -> (Type -> Type)
 >           -> Type
 >           -> Type
-> data Peer ps pr pl st q m a where
+> data Peer ps pr pl q st m a where
 >
 >     -- | 'Effect' allows to introduce monadic effects.
 >     --
