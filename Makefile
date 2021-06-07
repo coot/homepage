@@ -39,7 +39,8 @@ js_html5shiv = \
              dist/assets/html5shiv.min.js \
              dist/assets/html5shiv-printshiv.min.js
 
-images := $(patsubst %, dist/%, $(wildcard images/*.png))
+images := $(patsubst images/%, dist/images/%, $(wildcard images/*.png)) \
+	  $(patsubst images/%, dist/images/%, $(wildcard images/*.jpg))
 
 png_images := $(patsubst latex/png/%.tex, images/%.png, $(wildcard latex/png/*.tex))
 png_sources := $(wildcard latex/png/*.tex)
