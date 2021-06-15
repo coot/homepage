@@ -1,11 +1,7 @@
--- We use unbounded recursion in examples
-{-# OPTIONS --no-termination-check #-}
-
 module posts.agda.typed-protocols where
 
 open import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl)
-open Eq.≡-Reasoning
 open import Relation.Nullary using (¬_)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.List
@@ -96,34 +92,40 @@ exclusion-lemma-client-and-server-have-agency₂
 
 
 exclusion-lemma-we-have-agency-and-nobody-has-agency
-  : ∀ {agency : Agency}
-      {pr     : PeerRole}
-  → WeHaveAgency    ≡ relative            pr  agency
-  → NobodyHasAgency ≡ relative (dual-role pr) agency
+  : ∀ {agency  : Agency}
+      {pr      : PeerRole}
+      {pr'     : PeerRole}
+  → WeHaveAgency    ≡ relative pr  agency
+  → NobodyHasAgency ≡ relative pr' agency
   → ⊥
 exclusion-lemma-we-have-agency-and-nobody-has-agency
   {ClientAgency}
   {ClientRole}
+  {ServerRole}
   refl ()
 exclusion-lemma-we-have-agency-and-nobody-has-agency
   {ServerAgency}
   {ServerRole}
+  {ClientRole}
   refl ()
 
 
 exclusion-lemma-they-have-agency-and-nobody-has-agency
   : ∀ {agency : Agency}
       {pr     : PeerRole}
-  → TheyHaveAgency  ≡ relative            pr  agency
-  → NobodyHasAgency ≡ relative (dual-role pr) agency
+      {pr'    : PeerRole}
+  → TheyHaveAgency  ≡ relative pr  agency
+  → NobodyHasAgency ≡ relative pr' agency
   → ⊥
 exclusion-lemma-they-have-agency-and-nobody-has-agency
   {ServerAgency}
   {ClientRole}
+  {ServerRole}
   refl ()
 exclusion-lemma-they-have-agency-and-nobody-has-agency
   {ClientAgency}
   {ServerRole}
+  {ClientRole}
   refl ()
 
 
@@ -306,7 +308,8 @@ data PingPongMsg2 : ∀ (st st' : PingPong) → Set where
               → PingPongMsg st st' → PingPongMsg2 st st'
   MsgBusy     : PingPongMsg2 StBusy StBusy
 
-
+-- we use unbounded recursion in 'pipelinedPing2'
+{-# NON_TERMINATING #-}
 
 -- pipelined ping client which computes the number of busy messages
 --
@@ -388,20 +391,11 @@ theorem-non-pipelined-duality (Yield weHaveAgency _ _)
             weHaveAgency
             nobodyHasAgency)
 
-theorem-non-pipelined-duality {pr = ClientRole}
-                              (Done nobodyHasAgency _)
+theorem-non-pipelined-duality (Done nobodyHasAgency _)
                               (Yield weHaveAgency _ _) =
   ⊥-elim (exclusion-lemma-we-have-agency-and-nobody-has-agency
             weHaveAgency
             nobodyHasAgency)
-
-theorem-non-pipelined-duality {pr = ServerRole}
-                              (Done nobodyHasAgency _)
-                              (Yield weHaveAgency _ _) =
-  ⊥-elim (exclusion-lemma-we-have-agency-and-nobody-has-agency
-            weHaveAgency
-            nobodyHasAgency)
-
 
 theorem-non-pipelined-duality (Await theyHaveAgency _)
                               (Done nobodyHasAgency _) =
@@ -409,15 +403,7 @@ theorem-non-pipelined-duality (Await theyHaveAgency _)
             theyHaveAgency
             nobodyHasAgency)
 
-theorem-non-pipelined-duality {pr = ClientRole}
-                              (Done nobodyHasAgency _)
-                              (Await theyHaveAgency _) =
-  ⊥-elim (exclusion-lemma-they-have-agency-and-nobody-has-agency
-            theyHaveAgency
-            nobodyHasAgency)
-
-theorem-non-pipelined-duality {pr = ServerRole}
-                              (Done nobodyHasAgency _)
+theorem-non-pipelined-duality (Done nobodyHasAgency _)
                               (Await theyHaveAgency _) =
   ⊥-elim (exclusion-lemma-they-have-agency-and-nobody-has-agency
             theyHaveAgency
