@@ -1,0 +1,124 @@
+\documentclass[t,dvipsnames]{beamer}
+
+\setbeamertemplate{navigation symbols}{}
+\useinnertheme{circles}
+% \usecolortheme{crane}
+
+% \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+% \usepackage[polish]{babel}
+\usepackage[british]{babel}
+
+\usepackage[adobe-utopia]{mathdesign}
+\usepackage[series=z]{libgreek}
+\usepackage{tgpagella}
+\usepackage[textwidth=4cm]{todonotes}
+\usepackage{minted}
+\usemintedstyle{colorful}
+% \usemintedstyle{autumn}
+% \usemintedstyle{vs}
+\usepackage{tikz}
+\usetikzlibrary{matrix,arrows,calc}
+\tikzset{every scope/.style={>=angle 60,thick}}
+
+\author{Marcin Szamotulski}
+\institute{\insertlogo{\includegraphics[height=1cm]{iohk-logo.png}}}
+\title{Monoidal Synchronisation}
+
+\setbeamertemplate{frametitle}[default][center]
+
+\begin{document}
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\part{Introduction}
+\frame{
+  \partpage
+  \tableofcontents[part=1]
+}
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Semigroups}
+%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+  \frametitle{Semigroups}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Foldable1 type class}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%
+\section{Monoids}
+%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+  \frametitle{Monoids}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Foldable type class}
+\end{frame}
+
+\section{Near Semi-Rings}
+\begin{frame}
+  \frametitle{Near Semi-Ring}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{First-to-Finish and Last-to-Finish}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+  \frametitle{First-to-Finish / Last-to-Finish Near Semi-Ring}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Monoidal Last-to-Finish}
+\end{frame}
+
+\part{Case study}
+\frame{
+  \partpage
+  \tableofcontents[part=2]
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Design Pattern}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+  \frametitle{Design Pattern}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Multiplexer}
+%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+  \frametitle{Multiplexer}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Inbound Protocol Governor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+  \frametitle{Inbound Protocol Governor}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Outbound Protocol Governor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+  \frametitle{Outbound Protocol Governor}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Acknowledgement}
+\end{frame}
+\end{document}

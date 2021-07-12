@@ -17,3 +17,5 @@ todo.md
 /latex/*.ps
 /latex/*.pdf
 /posts/lhs/.build
+/**/*.pyg
+/presentations/*.pdf

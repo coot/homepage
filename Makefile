@@ -19,6 +19,8 @@ html := $(patsubst html/%, dist/%, $(wildcard html/*.html))
 
 agda_html := $(patsubst posts/agda/%.agda, dist/agda/posts.agda.%.html, $(wildcard posts/agda/*.agda))
 
+presentations := $(patsubst presentations/%.tex, dist/presentations/%.pdf, $(wildcard presentations/*.tex))
+
 js_assets = \
 	     dist/assets/index.js \
 	     dist/assets/script.js
@@ -191,17 +193,24 @@ dist/feed.rss: posts/feed.json $(pandoc_outputs)
 	cabal run -v0 exe:rssbuilder -- $< - | j2 -f json templates/feed.rss -o $@
 .PHONY: dist/feed.rss
 
+$(presentations): dist/presentations/%.pdf: presentations/%.tex
+	latexmk -shell-escape -output-directory=./presentations $<
+	mkdir -p dist/presentations
+	cp $(patsubst presentations/%.tex, presentations/%.pdf, $<) $@
+
 #
 # All, Clean & Deploy
 #
 
-all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js dist/feed.rss $(agda_html)
+all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js dist/feed.rss $(agda_html) $(presentations)
 .PHONY: all
 
 clean:
 	rm     latex/png/*.{log,aux,pdf} || true
+	rm     presentations/*.{aux,log,nav,pdf,pyg,snm,toc,vrb} || true
 	rm -rf posts/lhs/.build || true
 	rm -rf dist || true
+	rm -rf _minted-* || true
 
 deploy: all
 	rm -f dist.tar.gz
