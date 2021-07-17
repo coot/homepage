@@ -95,7 +95,7 @@ posts_dir:
 	mkdir -p dist/posts
 .PHONY: posts_dir
 
-$(lhs_posts): dist/posts/%: posts/lhs/% $(pandoc_outputs) $(templates)
+$(lhs_posts): dist/posts/%: posts/lhs/% $(pandoc_outputs) posts/base.html
 	echo '{"wrapperClass": "post"}' | j2 -f json $< -o $@
 
 jinja: $(lhs_posts)
@@ -107,7 +107,7 @@ jinja: $(lhs_posts)
 
 $(htm):
 
-$(html_posts): dist/posts/%: posts/html/% $(htm) $(templates)
+$(html_posts): dist/posts/%: posts/html/% $(htm) posts/base.html
 	echo '{"wrapperClass": "post"}' | j2 -f json $< -o $@
 
 html_posts: posts_dir $(html_posts)
