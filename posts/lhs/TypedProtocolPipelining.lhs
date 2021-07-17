@@ -449,7 +449,7 @@ below.  It also supports any monad and can embed any monadic computations.
 >
 >     -- | Await for a non-pipelined message.  One has to present a proof that
 >     -- one does not have agency and a continuation function which can deal
->     -- with any messege that might arrive from the network.
+>     -- with any message that might arrive from the network.
 >     --
 >     Await
 >       :: !(TheyHaveAgency pr st)
@@ -478,7 +478,7 @@ below.  It also supports any monad and can embed any monadic computations.
 >       -> Peer ps pr 'Pipelined (q |> Tr st' st'') st'' m a
 >       -> Peer ps pr 'Pipelined  q                 st   m a
 >
->     -- | Partially collect promissed transtion.
+>     -- | Partially collect promised transition.
 >     --
 >     Collect
 >       :: Maybe (Peer ps pr 'Pipelined (Tr st' st'' <| q) st m a)
@@ -487,7 +487,7 @@ below.  It also supports any monad and can embed any monadic computations.
 >           -> Peer ps pr 'Pipelined (Tr stNext st'' <| q) st m a)
 >       -> Peer     ps pr 'Pipelined (Tr st'    st'' <| q) st m a
 >
->     -- | Collect the identitty transition.
+>     -- | Collect the identity transition.
 >     --
 >     -- 'CollectDone' allows to defer popping @Tr ps st st@ from the queue
 >     -- after a message is received (in 'Collect' callback), unlike 'Collect'

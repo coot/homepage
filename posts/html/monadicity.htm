@@ -69,14 +69,14 @@ class FreeAlgebra (m :: Type -> Type)  where
     -- |
     -- Proof that @AlgebraType0 m a => m a@ is an algebra of type
     -- @AlgebraType m@.  This proves that @m@ is a mapping from the full
-    -- subcategory of @Hask@ of types satisfyling @AlgebraType0 m a@
+    -- subcategory of @Hask@ of types satisfying @AlgebraType0 m a@
     -- constraint to the full subcategory satisfying @AlgebraType m a@,
     -- @fmapFree@ below proves that it's a functor.
     proof :: forall a. AlgebraType0 m a
 	  => Proof (AlgebraType m (m a)) (m a)
     -- |
     -- Proof that the forgetful functor from types @a@ satisfying
-    -- @AgelbraType m a@ to @AlgebraType0 m a@ is well defiend.
+    -- @AgelbraType m a@ to @AlgebraType0 m a@ is well defined.
     forget :: forall a. AlgebraType  m a
 	   => Proof (AlgebraType0 m a) (m a)
 
@@ -338,7 +338,7 @@ bindFree ma f = case proof @m @b of
 </code></pre>    
     Together with
     <a href="https://hackage.haskell.org/package/free-algebras/docs/Data-Algebra-Free.html#v:returnFree"><code>returnFree :: FreeAlgebra m => a -> m a</code></a>
-    we have a a very general formula for constructing monads; actually any
+    we have a very general formula for constructing monads; actually any
     monad arise in this way: from a pair of adjoint functors; the
     <code>counit</code> morphism defines
     <a href="https://hackage.haskell.org/package/base/docs/Control-Monad.html#v:join"/><code>join</code></a>

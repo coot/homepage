@@ -16,7 +16,7 @@ start with a free monad.
 > import Control.Monad (ap, join)
 > import Data.Kind (Type)
 
-Kleisli contstruction
+Kleisli construction
 ---------------------
 
 > newtype Kleisli m a b = Kleisli { runKleisli :: a -> m b }
@@ -25,7 +25,7 @@ Kleisli contstruction
 >   id = Kleisli return
 >   Kleisli f . Kleisli g = Kleisli (\x -> f =<< g x)
 
-The Keisli composition is so useful, it has it's own operator defined in
+The Kleisli composition is so useful, it has it's own operator defined in
 `Control.Monad`:
 
 > (<=<) :: Monad m => (y -> m z) -> (x -> m y) -> x -> m z
@@ -91,7 +91,7 @@ package](https://hackage.haskell.org/package/free/docs/Control-Monad-Free.html).
 
 Instances of this class have the property that to construct a natural
 transformation from `FreeAlgebra1 m => m f` to a monad `Monad d => d` is
-enought to come up with a natural transformation of functors `forall x. f a ->
+enough to come up with a natural transformation of functors `forall x. f a ->
 d a`.  If you'd like to explore more why this class is the right one to speak
 about freeness, checkout one of my previous
 [posts](https://coot.me/posts/free-monads.html).  Note that the instance for
@@ -108,7 +108,7 @@ or as an equation:
 fmap g . liftFree == liftFree . fmap g
 ```
 
-This is more or less streightforward, just take a look at the definition of
+This is more or less straightforward, just take a look at the definition of
 `liftFree`.
 
 ![foldNatFree natural transformation](/images/foldNatFree-nat.png)
@@ -139,7 +139,7 @@ and
   = join $ nat $ foldNatFree nat <$> (fmap (fmap g) ff)
   = join $ nat $ foldNatFree nat <$> fmap g <$> ff
   = join $ nat $ (foldNatFree nat . fmap g) <$> ff
-  -- by induction hypotesis
+  -- by induction hypothesis
   = join $ nat $ (fmap g . foldNatFree nat) <$> ff
   = join $ nat $ fmap g <$> (foldNatFree nat <$> ff)
   = join $ nat $ fmap (fmap g) (foldNatFree nat <$> ff)
@@ -181,7 +181,7 @@ Let us prove this it:
 
 ```haskell
 join . (foldNatFree nat . fmap (foldNatFree nat)) (Return (Return a))
-  == join (foldNatFree nat (Return (foldNatFree nat (Retrun a))))
+  == join (foldNatFree nat (Return (foldNatFree nat (Return a))))
   == join (foldNatFree nat (Return (return a))
   == join (return (return a))
   == return a
@@ -197,7 +197,7 @@ foldNatFree nat (join (Free ff)))
   -- by definition of foldNatFree
   = join $ nat $ fmap (foldNatFree nat) (fmap join ff)
   = join $ nat $ fmap (foldNatFree nat . join) ff
-  -- by induction hypotesis
+  -- by induction hypothesis
   = join $ nat $ fmap (join . foldNatFree nat . fmap (foldNatFree nat)) ff
   = join $ nat $ fmap join $ fmap (foldNatFree nat) $
       fmap (fmap foldNatFree nat)) ff
@@ -251,7 +251,7 @@ in particular this is true for `foldNatFree nat`.
 ```
 
 The proof could be much shorter if we use monad morphism law in terms of
-binds.  The equivalne form of `join (fmap fn . fn) == fn . join` expressed
+binds.  The equivalence form of `join (fmap fn . fn) == fn . join` expressed
 with bind is `fn (f =<< ma) = (fn . f) =<< fn ma`.  A reason to use
 `join` is that the law take the same form as for monoid homomorphisms, so it
 is very easy to remember them.
@@ -281,8 +281,8 @@ of type
 Functor f => Kleisli f
 ```
 
-(`Keisli f` is a category only when `f` is a monad).  Both morphisms:
-`liftKleisli` is marely a morphisms of graphs, while `foldKleisli` is
+(`Kleisli f` is a category only when `f` is a monad).  Both morphisms:
+`liftKleisli` is merely a morphisms of graphs, while `foldKleisli` is
 a functor, which means it preserves `id` and the composition `(.) :: Category
 c => c y z -> c x y -> c x y`.
 

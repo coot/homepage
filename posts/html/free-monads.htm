@@ -667,7 +667,7 @@ join . f == f . fmap f . join</code></pre>
 
     <div class="proof">
 	<h6>Proof</h6>
-	Let start with a defintion of <code>foldFree</code>.
+	Let start with a definition of <code>foldFree</code>.
 <pre class="haskell"><code>foldFree :: Functor f => (forall x. f x -> m x) -> (Free f a -> m a)
 foldFree _ (Return a) = return a
 foldFree f (Free ff)  = join $ f $ foldFree f <$> ff</code></pre>
@@ -675,7 +675,7 @@ foldFree f (Free ff)  = join $ f $ foldFree f <$> ff</code></pre>
 <pre class="haskell"><code>liftF :: Functor f => (forall x. Free f x -> m x) -> (f a -> m a)
 liftF f fa = f $ Free $ Return <$> fa
 </code></pre>
-	First let's check that <code>foldFree f</code> is a morhpism of monads:
+	First let's check that <code>foldFree f</code> is a morphism of monads:
 	<pre class="haskell"><code>foldFree f (Return a)
 -- | by definition of (foldFree f)
 = return a
@@ -722,7 +722,7 @@ $ fmap (fmap (foldFree f)) $ ff
 -- ^ where f is a morphism of monads
 = foldFree (liftF f) (Free ff)
 = join $ liftF f $ fmap (foldFree (liftF f)) $ ff
--- | by induciton hypothesis
+-- | by induction hypothesis
 = join $ liftF f $ fmap f $ ff
 -- | by definition of (liftF f)
 = join $ f $ Free $ fmap Return $ fmap f $ ff 
@@ -740,7 +740,7 @@ $ fmap (fmap (foldFree f)) $ ff
 -- | by definition of (foldFree f)
 = join $ f $ fmap (foldFree f)  $ fmap Return $ fa
 = join $ f $ fmap (foldFree f . Return) $ fa
--- | by defintion of (foldFree f)
+-- | by definition of (foldFree f)
 = join $ f $ fmap return  $ fa
 -- | since f is a natural transformation
 = join $ fmap return $ f fa

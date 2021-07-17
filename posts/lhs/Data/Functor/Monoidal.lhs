@@ -5,7 +5,7 @@ In this posts we will explore the equivalence between applicative and monoidal
 functors (i.e. functors which preserve cartesian product).
 
 <div style="display: none;">
-  IDEA: make a framework, which typechecks all the proofs; maybe use liquid
+  IDEA: make a framework, which type checks all the proofs; maybe use liquid
   haskell for that.
 </div>
 
@@ -26,7 +26,7 @@ general.  A monoidal structure in a given category is a bit like a monoid,
 where you can combine any two objects of a category but the unitality and
 associativity laws have to be relaxed. They are satisfied up to an
 isomorphism.  This is needed even in the simplest case as we have here where
-the monoidal product is simply given by the categorial product, i.e. the pair
+the monoidal product is simply given by the categorical product, i.e. the pair
 type `(a,b)`.  
 
 _associativity_
@@ -68,7 +68,7 @@ monoidal functors, and they are defined by the following type class.
 >
 > infixl 4 <|>
 
-Note that this definition expressese the notion of a monoidal endo-functors of
+Note that this definition expresses the notion of a monoidal endo-functors of
 the category `(->)` in which the monoidal product is given by the tuple type
 `(a, b)`.
 
@@ -106,7 +106,7 @@ There's no need to introduce
 [applicative
 functors](https://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Applicative.html#t:Applicative).
 Let me just cite the applicative functor laws, which we will use quite
-extensievly:
+extensively:
 
 _identity law_
 ```haskell
@@ -168,7 +168,7 @@ Any data structure has at most one functor instance, thus whenever one has
 a functor instance it must be the one.  As a consequence for an applicative
 functor `fmap` and `liftA` are always equal.  This allows us to use `liftA` in
 exchange for `fmap` in proofs.  That's very handy, since otherwise the
-applicative properties do not provide any compatiblity with `fmap`.
+applicative properties do not provide any compatibility with `fmap`.
 
 It turns out that every applicative functor is a monoidal one.  And this is
 thanks to the following standard definition of `monoidal` and a bit further
@@ -432,13 +432,12 @@ Equivalence between Applicative and Monoidal functors
 
 === From applicative functor to monoidal and back
 
-In this section we consider an applicative functor `f` and we consider tha
-applicative `monoidalAp` and `monoidalUnit` obtained from the associated
-monoidal functor.  We show that these are equal to what we start with `<*>`
-and `pure` of `f`.
+In this section we consider an applicative functor `f` and applicative
+`monoidalAp` and `monoidalUnit` obtained from the associated monoidal functor.
+We show that these are equal to what we start with `<*>` and `pure` of `f`.
 
 The strategy of the proof transform all `<$>` into `<*>` using `f <$> x = pure
-f <*> x` and mobe all brackets to the left using the composition law of
+f <*> x` and move all brackets to the left using the composition law of
 applicative functors.
 
 When we'll get to the above canonical form (brackets grouped to the left)
@@ -457,7 +456,7 @@ this will be all based on:
     by definition of (.)
     = (\x -> (.) (uncurry ($)) (x,)) f a
     = (\x -> (uncurry ($)) . (x,)) f a
-    by definiiton of (.)
+    by definition of (.)
     = (\x y -> (uncurry ($)) (x, y)) f a
     by eta reduction
     = uncurry ($) (f, a)
@@ -475,7 +474,7 @@ shorter), then we will recover our original applicative `<*>` (e.g.
 monoidalAp fab fa
   -- by definition of `monoidalAp`
   = uncurry ($) <$> (fab <|> fa)
-  -- by defintion of `<|>` 
+  -- by definition of `<|>` 
   = uncurry ($) <$> ((,) <$> fab <*> fa)
   = uncurry ($) <$> (pure (,) <*> fab <*> fa)
   = pure (uncurry ($)) <*> ((pure (,) <*> fab) <*> fa)
@@ -511,11 +510,11 @@ pure ((.) (uncurry ($))) <*> (pure (,) <*> fab)
 
 === From monoidal to applicative and back
 
-In this section we consider a monoidal functor `f`, and then we consisder tha
+In this section we consider a monoidal functor `f`, and then we consider the
 monoidal functor obtained from the associated applicative functor by means of
 `monoidalAp` and `monoidalUnit`.  We prove that what we end with is the
 initial monoidal functor `f`.  We use `<|>` and `unit` to denote the initial
-monoidal structer of `f`, `<*>` and `pure` is the associated applicative
+monoidal structure of `f`, `<*>` and `pure` is the associated applicative
 instance, and we will show that `monoidal` is equal to `<|>`
 
 ```haskell
@@ -548,8 +547,8 @@ References
   Effects](https://www.staff.city.ac.uk/~ross/papers/Applicative.html), Conor
   McBride and Ross Peterson, Journal of Functional Programming, 2008.
 
-  There is a final section which briefly mentions equivalnce between strict
+  There is a final section which briefly mentions equivalence between strict
   lax monoidal functors and applicative ones (without all the details we went
   through here).  It touches some subtle difference between categorical
   formulation and a higher order functional perspective (also used here),
-  which are byond this blog post.
+  which are beyond this blog post.

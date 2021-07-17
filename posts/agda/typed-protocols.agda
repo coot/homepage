@@ -503,7 +503,7 @@ theorem-unpipeline = go EmptyQ
     go EmptyQ (Yield tok msg k) = Yield tok msg (go EmptyQ k)
     go EmptyQ (Await tok k)     = Await tok λ {msg → go EmptyQ (k msg)}
 
-    -- push msg and promissed transition to back of the 'PrQueue'
+    -- push msg and promised transition to back of the 'PrQueue'
     go q      (YieldPipelined tok msg k) =
       go (  q
          |> snockMsgQ tok msg

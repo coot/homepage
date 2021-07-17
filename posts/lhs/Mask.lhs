@@ -103,7 +103,7 @@ The complete list of interruptible operations is astonishingly short:
 href="https://hackage.haskell.org/package/stm/docs/Control-Monad-STM.html#v:retry"><code>retry :: STM a</code></a>,</li>
   <li><a href=""><code>throwTo</code></a></li>
   <li><a
-href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/exts/ffi.html#interruptible-foreign-calls">interrutible ffi calls</a>.</li>
+href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/exts/ffi.html#interruptible-foreign-calls">interruptible ffi calls</a>.</li>
   <li style="display: none">there are also some primitive operations in non-threaded RTS, which are interruptible, but this will be eventually fixed.</li>
 </ul>
 In particular none of the operations listed below are interruptible:
@@ -277,7 +277,7 @@ and thus is uninterruptible.  Closing the decoder is either a no-op
 <code>Handle__</code> is using <code>IODevice</code> <code>FD</code> instance.
 On systems that support either <code>epoll</code>, <code>poll</code> or
 <code>kqueue</code> (e.g. on <code>Linux</code>, <code>MacOS</code>,
-<code>FreeBSD</code>, and alikes) it is done via event manager.  On other
+<code>FreeBSD</code>, and a likes) it is done via event manager.  On other
 operating systems (<code>Windows</code>) closing file handle is done by
 a direct foreign call (this might change in the future with the new
 <code>mio</code> Windows event manager based on I\/O completion ports).  When
@@ -422,7 +422,7 @@ References
       Vries, 2014.
   </li>
   <li>
-    [Interruptible or uninterreptubile cleanup](https://github.com/fpco/safe-exceptions/issues/3),
+    [Interruptible or uninterruptible cleanup](https://github.com/fpco/safe-exceptions/issues/3),
     issue in [safe-exceptions](https://hackage.haskell.org/package/safe-exceptions) package.
   </li>
   <li>
