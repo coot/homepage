@@ -1,0 +1,4 @@
+{ "wrapperClass": "post",
+  "title": "Strictness of foldr' from containers package",
+  "description": "This blog explains lazy evaluation and recent changes in strictness of foldr from the containers package"
+}

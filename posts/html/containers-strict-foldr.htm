@@ -1,0 +1,324 @@
+<header>
+  <h1 class="section_h" id="containers-strict-fodlr">Strictness of <code>foldr'</code> from <a href="https://hackage.haskell.org/package/containers-0.6.4.1/docs/Data-Map-Internal.html#v:foldr-39-">containers</a></h1>
+</header>
+
+<p>
+  This blog post will present Haskell's evaluation order based on an interesting issue I discovered in 
+  <a href="https://hackage.haskell.org/package/containers-0.6.4.1/docs/Data-Map-Internal.html#v:foldr-39-"><code>foldr'</code></a>.
+  As a result of this investigation, the original implementation was altered.
+  Let us start with with some basics on lazy evaluation.
+
+<h2>Lazy evaluation</h2>
+<p>
+  There are two important aspects of lazy evaluation: evaluation order and
+  sharing of suspended computations (thunks).  Understanding both is important
+  for writing efficient code or to avoid space leaks.  In this blog post
+  we focus on the evaluation order.
+
+  Haskell is using the so called <it>call-by-need</it> evaluation strategy,
+  which is defined as: <b>always reduce the left most, outer most
+  <a href="https://wiki.haskell.org/Reducible_expression">redex</a></b>
+  (i.e. unevaluated reducible expression) found in an expression.  Let's consider
+  a simple example:
+<pre>
+head (map (+1) ([1,2,3] :: [Int])
+</pre>
+  Here we have two unevaluated sub-expressions: the application of
+  <code>head</code> and the application of <code>map</code>.  We cannot
+  reduce the application of <code>head</code> since we don't match any of its patterns:
+</code><pre>
+head :: [a] -> a
+head (a : _) = a
+head []      = error "Prelude.head: empty list"
+</pre></code>
+  We can reduce the application of <code>map</code>, which makes it the only
+  redex in this expression (note that if we didn't specify that the literals are all integers
+  they would be redexes too, desugared to
+  <code>fromInteger 1 :: forall a. Num a => a</code>, see
+  <a href="https://www.haskell.org/definition/haskell2010.pdf#subsection.6.4.1">Haskell2010 report</a>,
+  in what follows we write <code>1</code> for <code>1 :: Int</code> for
+  brevity).
+  After applying the definition of <code>repeat</code> we get:
+<pre>
+head ((+1) 1 : map (+1) [2, 3])
+</pre>
+  Now we have three redexes that could be evaluated: either the application of
+  <code>head</code>, the <code>(+1) 1</code> expression or the application
+  <code>map</code>.  According to the <it>call-by-need</it> strategy we reduce
+  the application of <code>head</code> first and, as a result the expression
+  evaluates to <code>(+1) 1</code>, which further can be reduced to its
+  <b>normal form</b> <code>2 :: Int</code> (i.e. an expression without
+  redexes).
+</p>
+
+<p>
+  Evaluation to <b>weak head normal form</b> (<b>WHNF</b>), means that
+  evaluation stops as soon as at the top of the expression we get
+  a constructor, or a lambda abstraction.
+</p>
+
+<h2>Bang patterns</h2>
+<p>
+  The
+  <a
+      href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/exts/strict.html#bang-patterns-informal"><code>BangPatterns</code></a>
+  extension allows to influence the evaluation order.  We'll explain it on a simple example:
+  <a href="https://hackage.haskell.org/package/base-4.15.0.0/docs/Prelude.html#v:const"><code>const</code></a>
+  and its strict version <code>const'</code>:
+<code><pre>const :: a -> b -> a
+const a _ = a
+
+const' :: a -> b -> a
+const' a !_ = a
+</pre></code>
+
+The difference between them is that application of <code>const'</code> will
+reduce its second argument <code>b</code> to <b>WHNF</b> when the result is
+demanded while <code>const</code> won't.  They can be distinguished by the end
+user using the calls below:
+<pre>> const () (error "BANG!")
+()
+> const' () (error "BANG!")
+CallStack (from HasCallStack):
+  error, called at <interactive>:5:12 in interactive:Ghci2
+</pre>
+</p>
+
+<p>
+A bang pattern makes a promise to evaluate the expression under the bang when
+the right hand side is demanded and it is not already in <b>WHNF</b>.
+These patterns are also forced when a guard protects it, e.g.
+<code><pre>> let f !_ | False = 0; f _ = 1 in f undefined
+*** Exception: Prelude.undefined
+CallStack (from HasCallStack):
+  error, called at libraries/base/GHC/Err.hs:79:14 in base:GHC.Err
+  undefined, called at <interactive>:21:36 in interactive:Ghci4
+</pre></code>
+This also applies to bang patterns which appear when we bind a name using
+<code>where</code> or <code>let</code> clauses (which otherwise are
+lazy!). Though in this case the expressions will be reduced to <b>WHNF</b> when
+the whole expression defined by <code>where</code> or <code>let</code> is
+demanded.  Bang patterns are desugared into applications of the
+<a href="https://hackage.haskell.org/package/base-4.15.0.0/docs/Prelude.html#v:seq"><code>seq :: a -> b -> b</code></a>.
+This function makes a promise to evaluate the first expression to WHNF when the
+second expression is evaluated to WHNF, but it does not make any guarantees
+which expression will be reduced first.  An equivalent definition of
+<code>const'</code> using
+<code>seq</code>:
+<pre><code>const' a b = b `seq` a
+</code></pre>
+In this case <code>seq</code> guarantees that <code>b</code> is evaluated to
+WHNF when the right hand side of <code>const'</code> is evaluated to WHNF,
+which happens to be <code>a</code>.
+
+Let's also consider another example:
+<pre><code>id :: a -> a
+id a = a
+  where
+    Left _ = undefined
+</code></pre>
+Do you know what is the result of <code>id 'a'</code>?  The bindings done by
+<code>where</code> (or <code>let</code>) are lazy which means that they are
+only demanded when needed.  This version of <code>id</code> will return.  But
+the modified version <code>id'</code> will always error:
+<pre><code>id' :: a -> a
+id' a = a
+  where
+    !(Left _) = undefined
+</code></pre>
+<code>id'</code> is desugared to:
+<pre><code>id' :: a -> a
+id' a = b `seq` a
+  where
+    b@(Left _) = undefined
+</code></pre>
+When <code>id'</code> is called, <code>seq</code> will force <code>b</code> and
+that's why it errors.
+</p>
+
+<h3>Strict constructor fields</h3>
+<p>
+For the sake of completeness, let us mention that one can use bangs within
+a constructor's fields (which does not require <code>BangPattern</code>
+extension).  For example a strict <code>Maybe</code> type can be defined as
+<pre><code>data SMaybe = SNothing | SJust !a
+</code></pre>
+Whenever an expression of type <code>SMaybe</code> is evaluated to WHNF and it
+turns out that it is an application of <code>SJust</code>, the argument to the constructor
+will also be evaluated to <b>WHNF</b>.
+</p>
+
+<p>
+  With this knowledge at hand we can analyse the strict fold from
+  <a href="https://hackage.haskell.org/package/containers-0.6.4.1/docs/Data-Map-Internal.html#v:foldr-39-">containers</a>.
+</p>
+
+<h2>Strict right-associative fold</h2>
+<p>
+The right-associative strict fold in <it>container-0.6.4.1</it> is defined in
+the following way:
+<pre class="haskell"><code>-- | O(n). A strict version of foldr. Each application of the operator
+-- is evaluated before using the result in the next application.
+-- This function is strict in the starting value.
+foldr' :: (a -&gt; b -&gt; b) -&gt; b -&gt; Map k a -&gt; b
+foldr' f b0 = go b0
+  where
+    go !b Tip             = b
+    go  b (Bin _ _ x l r) = go (f x (go b r)) l
+</code></pre>
+</p>
+
+<p>
+Let us consider what happens when <code>foldr'</code> applied to a function
+which is lazy in its second argument.   It turns out that
+this use of <code>foldr'</code> will not force the accumulator.  Let us
+consider:
+
+<pre class="haskell"><code>-- | @fromList [(0,0+0), (1,1+0), (2,2+0)]@
+a :: Map Int Int
+a = Bin 3 1 (1+0) (Bin 1 0 (0+0) Tip Tip) (Bin 1 2 (2+0) Tip Tip)
+</code></pre>
+and analyse how <code>foldr' cons nil a</code> would evaluate for some <code>cons</code> and <code>nil</code>.
+</p>
+
+<h2>Strict right-associative fold reduction</h2>
+Let us analyse how <code>foldr' cons nil a</code> reduces:
+<pre>foldr' cons nil a
+---------------------------------------------- (1)
+go nil (Bin 3 1 x1 l r)
+  where
+    x1 = 1+0
+    l = Bin 1 0 (0+0) Tip Tip
+    r = Bin 1 2 (2+0) Tip Tip
+---------------------------------------------- (2)
+go (cons x1 (go nil r)) l
+---------------------------------------------- (3)
+go (cons x0 (go (cons x1 (go nil r)) Tip)) Tip
+  where
+    x0 = 0+0
+---------------------------------------------- (4)
+cons x0 (go (cons x1 (go nil r)) Tip)
+</pre>
+
+In step (1) the topmost, leftmost redex is the <code>foldr'</code>
+application.  In steps (2), (3), and (4) it is the top most <code>go</code>
+application.  In step (2) and (4) we just use the definition of
+<code>go</code>, in step (3) we substitute <code>l</code> and use the
+definition of <code>go</code>.
+
+Whenever <code>cons</code> is lazy in its second argument then the
+<code>go</code> redex will not be evaluated.  We can verify this in
+<code>ghci</code>:
+
+<pre>> let !x = foldr' (:) [] a 
+> :sprint x
+x = _ : _
+</pre>
+
+Furthermore, with the help of
+<a href="https://hackage.haskell.org/package/ghc-heap-view">ghc-heap-view</a>
+library, we can explore the heap layout of <code>x</code>:
+<pre>> HeapView.buildHeapTree 100 (HeapView.asBox x)
+    >>= print . HeapView.ppHeapTree
+_ind (_bh (_thunk() :
+            _thunk _fun (_thunk() :
+              _thunk _fun
+                ([] 5053632)
+                (Bin (I# 2) _thunk() (Tip 4471056) (Tip 4471056) 1)
+              )
+            (Tip 4471056)))
+</pre>
+We can see which parts of the expression were already evaluated to <b>WHNF</b>,
+which gives more precise information than <code>:sprint</code> does.  The
+first <code>_thunk()</code> is the unevaluated <code>0+0</code> expression,
+then <code>:</code> is the evaluated list constructor.  The tail of the list is
+an unevaluated call to <code>go</code>, which is represented by <code>_thunk
+  _fun</code>. It is applied to <code>cons x1 (go nil r)</code> which itself is
+evaluated to WHNF in step (2), hence it has the form <code>(:) x1 (go []
+r)</code>, <code>x1</code> is an unevaluated thunk represented by
+<code>_thunk()</code> which stands for the expression <code>1+0</code>, the
+empty list constructor is evaluated in the step (1).
+
+<h2>Stricter right-associative fold</h2>
+
+<p>
+There is another possible definition of a strict right-associative fold:
+
+<pre class="haskell"><code>foldr'' :: (a -&gt; b -&gt; b) -&gt; b -&gt; Map k a -&gt; b
+foldr'' f b0 = go b0
+  where
+    go b Tip             = b
+    go b (Bin _ _ x l r) = go (f x $! go b r) l
+</code></pre>
+Instead of forcing the accumulator <code>b</code> when it is applied to
+<code>go</code>, we force it when it is applied to <code>f</code> (as mentioned
+in the original haddock documentation).
+
+Let us consider how <code>foldr'' cons nil a</code> would be evaluated by Haskell:
+
+<pre>foldr'' cons nil a
+------------------------------------------------- (1)
+go nil (Bin 3 1 x1 l r)
+  where
+    x1 = 1+0
+    l = Bin 1 0 (0+0) Tip Tip
+    r = Bin 1 2 (2+0) Tip Tip
+------------------------------------------------- (2)
+go (cons x1 $! go nil r) l
+------------------------------------------------- (3)
+go (cons x0 $! go (cons x1 $! go nil r) Tip) Tip
+  where
+    x0 = 0+0
+------------------------------------------------- (4) force first $!
+cons x0 $! go (cons x1 $! go nil r) Tip
+------------------------------------------------- (5) force second $!
+cons x0 $! cons x1 $! go nil r
+------------------------------------------------- (6)
+cons x0 $! cons x1 $! go (cons x2 $! go nil Tip) Tip
+------------------------------------------------- (7) force last $!
+cons x0 $! cons x1 $! cons x2 $! go nil Tip
+------------------------------------------------- (8)
+cons x0 $! cons x1 $! cons x2 $! nil
+</pre>
+
+The difference is that now, when we have <code>cons y $! go ...</code> we need
+to force the application of <code>go</code> to <b>WHNF</b> as well, that's why the
+evaluation goes further.
+
+We can verify this in a new session in <code>ghci</code> (or using a fresh copy
+of <code>a</code>):
+<pre>> let !x = foldr'' (:) [] a
+> :sprint x
+[_,_,_]
+</pre>
+or using the <it>ghc-heap-view</it> library:
+<pre>> HeapView.buildHeapTree 100 (HeapView.asBox x)
+    >>= print . HeapView.ppHeapTree
+_ind (_bh (_thunk() : _thunk() : _thunk() : [] 5056128))
+</pre>
+</p>
+
+
+<h2>Consequences</h2>
+<p>
+  <ul>
+    <li><code>foldr'</code> gives more power to the programmer, just by making
+    <code>cons</code> strict one can transform a <code>foldr'</code> into
+    <code>foldr''</code>;</li>
+    <li><code>foldr''</code> is in general slightly more efficient, both
+      in terms of memory and CPU cycles, see
+      <a
+          href="https://github.com/haskell/containers/pull/750/commits/acce3e22b198e238b552b796ce6b29e655197294">benchmarks</a>.
+    </li>
+  </ul>
+  My <a href="https://github.com/haskell/containers/pull/750">patch</a> was recently accepted and various strict folds in <a
+        href="https://hackage.haskell.org/package/containers-0.6.5.1">containers-0.6.5.1</a>
+  became more strict.  The version of
+  <a href="https://hackage.haskell.org/package/containers-0.6.5.1/docs/src/Data.Map.Internal.html#foldr%27"><code>foldr'</code></a>
+  in <it>containers-0.6.5.1<it> is a combination of <code>foldr'</code> and
+  <code>foldr''</code> from this blog post.
+
+  If you want to play around this, checkout the
+  <a href="https://gist.github.com/coot/4bda8ec91fbf5c22b3d521170d3b98dc">gist</a>.
+</p>
+
