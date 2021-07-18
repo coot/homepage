@@ -96,7 +96,7 @@ posts_dir:
 .PHONY: posts_dir
 
 $(lhs_posts): dist/posts/%: posts/lhs/% $(pandoc_outputs) posts/base.html
-	echo '{"wrapperClass": "post"}' | j2 -f json $< -o $@
+	j2 -f json -o $@ $< $(basename $<).json
 
 jinja: $(lhs_posts)
 .PHONY: jinja
@@ -108,7 +108,7 @@ jinja: $(lhs_posts)
 $(htm):
 
 $(html_posts): dist/posts/%: posts/html/% $(htm) posts/base.html
-	echo '{"wrapperClass": "post"}' | j2 -f json $< -o $@
+	j2 -f json -o $@ $< $(basename $<).json
 
 html_posts: posts_dir $(html_posts)
 
@@ -130,7 +130,7 @@ $(agda_html) &: dist/agda/posts.agda.%.html: posts/agda/%.agda
 #
 
 $(html): dist/%: html/% $(templates)
-	echo '{"wrapperClass": ""}' | j2 -f json $< -o $@
+	j2 -f json -o $@ $< html/ctx.json
 
 #
 # Assets

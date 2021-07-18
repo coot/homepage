@@ -1,0 +1,4 @@
+{ "wrapperClass": "post",
+  "title": "Monoidal and Applicative Functors",
+  "description": "Equivalence between monoidal and applicative functors."
+}

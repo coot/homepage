@@ -1,0 +1,4 @@
+{ "wrapperClass": "post",
+  "title": "Ghc Tags Plugin published on hackage",
+  "description": "ghc-tags-plugin allows to build tags file as part of ghc build pipeline"
+}

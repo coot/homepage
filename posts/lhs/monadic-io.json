@@ -1,0 +1,4 @@
+{ "wrapperClass": "post",
+  "title": "Why Monadic IO?",
+  "description": "Where we explore why monadic IO is natural for purely functional programming language."
+}
