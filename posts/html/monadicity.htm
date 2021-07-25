@@ -52,8 +52,8 @@ newtype Proof (c :: Constraint) (a :: l) = Proof (Dict c)
 -- This in turn guaranties that @m@ is a left adjoint functor from Hask
 -- to algebras of type @'AlgebraType m'@.  The right adjoint is the
 -- forgetful functor.  The composition of left adjoin and the right one
--- is always a monad, this is why we will be able to build monad instance
--- for @m@.
+-- is always a monad, this is why we will be able to build monad
+-- instance for @m@.
 class FreeAlgebra (m :: Type -> Type)  where
     -- | Injective map that embeds generators @a@ into @m@.
     returnFree :: a -> m a
@@ -352,7 +352,8 @@ bindFree ma f = case proof @m @b of
 <pre class="haskell" id="FreeMAlg"><code>-- |
 -- The composition of @Free@ followed by @U@
 data FreeMAlg (m :: * -> *) (a :: *) where
-    FreeMAlg :: ( FreeAlgebra m, AlgebraType m a ) => m a -> FreeMAlg m a
+    FreeMAlg :: ( FreeAlgebra m, AlgebraType m a )
+             => m a -> FreeMAlg m a
 
 runFreeMAlg :: FreeMAlg m a -> m a
 runFreeMAlg (FreeMAlg ma) = ma

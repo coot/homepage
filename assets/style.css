@@ -3,7 +3,7 @@ html, body {
   font-display: swap;
   font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
   text-rendering: optimizeLegibility;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 body {
@@ -170,8 +170,12 @@ pre {
     padding: 10px;
     /* background-color: rgba(78, 44, 251, 0.1); */
     /* color: #505050; */
-    color: #a0a0a0;
     border-radius: 1px;
+}
+
+code, pre {
+  font-family: "Roboto Mono Light", "Cutive Mono", monospace;
+    color: #a0a0a0;
 }
 
 pre.sourceCode {
@@ -208,7 +212,7 @@ pre.haskell a {
 
 .Agda .Comment,
 .haskell .co {
-  color: #787878;
+  color: #989898;
 }
 
 

@@ -113,7 +113,8 @@ two cases, following the definition on composition in `Cat f`.
 foldNatFree2 f (Id . ys)
   = foldNatFree2 f ys      -- since `Id` is an identity
   = id . foldNatFree2 f ys -- since `id` is an identity
-  = foldNatFree2 f Id . foldNatFree2 ys -- by definition of `foldNatFree`
+  = foldNatFree2 f Id . foldNatFree2 ys
+                           -- by definition of `foldNatFree`
 ```
 
 and
