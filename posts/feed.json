@@ -1,5 +1,10 @@
 { "entries":
-  [ { "title": "Pipelining in Typed Protocols"
+  [ { "title": "Strictness of foldr' from containers package"
+    , "url":   "https://coot.me/posts/containers-strict-foldr.html"
+    , "date":  "25 Jul 2021 00:00 GMT"
+    , "data":  "posts/html/containers-strict-foldr.htm"
+    }
+  , { "title": "Pipelining in Typed Protocols"
     , "url":   "https://coot.me/posts/typed-protocol-pipelining.html"
     , "date":  "5 Jun 2021 00:00 GMT"
     , "data":  "posts/lhs/.build/TypedProtocolPipelining.html"
