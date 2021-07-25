@@ -19,3 +19,4 @@ todo.md
 /posts/lhs/.build
 /**/*.pyg
 /presentations/*.pdf
+presentations/_minted-*

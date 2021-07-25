@@ -1,4 +1,4 @@
-\documentclass[t,dvipsnames]{beamer}
+\documentclass[t,dvipsnames,hyperref={colorlinks,citecolor=NavyBlue,linkcolor=NavyBlue,anchorcolor=NavyBlue,urlcolor=NavyBlue}]{beamer}
 
 \setbeamertemplate{navigation symbols}{}
 \useinnertheme{circles}
@@ -42,29 +42,135 @@
 \section{Semigroups}
 %%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Semigroups}
+  \begin{minted}[stripall,bgcolor=NavyBlue!5!white,fontsize=\small]{haskell}
+class Semigroup a where
+  -- associativity: (a <> b) <> c == a <> (b <> c)
+  (<>) :: a -> a -> a
+  \end{minted}
+
+Examples
+  \begin{minted}[stripall,bgcolor=NavyBlue!5!white,fontsize=\small]{haskell}
+-- free semigroup with one generator
+instance Semigroup (NonEmpty a) where
+  (a :| as) <> (b :| bs) = a :| as ++ b : bs
+
+instance Semigroup [a] where
+  (<>) = (++)
+
+instance Semigroup a => Semigroup (Maybe a) where
+  Nothing <> a = a
+  a <> Nothing = a
+  Just a  <> Just b = Just (a <> b)
+  \end{minted}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Foldable1 type class}
+  \begin{minted}[stripall,bgcolor=NavyBlue!5!white,fontsize=\small]{haskell}
+-- from "semigroupoids" package
+class Foldable t => Foldable1 t where
+  foldMap1 :: Semigroup m
+           => (a -> m) -> t a -> m
+  fold1 :: Semigroup m => t m -> m
+  fold1 = foldMap1 id
+  toNonEmpty :: t a -> NonEmpty a
+  toNonEmpty = foldMap1 (:| [])
+  \end{minted}
+
+Examples
+\small{The cannonical example instance is \texttt{NonEmpty}; all the instances
+  require that the container is non-empty\footnote{This is a consequence of a \texttt{Semigroup} constraint rather than the \texttt{toNonEmpty} class member.}.}
+  \begin{minted}[stripall,bgcolor=NavyBlue!5!white,fontsize=\small]{haskell}
+instance Foldable1 NonEmpty where
+  -- proof that @NonEmpty@ is a free semigroup:
+  foldMap1 :: Semigroup m => (a -> m) -> NonEmpty a -> m
+  foldMap1 f (a :| (b : bs)) = f a <> foldMap1 f (b :| bs)
+  foldMap1 f (a :| [])       = f a
+  \end{minted}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%
 \section{Monoids}
 %%%%%%%%%%%%%%%%%
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Monoids}
+  \begin{minted}[stripall,bgcolor=NavyBlue!5!white,fontsize=\small]{haskell}
+class Semigroup a => Monoid a where
+  -- two sided identity
+  -- > a <> mempty == a == mempty <> a
+  mempty :: a
+  \end{minted}
+
+  Examples
+  \begin{minted}[stripall,bgcolor=NavyBlue!5!white,fontsize=\small]{haskell}
+instance Monoid [a] where
+  mempty = []
+instance Semigroup a => Monoid (Maybe a) where
+  mempty = Nothing
+  \end{minted}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Foldable type class}
+  \begin{minted}[stripall,bgcolor=NavyBlue!5!white,fontsize=\small]{haskell}
+class Foldable t where
+  foldMap :: Monoid m => (a -> m) -> t a -> m
+  fold :: Monoid m => t m -> m
+  fold = foldMap id
+  toList :: t a -> [a]
+  toList = foldMap (\a -> [a]) 
+  \end{minted}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{FreeAlgebras}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+  \frametitle{Free algebras}
+  {\small
+    The \texttt{FreeAlgebra} type class can capture the heart of \texttt{Foldable} and
+    \texttt{Foldable1} classes and many other free structures as well.
+  }
+  \begin{minted}[stripall,bgcolor=NavyBlue!5!white,fontsize=\small]{haskell}
+class FreeAlgebra (m :: Type -> Type) where
+  returnFree  :: a -> m a
+  foldMapFree :: forall d a.
+                 ( AlgebraType  m d
+                 , AlgebraType0 m a )
+              => (a -> d) -> m a -> d
+  \end{minted}
+  {\small
+  For more details see
+  \begin{itemize}
+    \item \href{https://skillsmatter.com/skillscasts/13007-lightning-talk-rethinking-freeness-through-universal-algebra}{Haskell eXchange lightning talk};
+    \item \href{https://hackage.haskell.org/package/free-algebras}{free-algebras}
+      package on Hackage.
+  \end{itemize}
+  }
 \end{frame}
 
 \section{Near Semi-Rings}
 \begin{frame}
   \frametitle{Near Semi-Ring}
+  \begin{definition}
+    \((S, +, \cdot, 0)\) is a near semi-ring if:
+    \begin{itemize}
+      \item \((S, +, 0)\) is a monoid (not necessary abelian);
+      \item \((S, \cdot)\) is a semigroup;
+      \item \((a + b) \cdot c = a \cdot c + b \cdot c\);
+      \item \(0 \cdot a = 0\).
+    \end{itemize}
+  \end{definition}
+  Example: if \(M\) is a monoid then all monoid homorphism form a near semi-ring with:
+  \begin{itemize}
+    \item \textit{multiplication}: function composition
+    \item \textit{addition}: pointwise addition
+    \item \textit{zero}: constant function to the identity of the monoid
+  \end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
