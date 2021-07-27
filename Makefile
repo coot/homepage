@@ -67,7 +67,7 @@ latex_clean:
 
 $(templates):
 
-post/base.html: $(templates)
+posts/base.html: $(templates)
 
 templates: $(templates)
 .PHONY: templates
@@ -80,7 +80,7 @@ cabal:
 	cabal build homepage
 .PHONY: cabal
 
-$(pandoc_outputs): posts/lhs/.build/%.html: posts/lhs/%.lhs posts/base.html
+$(pandoc_outputs): posts/lhs/.build/%.html: posts/lhs/%.lhs posts/base.html $(templates)
 	pandoc $< -o $@
 
 pandoc_dir:
@@ -95,7 +95,7 @@ posts_dir:
 	mkdir -p dist/posts
 .PHONY: posts_dir
 
-$(lhs_posts): dist/posts/%: posts/lhs/% $(pandoc_outputs) posts/base.html
+$(lhs_posts): dist/posts/%: posts/lhs/% $(pandoc_outputs) posts/base.html $(templates)
 	j2 -f json -o $@ $< $(basename $<).json
 
 jinja: $(lhs_posts)
@@ -107,12 +107,12 @@ jinja: $(lhs_posts)
 
 $(htm):
 
-$(html_posts): dist/posts/%: posts/html/% $(htm) posts/base.html
+$(html_posts): dist/posts/%: posts/html/% $(htm) posts/base.html $(templates)
 	j2 -f json -o $@ $< $(basename $<).json
 
 html_posts: posts_dir $(html_posts)
 
-lhs_posts: posts_dir cabal pandoc jinja
+lhs_posts: posts_dir cabal pandoc jinja posts/base.html $(templates)
 .PHONY: lhs_posts
 
 posts: posts_dir lhs_posts html_posts
