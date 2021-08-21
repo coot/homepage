@@ -814,7 +814,7 @@ track the evolution of types.
 > type SQueue :: Queue ps -> Type
 > data SQueue q where
 >   SEmpty :: SQueue Empty
->   SCons  :: STrans (Tr st st') -> SQueue q -> SQueue (Tr st st' <| queue)
+>   SCons  :: STrans (Tr st st') -> SQueue q -> SQueue (Tr st st' <| q)
 >
 > -- | `PrQueue` tracks the order of transitions.  We either have an
 > -- explicit `Message` or a `STrans` singleton, both are pushed by
@@ -859,14 +859,6 @@ track the evolution of types.
 >   ConsTrQ tr' (snocTrQ tr pq)
 > snocTrQ tr EmptyQ =
 >   ConsTrQ tr EmptyQ
->
-> -- | Derive `SQueue q` singleton from `PrQueue ps pr st q st'` by
-> -- a simple traversal.
-> --
-> promisedQueue :: PrQueue ps pr st q st' -> SQueue q
-> promisedQueue (ConsMsgQ  _ _ pq) = promisedQueue pq
-> promisedQueue (ConsTrQ tr pq)    = SCons tr (promisedQueue pq)
-> promisedQueue  EmptyQ            = SEmpty
 
 
 With all the singletons at hand we are ready to prove:
