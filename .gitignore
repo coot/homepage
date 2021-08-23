@@ -20,3 +20,6 @@ todo.md
 /**/*.pyg
 /presentations/*.pdf
 presentations/_minted-*
+/presentations/lhs/*.pdf
+/presentations/lhs/*.ptb
+/presentations/lhs/*.tex

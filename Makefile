@@ -197,6 +197,7 @@ presentations:
 	${MAKE} -C $(presentations_dir) all; 
 	mkdir -p dist/presentations
 	cp presentations/*.pdf dist/presentations
+	cp presentations/lhs/*.pdf dist/presentations
 .PHONY: presentations
 
 #

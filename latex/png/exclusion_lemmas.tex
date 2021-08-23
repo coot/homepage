@@ -5,9 +5,9 @@
 \definecolor{mygreen}{rgb}{0.109804,0.698039,0.341176}
 \definecolor{myblue}{rgb}{0.360784,0.423529,255}
 \definecolor{myred}{rgb}{1,0,0}
-\newcommand{\ClientHasAgency}{\large\texttt{ClientHasAgency}}
-\newcommand{\ServerHasAgency}{\large\texttt{ServerHasAgency}}
-\newcommand{\NobodyHasAgency}{\large\texttt{NobodyHasAgency}}
+\newcommand{\ClientAgency}{\large\texttt{ClientAgency}}
+\newcommand{\ServerAgency}{\large\texttt{ServerAgency}}
+\newcommand{\NobodyAgency}{\large\texttt{NobodyAgency}}
 \begin{document}
 \tikzset{
     state/.style={
@@ -22,36 +22,24 @@
 \tikzstyle{every node}=[color=white!40!black]
 
 \begin{tikzpicture}
-  \node (ClientHasAgency) at (0,    0) {\ClientHasAgency};
-  \node (ServerHasAgency) at (12cm, 0) {\ServerHasAgency};
-  \node (NobodyHasAgency) at (5cm, -5cm) {\NobodyHasAgency};
-  % \node (NobodyHasAgency) at (5cm, -5cm) {$\cdot$};
-  \draw[-,red] (ClientHasAgency)
-            -- node[above]{\footnotesize\texttt{exclusionLemma\_ClientAndServerHaveAgency}}
-               (ServerHasAgency);
-  \draw[-,red] (ClientHasAgency)
+  \node (ClientAgency) at (0,    0) {\ClientAgency};
+  \node (ServerAgency) at (12cm, 0) {\ServerAgency};
+  \node (NobodyAgency) at (5cm, -5cm) {\NobodyAgency};
+  % \node (NobodyAgency) at (5cm, -5cm) {$\cdot$};
+  \draw[-,red] (ClientAgency)
+            -- node[above]{\footnotesize client and server have agency}
+               (ServerAgency);
+  \draw[-,red] (ClientAgency)
             -- node[ pos=0.35
                    , rotate=-46
                    , below=0.5
-                   ] {\footnotesize\texttt{exclusionLemma\_NobodyAndClientHaveAgency}}
-               (NobodyHasAgency);
-  \draw[-,red] (ServerHasAgency)
+                   ] {\footnotesize nobody and client have agency}
+               (NobodyAgency);
+  \draw[-,red] (ServerAgency)
             -- node[ pos=0.4
                    , below=0.4
                    , rotate=37
-                   ] {\footnotesize\texttt{exclusionLemma\_NobodyAndServerHaveAgency}}
-               (NobodyHasAgency);
-  % \draw[-] (ClientHasAgency)
-           % edge [out=120, in=60,  looseness=16]
-           % node [above] {\texttt{ClientHasAgency}}
-           % (ClientHasAgency);
-  % \draw[-] (ServerHasAgency)
-           % edge [out=120, in=60,  looseness=16]
-           % node [above] {\texttt{ServerHasAgency}}
-           % (ServerHasAgency);
-  \draw[-] (NobodyHasAgency)
-           edge [out=240, in=300, looseness=16]
-           node [below] {\texttt{Client \& Server Terminated}}
-           (NobodyHasAgency);
+                   ] {\footnotesize nobody and server have agency}
+               (NobodyAgency);
 \end{tikzpicture}
 \end{document}
