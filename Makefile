@@ -194,7 +194,7 @@ dist/feed.rss: posts/feed.json $(pandoc_outputs)
 .PHONY: dist/feed.rss
 
 presentations:
-	${MAKE} -C $(presentations_dir) all; 
+	${MAKE} -C $(presentations_dir); 
 	mkdir -p dist/presentations
 	cp presentations/*.pdf dist/presentations
 	cp presentations/lhs/*.pdf dist/presentations
