@@ -1,5 +1,10 @@
 % Document class is set in the Makefile.
 
+% To compile, comment out all the '%format' lines and all 'hide'
+% environments, then run;
+% lhs2TeX --newcode typed-protocol-pipelining.lhs > typed-protocol-pipelining.hs
+% ghc -package singletons typed-protocols-pipelining.hs
+
 %include polycode.fmt
 \arrayhs
 %include forall.fmt
@@ -33,6 +38,7 @@
 %format ReflRelativeAgency    = "{\color{MediumPurple4}{\Conid{ReflRelativeAgency}}}"
 %format ReflNobodyHasAgency   = "{\color{MediumPurple4}{\Conid{ReflNobodyHasAgency}}}"
 %format MkReflNobodyHasAgency = "{\color{MediumPurple2}{\Conid{ReflNobodyHasAgency}}}"
+%format MkPipelined           = "Pipelined"
 %format ReflClientAgency      = "{\color{MediumPurple2}{\Conid{ReflClientAgency}}}"
 %format ReflServerAgency      = "{\color{MediumPurple2}{\Conid{ReflServerAgency}}}"
 %format ReflNobodyAgency      = "{\color{MediumPurple2}{\Conid{ReflNobodyAgency}}}"
@@ -57,7 +63,8 @@
 \institute{\insertlogo{\includegraphics[height=1cm]{iohk-logo.png}}}
 \title{Typed Protocol Pipelining}
 
-% \renewcommand{\Conid}[1]{{\color{RoyalBlue4}{\mathit{#1}}}}
+% placing a 'code' environment inside 'hide', hides it.
+\newenvironment{hide}{}{}
 
 \begin{document}
 \begin{frame}
@@ -70,6 +77,26 @@
     \begin{flushright}
       \includegraphics[height=1.5cm]{../images/typed-protocol-pipelining-qr.png}
     \end{flushright}
+\end{frame}
+
+\begin{frame}
+  \begin{code}
+{-# LANGUAGE BangPatterns              #-}
+{-# LANGUAGE DataKinds                 #-}
+{-# LANGUAGE EmptyCase                 #-}
+{-# LANGUAGE GADTs                     #-}
+{-# LANGUAGE PolyKinds                 #-}
+{-# LANGUAGE RankNTypes                #-}
+{-# LANGUAGE ScopedTypeVariables       #-}
+{-# LANGUAGE StandaloneDeriving        #-}
+{-# LANGUAGE StandaloneKindSignatures  #-}
+{-# LANGUAGE TypeFamilies              #-}
+{-# LANGUAGE TypeOperators             #-}
+module X where
+
+import Data.Kind (Type)
+import Data.Singletons
+  \end{code}
 \end{frame}
 
 \begin{frame}
@@ -122,31 +149,47 @@
   \frametitle{Towards non-pipelined protocol description}
   \small
   \begin{code}
-  data PingPong where
-    StIdle     :: PingPong
-    StBusy     :: PingPong
-    StDone     :: PingPong
+data PingPong where
+  StIdle     :: PingPong
+  StBusy     :: PingPong
+  StDone     :: PingPong
+  \end{code}
+  \begin{hide}
+  \begin{code}
+data SPingPong (st :: PingPong) where
+  SingIdle :: SPingPong StIdle
+  SingBusy :: SPingPong StBusy
+  SingDone :: SPingPong StDone
+deriving instance Show (SPingPong st)
+type instance Sing = SPingPong
+instance SingI StIdle where
+    sing = SingIdle
+instance SingI StBusy where
+    sing = SingBusy
+instance SingI StDone where
+    sing = SingDone
+  \end{code}
+  \end{hide}
+  \pause
+  \begin{code}
+data MessageSimplePingPong (st  :: PingPong) (st' :: PingPong) where
+  MsgSimplePing  :: MessageSimplePingPong StIdle StBusy
+  MsgSimplePong  :: MessageSimplePingPong StBusy StIdle
+  MsgSimpleDone  :: MessageSimplePingPong StIdle StDone
   \end{code}
   \pause
   \begin{code}
-  data MessageSimplePingPong (st  :: PingPong) (st' :: PingPong) where
-    MsgSimplePing  :: MessageSimplePingPong StIdle StBusy
-    MsgSimplePong  :: MessageSimplePingPong StBusy StIdle
-    MsgSimpleDone  :: MessageSimplePingPong StIdle StDone
-  \end{code}
-  \pause
-  \begin{code}
-  data SimplePingPongClient (st :: PingPong) a where
-    SendMsg     ::  MessageSimplePingPong StIdle st
-                ->  (SimplePingPongClient st a)
-                ->  SimplePingPongClient StIdle a
+data SimplePingPongClient (st :: PingPong) a where
+  SendMsg     ::  MessageSimplePingPong StIdle st
+              ->  (SimplePingPongClient st a)
+              ->  SimplePingPongClient StIdle a
 
-    RecvMsg     ::  (MessageSimplePingPong StBusy StIdle
-                      -> (SimplePingPongClient StIdle a))
-                ->  SimplePingPongClient StBusy a
+  RecvMsg     ::  (MessageSimplePingPong StBusy StIdle
+                    -> (SimplePingPongClient StIdle a))
+              ->  SimplePingPongClient StBusy a
 
-    ClientDone  ::  a
-                ->  SimplePingPongClient StDone a
+  ClientDone  ::  a
+              ->  SimplePingPongClient StDone a
   \end{code}
 \end{frame}
 
@@ -154,18 +197,18 @@
   \frametitle{Towards non-pipelined protocol description}
   \begin{columns}[t]
     \begin{column}{1.0\textwidth}
-      \begin{code}
-      simplePingPongClient :: a -> SimplePingPongClient StIdle a
-      simplePingPongClient a =
-          SendMsg  MsgSimplePing
-       $  RecvMsg  $ \MsgSimplePong ->
-          SendMsg  MsgSimplePing
-       $  RecvMsg  $ \MsgSimplePong ->
-          SendMsg  MsgSimplePing
-       $  RecvMsg  $ \MsgSimplePong ->
-          SendMsg  MsgSimpleDone
-       $  ClientDone a
-      \end{code}
+    \begin{code}
+simplePingPongClient :: a -> SimplePingPongClient StIdle a
+simplePingPongClient a =
+    SendMsg  MsgSimplePing
+ $  RecvMsg  $ \MsgSimplePong ->
+    SendMsg  MsgSimplePing
+ $  RecvMsg  $ \MsgSimplePong ->
+    SendMsg  MsgSimplePing
+ $  RecvMsg  $ \MsgSimplePong ->
+    SendMsg  MsgSimpleDone
+ $  ClientDone a
+    \end{code}
     \end{column}
   \end{columns}
 \end{frame}
@@ -174,55 +217,55 @@
   \frametitle{Towards pipelined protocol description}
   \footnotesize
   \begin{code}
-  data N = Z | S N
+data N = Z | S N
   \end{code}
   \pause
   \begin{code}
-  data SimplePipelinedPingPongClient (st :: PingPong) (n :: N) c a where
-    PipelinedSendMsg  :: MessageSimplePingPong StIdle st
-                      -> PingPongReceiver               StBusy StIdle  c
-                      -> SimplePipelinedPingPongClient  StIdle (S  n)  c a
-                      -> SimplePipelinedPingPongClient  StIdle     n   c a
+data SimplePipelinedPingPongClient (st :: PingPong) (n :: N) c a where
+  PipelinedSendMsg  :: MessageSimplePingPong StIdle st
+                    -> PingPongReceiver               StBusy StIdle  c
+                    -> SimplePipelinedPingPongClient  StIdle (S  n)  c a
+                    -> SimplePipelinedPingPongClient  StIdle     n   c a
 
-    CollectResponse   :: (c -> SimplePipelinedPingPongClient  StIdle     n   c a)
-                      -> SimplePipelinedPingPongClient        StIdle (S  n)  c a
+  CollectResponse   :: (c -> SimplePipelinedPingPongClient  StIdle     n   c a)
+                    -> SimplePipelinedPingPongClient        StIdle (S  n)  c a
 
-    SendMsgDone       :: MessageSimplePingPong          StIdle StDone
-                      -> SimplePipelinedPingPongClient  StDone Z c a
-                      -> SimplePipelinedPingPongClient  StIdle Z c a
+  SendMsgDone       :: MessageSimplePingPong          StIdle StDone
+                    -> SimplePipelinedPingPongClient  StDone Z c a
+                    -> SimplePipelinedPingPongClient  StIdle Z c a
 
-    PipelinedDone     :: a
-                      -> SimplePipelinedPingPongClient StDone Z c a
+  PipelinedDone     :: a
+                    -> SimplePipelinedPingPongClient StDone Z c a
   \end{code}
   \pause
   \begin{code}
-  data PingPongReceiver  (st   :: PingPong)
-                         (st'  :: PingPong) c where
-    RecvPipelinedMsg   ::  (MessageSimplePingPong StBusy StIdle -> c)
-                       ->  PingPongReceiver StBusy StIdle c
+data PingPongReceiver  (st   :: PingPong)
+                       (st'  :: PingPong) c where
+  RecvPipelinedMsg   ::  (MessageSimplePingPong StBusy StIdle -> c)
+                     ->  PingPongReceiver StBusy StIdle c
   \end{code}
 \end{frame}
 
 \begin{frame}
   \frametitle{Towards pipelined protocol description}
   \begin{code}
-  simplePipelinedPingPongClient
-     ::  a  -- fixed result, for simplicity
-     ->  c  -- fixed collected value, for simplicity
-     ->  SimplePipelinedPingPongClient StIdle Z c a
-  simplePipelinedPingPongClient a c =
-     PipelinedSendMsg
+simplePipelinedPingPongClient
+   ::  a  -- fixed result, for simplicity
+   ->  c  -- fixed collected value, for simplicity
+   ->  SimplePipelinedPingPongClient StIdle Z c a
+simplePipelinedPingPongClient a c =
+   PipelinedSendMsg
+     MsgSimplePing
+     (RecvPipelinedMsg     $ \MsgSimplePong -> c)
+     (PipelinedSendMsg
        MsgSimplePing
-       (RecvPipelinedMsg     $ \MsgSimplePong -> c)
-       (PipelinedSendMsg
-         MsgSimplePing
-         (RecvPipelinedMsg   $ \MsgSimplePong -> c)
-         (          CollectResponse
-         $ \ _  ->  CollectResponse
-         $ \ _  ->  SendMsgDone MsgSimpleDone
-         $          PipelinedDone a
-         )
+       (RecvPipelinedMsg   $ \MsgSimplePong -> c)
+       (          CollectResponse
+       $ \ _  ->  CollectResponse
+       $ \ _  ->  SendMsgDone MsgSimpleDone
+       $          PipelinedDone a
        )
+     )
   \end{code}
 \end{frame}
 
@@ -232,12 +275,12 @@
   Branching in |PipelinedSendMsg| requires that the interpretation of
   |SimplePipelinedPingPongClient| needs to concurrent execution: 
   \small
-  \begin{code}
-  PipelinedSendMsg  ::  MessageSimplePingPong StIdle st
-                    ->  PingPongReceiver               StBusy StIdle c
-                    ->  SimplePipelinedPingPongClient  StIdle (S  n)  c a
-                    ->  SimplePipelinedPingPongClient  StIdle     n   c a
-  \end{code}
+  \begin{spec}
+PipelinedSendMsg  ::  MessageSimplePingPong StIdle st
+                  ->  PingPongReceiver               StBusy StIdle c
+                  ->  SimplePipelinedPingPongClient  StIdle (S  n)  c a
+                  ->  SimplePipelinedPingPongClient  StIdle     n   c a
+  \end{spec}
 \end{frame}
 
 \begin{frame}
@@ -245,29 +288,29 @@
   \framesubtitle{Protocol Type Class}
   \small
   \begin{code}
-  data Agency where
-      ClientAgency  :: Agency
-      ServerAgency  :: Agency
-      NobodyAgency  :: Agency
+data Agency where
+    ClientAgency  :: Agency
+    ServerAgency  :: Agency
+    NobodyAgency  :: Agency
   \end{code}
   \pause
   Protocol type class provides messages and state type family.
   \begin{code}
-  class Protocol ps where
-    data Message ps (st :: ps) (st' :: ps)
-    type StateAgency (st :: ps) :: Agency
+class Protocol ps where
+  data Message ps (st :: ps) (st' :: ps)
+  type StateAgency (st :: ps) :: Agency
   \end{code}
   \pause
   \begin{code}
-  instance Protocol PingPong where
-    data Message PingPong from to where
-      MsgPing  :: Message PingPong StIdle StBusy
-      MsgPong  :: Message PingPong StBusy StIdle
-      MsgDone  :: Message PingPong StIdle StDone
+instance Protocol PingPong where
+  data Message PingPong from to where
+    MsgPing  :: Message PingPong StIdle StBusy
+    MsgPong  :: Message PingPong StBusy StIdle
+    MsgDone  :: Message PingPong StIdle StDone
 
-    type StateAgency StIdle  = ClientAgency
-    type StateAgency StBusy  = ServerAgency
-    type StateAgency StDone  = NobodyAgency
+  type StateAgency StIdle  = ClientAgency
+  type StateAgency StBusy  = ServerAgency
+  type StateAgency StDone  = NobodyAgency
   \end{code}
 \end{frame}
 
@@ -275,26 +318,40 @@
   \frametitle{Typed Protocol Description}
   \framesubtitle{Relative Agency}
   \begin{code}
-  data PeerRole = AsClient | AsServer
+data PeerRole = AsClient | AsServer
   \end{code}
-  \pause
+  \begin{hide}
   \begin{code}
-  data RelativeAgency where
-      WeHaveAgency     :: RelativeAgency
-      TheyHaveAgency   :: RelativeAgency
-      NobodyHasAgency  :: RelativeAgency
-  \end{code}
-  \pause
-  \begin{code}
-  type        Relative :: PeerRole -> Agency -> RelativeAgency
-  type family Relative  pr a where
-    Relative AsClient ClientAgency  = WeHaveAgency
-    Relative AsClient ServerAgency  = TheyHaveAgency
-    Relative AsClient NobodyAgency  = NobodyHasAgency
+type SingPeerRole :: PeerRole -> Type
+data SingPeerRole pr where
+    SingAsClient :: SingPeerRole AsClient
+    SingAsServer :: SingPeerRole AsServer
 
-    Relative AsServer ClientAgency  = TheyHaveAgency
-    Relative AsServer ServerAgency  = WeHaveAgency
-    Relative AsServer NobodyAgency  = NobodyHasAgency
+type instance Sing = SingPeerRole
+instance SingI AsClient where
+    sing = SingAsClient
+instance SingI AsServer where
+    sing = SingAsServer
+  \end{code}
+  \end{hide}
+  \pause
+  \begin{code}
+data RelativeAgency where
+    WeHaveAgency     :: RelativeAgency
+    TheyHaveAgency   :: RelativeAgency
+    NobodyHasAgency  :: RelativeAgency
+  \end{code}
+  \pause
+  \begin{code}
+type        Relative :: PeerRole -> Agency -> RelativeAgency
+type family Relative  pr a where
+  Relative AsClient ClientAgency  = WeHaveAgency
+  Relative AsClient ServerAgency  = TheyHaveAgency
+  Relative AsClient NobodyAgency  = NobodyHasAgency
+
+  Relative AsServer ClientAgency  = TheyHaveAgency
+  Relative AsServer ServerAgency  = WeHaveAgency
+  Relative AsServer NobodyAgency  = NobodyHasAgency
   \end{code}
 \end{frame}
 
@@ -305,25 +362,24 @@
   Type equality for |RelativeAgency| which also carries
   information about agency.
   \begin{code}
-  type  ReflRelativeAgency
-    ::  Agency -> RelativeAgency -> RelativeAgency -> Type
-  data ReflRelativeAgency a r r' where
-      ReflClientAgency  :: ReflRelativeAgency ClientAgency  r r
-      ReflServerAgency  :: ReflRelativeAgency ServerAgency  r r
-      ReflNobodyAgency  :: ReflRelativeAgency NobodyAgency  r r
+type  ReflRelativeAgency
+  ::  Agency -> RelativeAgency -> RelativeAgency -> Type
+data ReflRelativeAgency a r r' where
+    ReflClientAgency  :: ReflRelativeAgency ClientAgency  r r
+    ReflServerAgency  :: ReflRelativeAgency ServerAgency  r r
+    ReflNobodyAgency  :: ReflRelativeAgency NobodyAgency  r r
   \end{code}
   \pause
 
   An evidence that both relative agencies are equal to
   'NobodyHasAgency'.
   \begin{code}
-  type  ReflNobodyHasAgency
-    ::  RelativeAgency -> RelativeAgency -> Type
-  data ReflNobodyHasAgency ra ra' where
-       MkReflNobodyHasAgency ::  ReflNobodyHasAgency
-                                   NobodyHasAgency
-                                   NobodyHasAgency
-
+type  ReflNobodyHasAgency
+  ::  RelativeAgency -> RelativeAgency -> Type
+data ReflNobodyHasAgency ra ra' where
+     MkReflNobodyHasAgency ::  ReflNobodyHasAgency
+                                 NobodyHasAgency
+                                 NobodyHasAgency
   \end{code}
 \end{frame}
 
@@ -333,10 +389,10 @@
   \small
   A type family which swaps the client and server roles.
   \begin{code}
-  type        FlipAgency :: PeerRole -> PeerRole
-  type family FlipAgency pr where
-    FlipAgency AsClient = AsServer
-    FlipAgency AsServer = AsClient
+type        FlipAgency :: PeerRole -> PeerRole
+type family FlipAgency pr where
+  FlipAgency AsClient = AsServer
+  FlipAgency AsServer = AsClient
   \end{code}
 \end{frame}
 
@@ -356,23 +412,23 @@
   equal then nobody has agency.  In particual this lemma excludes the
   possibility that client and server has agency at the same state.
   \begin{code}
-  exclusionLemma_ClientAndServerHaveAgency
-    ::  forall  ((pr :: PeerRole)) (a :: Agency) (ra  :: RelativeAgency).
-        SingPeerRole pr
-    ->  ReflRelativeAgency a ra (Relative (            pr) a)
-    ->  ReflRelativeAgency a ra (Relative (FlipAgency  pr) a)
-    ->  ReflNobodyHasAgency     (Relative (            pr) a)
-                                (Relative (FlipAgency  pr) a)
+exclusionLemma_ClientAndServerHaveAgency
+  ::  forall  (pr :: PeerRole) (a :: Agency) (ra  :: RelativeAgency).
+      SingPeerRole pr
+  ->  ReflRelativeAgency a ra (Relative (            pr) a)
+  ->  ReflRelativeAgency a ra (Relative (FlipAgency  pr) a)
+  ->  ReflNobodyHasAgency     (Relative (            pr) a)
+                              (Relative (FlipAgency  pr) a)
   \end{code}
   \pause
   \begin{code}
-  exclusionLemma_ClientAndServerHaveAgency
-    SingAsClient ReflNobodyAgency ReflNobodyAgency
-    = MkReflNobodyHasAgency
+exclusionLemma_ClientAndServerHaveAgency
+  SingAsClient ReflNobodyAgency ReflNobodyAgency
+  = MkReflNobodyHasAgency
 
-  exclusionLemma_ClientAndServerHaveAgency
-    SingAsServer ReflNobodyAgency ReflNobodyAgency
-    = MkReflNobodyHasAgency
+exclusionLemma_ClientAndServerHaveAgency
+  SingAsServer ReflNobodyAgency ReflNobodyAgency
+  = MkReflNobodyHasAgency
   \end{code}
 \end{frame}
 
@@ -383,18 +439,18 @@
   A proof that if one side has terminated, then the other side terminated as
   well.
   \begin{code}
-  terminationLemma_1
-      ::  SingPeerRole pr
-      ->  ReflRelativeAgency a ra               (Relative (            pr) a)
-      ->  ReflRelativeAgency a NobodyHasAgency  (Relative (FlipAgency  pr) a)
-      ->  ReflNobodyHasAgency                   (Relative (            pr) a)
-                                                (Relative (FlipAgency  pr) a)
-  terminationLemma_1
-    SingAsClient ReflNobodyAgency ReflNobodyAgency
-      = MkReflNobodyHasAgency
-  terminationLemma_1
-    SingAsServer ReflNobodyAgency ReflNobodyAgency
-      = MkReflNobodyHasAgency
+terminationLemma_1
+    ::  SingPeerRole pr
+    ->  ReflRelativeAgency a ra               (Relative (            pr) a)
+    ->  ReflRelativeAgency a NobodyHasAgency  (Relative (FlipAgency  pr) a)
+    ->  ReflNobodyHasAgency                   (Relative (            pr) a)
+                                              (Relative (FlipAgency  pr) a)
+terminationLemma_1
+  SingAsClient ReflNobodyAgency ReflNobodyAgency
+    = MkReflNobodyHasAgency
+terminationLemma_1
+  SingAsServer ReflNobodyAgency ReflNobodyAgency
+    = MkReflNobodyHasAgency
   \end{code}
 \end{frame}
 
@@ -403,18 +459,18 @@
   \framesubtitle{Relative Agency}
   \footnotesize
   \begin{code}
-  terminationLemma_2
-      ::  SingPeerRole pr
-      ->  ReflRelativeAgency a ra               (Relative (FlipAgency  pr) a)
-      ->  ReflRelativeAgency a NobodyHasAgency  (Relative (            pr) a)
-      ->  ReflNobodyHasAgency                   (Relative (FlipAgency  pr) a)
-                                                (Relative (            pr) a)
-  terminationLemma_2
-    SingAsClient ReflNobodyAgency ReflNobodyAgency
-      = MkReflNobodyHasAgency
-  terminationLemma_2
-    SingAsServer ReflNobodyAgency ReflNobodyAgency
-      = MkReflNobodyHasAgency
+terminationLemma_2
+    ::  SingPeerRole pr
+    ->  ReflRelativeAgency a ra               (Relative (FlipAgency  pr) a)
+    ->  ReflRelativeAgency a NobodyHasAgency  (Relative (            pr) a)
+    ->  ReflNobodyHasAgency                   (Relative (FlipAgency  pr) a)
+                                              (Relative (            pr) a)
+terminationLemma_2
+  SingAsClient ReflNobodyAgency ReflNobodyAgency
+    = MkReflNobodyHasAgency
+terminationLemma_2
+  SingAsServer ReflNobodyAgency ReflNobodyAgency
+    = MkReflNobodyHasAgency
   \end{code}
 \end{frame}
 
@@ -422,28 +478,28 @@
   \frametitle{Protocol Application API}
   \framesubtitle{singletons}
   \begin{code}
-  data Trans ps where
-      Tr        :: forall ps. ps -> ps -> Trans ps
+data Trans ps where
+    Tr        :: forall ps. ps -> ps -> Trans ps
   \end{code}
   \pause
   \begin{code}
-  data Queue ps where
-    Empty       :: Queue ps
-    Cons        :: Trans ps -> Queue ps -> Queue ps
+data Queue ps where
+  Empty       :: Queue ps
+  Cons        :: Trans ps -> Queue ps -> Queue ps
   \end{code}
   \pause 
   \begin{code}
-  type  (<|)    :: Trans ps -> Queue ps -> Queue ps
-  type a <| as  = Cons a as
-  infixr 5 <|
+type  (<|)    :: Trans ps -> Queue ps -> Queue ps
+type a <| as  = Cons a as
+infixr 5 <|
   \end{code}
   \pause 
   \begin{code}
-  type (|>)       :: Queue ps -> Trans ps -> Queue ps
-  type family as  |> b where
-       Empty      |> b  = Cons b Empty
-       (a <| as)  |> b  = a <| (as |> b)
-  infixr 5 |>
+type (|>)       :: Queue ps -> Trans ps -> Queue ps
+type family as  |> b where
+     Empty      |> b  = Cons b Empty
+     (a <| as)  |> b  = a <| (as |> b)
+infixr 5 |>
   \end{code}
 \end{frame}
 
@@ -453,23 +509,23 @@
   \small
   \savesavecolumns
   \begin{code}
-  data Pipelined = NonPipelined | Pipelined
-  data Peer   ps
-             (pr :: PeerRole)
-             (pl :: Pipelined)
-             (q :: Queue ps)
-             (st :: ps) m a where
+data Pipelined = NonPipelined | MkPipelined
+data Peer   ps
+           (pr :: PeerRole)
+           (pl :: Pipelined)
+           (q :: Queue ps)
+           (st :: ps) m a where
 
-    Effect  ::  m (Peer ps pr pl q st m a)
-            ->  Peer ps pr pl q st m a
+  Effect  ::  m (Peer ps pr pl q st m a)
+          ->  Peer ps pr pl q st m a
 
 
-    Done    ::  SingI st
-            =>  (ReflRelativeAgency  (StateAgency st)
-                                     NobodyHasAgency
-                                     (Relative pr (StateAgency st)))
-            ->  a
-            ->  Peer ps pr pl Empty st m a
+  Done    ::  SingI st
+          =>  (ReflRelativeAgency  (StateAgency st)
+                                   NobodyHasAgency
+                                   (Relative pr (StateAgency st)))
+          ->  a
+          ->  Peer ps pr pl Empty st m a
   \end{code}
 \end{frame}
 \begin{frame}
@@ -480,13 +536,13 @@
   that the sender has agency (|WeHaveAgency|).
   \restorecolumns
   \begin{code}
-    Yield   ::  SingI st
-            =>  (ReflRelativeAgency  (StateAgency st)
-                                     WeHaveAgency
-                                     (Relative pr (StateAgency st)))
-            ->  Message ps st st'
-            ->  Peer ps pr pl Empty st' m a
-            ->  Peer ps pr pl Empty st  m a
+  Yield   ::  SingI st
+          =>  (ReflRelativeAgency  (StateAgency st)
+                                   WeHaveAgency
+                                   (Relative pr (StateAgency st)))
+          ->  Message ps st st'
+          ->  Peer ps pr pl Empty st' m a
+          ->  Peer ps pr pl Empty st  m a
   \end{code}
   \pause[2]
 
@@ -494,12 +550,12 @@
   evidence that the remote side has agency (|TheyHaveAgency|).
   \restorecolumns
   \begin{code}
-    Await  ::  SingI st
-           =>  (ReflRelativeAgency  (StateAgency st)
-                                    TheyHaveAgency
-                                    (Relative pr (StateAgency st)))
-           ->  (forall st'. Message ps st st' -> Peer ps pr pl Empty st' m a)
-           ->  Peer ps pr pl Empty st  m a
+  Await  ::  SingI st
+         =>  (ReflRelativeAgency  (StateAgency st)
+                                  TheyHaveAgency
+                                  (Relative pr (StateAgency st)))
+         ->  (forall st'. Message ps st st' -> Peer ps pr pl Empty st' m a)
+         ->  Peer ps pr pl Empty st  m a
   \end{code}
 \end{frame}
 
@@ -512,14 +568,14 @@
   transitions, and continue possibly pipelining more messages.
   \restorecolumns
   \begin{code}
-    YieldPipelined
-      ::  (SingI st, SingI st')
-      =>  (ReflRelativeAgency  (StateAgency st)
-                               WeHaveAgency
-                               (Relative pr (StateAgency st)))
-      ->  Message ps st st'
-      ->  Peer ps pr Pipelined (q |> Tr st' st'')  st''  m a
-      ->  Peer ps pr Pipelined (q               )  st    m a
+  YieldPipelined
+    ::  (SingI st, SingI st')
+    =>  (ReflRelativeAgency  (StateAgency st)
+                             WeHaveAgency
+                             (Relative pr (StateAgency st)))
+    ->  Message ps st st'
+    ->  Peer ps pr MkPipelined (q |> Tr st' st'')  st''  m a
+    ->  Peer ps pr MkPipelined (q               )  st    m a
   \end{code}
 \end{frame}
 
@@ -531,23 +587,23 @@
   that the remote side has agency for the state |st'|.
   \restorecolumns
   \begin{code}
-    Collect
-      ::  SingI st'
-      =>  (ReflRelativeAgency  (StateAgency st')
-                               TheyHaveAgency
-                               (Relative pr (StateAgency st')))
-      ->  Maybe (Peer  ps pr Pipelined (Tr st'  st''  <| q)  st m a)
-      ->  (forall stNext. Message ps st' stNext
-           -> Peer  ps pr Pipelined (Tr stNext  st''  <| q)  st m a)
-      ->  Peer      ps pr Pipelined (Tr st'     st''  <| q)  st m a
+  Collect
+    ::  SingI st'
+    =>  (ReflRelativeAgency  (StateAgency st')
+                             TheyHaveAgency
+                             (Relative pr (StateAgency st')))
+    ->  Maybe (Peer  ps pr MkPipelined (Tr st'  st''  <| q)  st m a)
+    ->  (forall stNext. Message ps st' stNext
+         -> Peer  ps pr MkPipelined (Tr stNext  st''  <| q)  st m a)
+    ->  Peer      ps pr MkPipelined (Tr st'     st''  <| q)  st m a
   \end{code}
   \pause
   Eliminate an identity transition from the front of the queue.
   \restorecolumns
   \begin{code}
-    CollectDone
-      ::  Peer ps pr Pipelined  (             q)  st m a
-      ->  Peer ps pr Pipelined  (Tr st st <|  q)  st m a
+  CollectDone
+    ::  Peer ps pr MkPipelined  (             q)  st m a
+    ->  Peer ps pr MkPipelined  (Tr st st <|  q)  st m a
   \end{code}
 \end{frame}
 
@@ -555,24 +611,24 @@
   \frametitle{Pipelined Ping Pong client}
   \small
   \begin{code}
-  pingPongClientPipelined
-      :: Peer PingPong AsClient Pipelined Empty StIdle m ()
-  pingPongClientPipelined a =
-        YieldPipelined ReflClientAgency MsgPing
-     $  YieldPipelined ReflClientAgency MsgPing
-     $  YieldPipelined ReflClientAgency MsgPing
-     $  collect
-     $  collect
-     $  collect
-     $  Yield ReflClientAgency MsgDone
-     $  Done  ReflNobodyAgency ()
-   where
-     collect  ::  Peer  PingPong AsClient Pipelined q StIdle m ()
-              ->  Peer  PingPong AsClient Pipelined 
-                        (Tr StBusy StIdle <| q)  StIdle m ()
-     collect k =
-         Collect ReflServerAgency Nothing
-       $ \ MsgPong -> CollectDone k
+pingPongClientPipelined
+    :: Peer PingPong AsClient MkPipelined Empty StIdle m ()
+pingPongClientPipelined =
+      YieldPipelined ReflClientAgency MsgPing
+   $  YieldPipelined ReflClientAgency MsgPing
+   $  YieldPipelined ReflClientAgency MsgPing
+   $  collect
+   $  collect
+   $  collect
+   $  Yield ReflClientAgency MsgDone
+   $  Done  ReflNobodyAgency ()
+ where
+   collect  ::  Peer  PingPong AsClient MkPipelined q StIdle m ()
+            ->  Peer  PingPong AsClient MkPipelined 
+                      (Tr StBusy StIdle <| q)  StIdle m ()
+   collect k =
+       Collect ReflServerAgency Nothing
+     $ \ MsgPong -> CollectDone k
   \end{code}
 \end{frame}
 
@@ -584,11 +640,21 @@
   \end{figure}
   \footnotesize
   \begin{code}
-  newtype PingPong2 = Wrap PingPong
-  type StIdle2  = Wrap StIdle
-  type StBusy2  = Wrap StBusy
-  type StDone2  = Wrap StDone
+newtype PingPong2 = Wrap PingPong
+type StIdle2  = Wrap StIdle
+type StBusy2  = Wrap StBusy
+type StDone2  = Wrap StDone
   \end{code}
+  \begin{hide}
+  \begin{code}
+data SPingPong2 (st :: PingPong2) where
+    SPingPong :: SPingPong st -> SPingPong2 (Wrap st)
+deriving instance Show (SPingPong2 st)
+type instance Sing = SPingPong2
+instance SingI st => SingI (Wrap st) where
+    sing = SPingPong sing
+  \end{code}
+  \end{hide}
 \end{frame}
 
 \begin{frame}
@@ -599,17 +665,17 @@
   \end{figure}
   \footnotesize
   \begin{code}
-  instance Protocol PingPong2 where
-    data Message PingPong2 from to where
-      MsgPingPong
-        ::  Message PingPong   (      st)      (      st')
-        ->  Message PingPong2  (Wrap  st)      (Wrap  st')
-      MsgBusy
-        ::  Message PingPong2  (Wrap  StBusy)  (Wrap StBusy)
+instance Protocol PingPong2 where
+  data Message PingPong2 from to where
+    MsgPingPong
+      ::  Message PingPong   (      st)      (      st')
+      ->  Message PingPong2  (Wrap  st)      (Wrap  st')
+    MsgBusy
+      ::  Message PingPong2  (Wrap  StBusy)  (Wrap StBusy)
 
-      type StateAgency (Wrap StIdle)  = StateAgency StIdle
-      type StateAgency (Wrap StBusy)  = StateAgency StBusy
-      type StateAgency (Wrap StDone)  = StateAgency StDone
+  type StateAgency (Wrap StIdle)  = StateAgency StIdle
+  type StateAgency (Wrap StBusy)  = StateAgency StBusy
+  type StateAgency (Wrap StDone)  = StateAgency StDone
   \end{code}
 \end{frame}
 
@@ -617,27 +683,27 @@
   \frametitle{Pipelined Ping Pong v2 Client}
   \footnotesize
   \begin{code}
-  pingPongClientPipeliend2
-    :: Peer PingPong2 AsClient Pipelined Empty StIdle2 m Int
-  pingPongClientPipeliend2 =
-       YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
-    $  YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
-    $  YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
-    $            collect 0
-    $  \  n1 ->  collect n1
-    $  \  n2 ->  collect n2
-    $  \  n3 ->  Yield ReflClientAgency (MsgPingPong MsgDone)
-    $            Done ReflNobodyAgency n3
-   where
-     collect ::  Int
-             ->  (Int -> Peer PingPong2 AsClient Pipelined q StIdle2 m Int)
-             ->  Peer  PingPong2 AsClient Pipelined
-                       (Tr StBusy2 StIdle2 <| q) StIdle2 m Int
-     collect !n k =
-          Collect ReflServerAgency Nothing
-       $  \  msg -> case msg of
-             MsgBusy                ->  collect (n+1) k
-             (MsgPingPong MsgPong)  ->  CollectDone (k n)
+pingPongClientPipeliend2
+  :: Peer PingPong2 AsClient MkPipelined Empty StIdle2 m Int
+pingPongClientPipeliend2 =
+     YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
+  $  YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
+  $  YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
+  $            collect 0
+  $  \  n1 ->  collect n1
+  $  \  n2 ->  collect n2
+  $  \  n3 ->  Yield ReflClientAgency (MsgPingPong MsgDone)
+  $            Done ReflNobodyAgency n3
+ where
+   collect ::  Int
+           ->  (Int -> Peer PingPong2 AsClient MkPipelined q StIdle2 m Int)
+           ->  Peer  PingPong2 AsClient MkPipelined
+                     (Tr StBusy2 StIdle2 <| q) StIdle2 m Int
+   collect !n k =
+        Collect ReflServerAgency Nothing
+     $  \  msg -> case msg of
+           MsgBusy                ->  collect (n+1) k
+           (MsgPingPong MsgPong)  ->  CollectDone (k n)
   \end{code}
 \end{frame}
 
@@ -648,28 +714,28 @@
   \small
   \vspace{-1em}
   \begin{code}
-  data TerminalStates ps (pr :: PeerRole) where
-       TerminalStates
-         :: forall ps pr (st :: ps) (st' :: ps).
-             Sing st
-         ->  ReflRelativeAgency  (StateAgency st)
-                                 NobodyHasAgency
-                                 (Relative (            pr)  (StateAgency st))
-         ->  Sing st'
-         ->  ReflRelativeAgency  (StateAgency st')
-                                 NobodyHasAgency
-                                 (Relative (FlipAgency  pr) (StateAgency st'))
-         ->  TerminalStates ps pr
+data TerminalStates ps (pr :: PeerRole) where
+     TerminalStates
+       :: forall ps pr (st :: ps) (st' :: ps).
+           Sing st
+       ->  ReflRelativeAgency  (StateAgency st)
+                               NobodyHasAgency
+                               (Relative (            pr)  (StateAgency st))
+       ->  Sing st'
+       ->  ReflRelativeAgency  (StateAgency st')
+                               NobodyHasAgency
+                               (Relative (FlipAgency  pr) (StateAgency st'))
+       ->  TerminalStates ps pr
   \end{code}
   \pause[2]
-  \begin{code}
-  theorem_nonpipelined_duality
-     :: forall ps (pr :: PeerRole) (initSt :: ps) m a b.
-        (Monad m,  SingI pr)
-     => Peer ps (            pr)  NonPipelined Empty initSt m a
-     -> Peer ps (FlipAgency  pr)  NonPipelined Empty initSt m b
-     -> m (a, b, TerminalStates ps)
-  \end{code}
+  \begin{spec}
+theorem_nonpipelined_duality
+   :: forall ps (pr :: PeerRole) (initSt :: ps) m a b.
+      (Monad m,  SingI pr)
+   => Peer ps (            pr)  NonPipelined Empty initSt m a
+   -> Peer ps (FlipAgency  pr)  NonPipelined Empty initSt m b
+   -> m (a, b, TerminalStates ps pr)
+  \end{spec}
   Link to the
   \href{https://github.com/input-output-hk/ouroboros-network/blob/coot/typed-protocols-rewrite/typed-protocols/src/Network/TypedProtocol/Proofs.hs\#L83}{proof}.
   The proof relies on exclusion lemmas.
@@ -678,20 +744,19 @@
 \begin{frame}
   \frametitle{Removing pipelining}
   \small
-  \begin{code}
-  theorem_unpipeline
-      :: forall ps (pr :: PeerRole)
-                   (pl :: Pipelined)
-                   (initSt :: ps) m a.
-         Functor m
-      => [Bool]
-      -- interleaving choices for pipelining allowed by
-      -- `Collect` primitive. False values or `[]` give no
-      -- pipelining.
-      -> Peer ps pr pl            Empty initSt m a
-      -> Peer ps pr NonPipelined  Empty initSt m a
-  \end{code}
-
+  \begin{spec}
+theorem_unpipeline
+    :: forall ps (pr :: PeerRole)
+                 (pl :: Pipelined)
+                 (initSt :: ps) m a.
+       Functor m
+    => [Bool]
+    -- interleaving choices for pipelining allowed by
+    -- `Collect` primitive. False values or `[]` give no
+    -- pipelining.
+    -> Peer ps pr pl            Empty initSt m a
+    -> Peer ps pr NonPipelined  Empty initSt m a
+ \end{spec}
   Link to the \href{https://coot.me/posts/typed-protocol-pipelining.html\#removing-pipelining}{proof}.
 \end{frame}
 
@@ -699,19 +764,20 @@
   \frametitle{Pipelined Duality}
   \small
   \begin{code}
-  theorem_duality
-      ::  forall  ps  (pr :: PeerRole)
-                      (pl :: Pipelined)
-                      (st :: ps) m a b.
-          (Monad m,  SingI pr)
-      =>  [Bool] -> [Bool]
-      ->  Peer ps  (            pr) pl   Empty st m a
-      ->  Peer ps  (FlipAgency  pr) pl'  Empty st m b
-      ->  m (a, b, TerminalStates ps)
+theorem_duality
+    ::  forall  ps  (pr  :: PeerRole)
+                    (pl  :: Pipelined)
+                    (pl' :: Pipelined)
+                    (st  :: ps) m a b.
+        (Monad m,  SingI pr)
+    =>  [Bool] -> [Bool]
+    ->  Peer ps  (            pr) pl   Empty st m a
+    ->  Peer ps  (FlipAgency  pr) pl'  Empty st m b
+    ->  m (a, b, TerminalStates ps pr)
 
-  theorem_duality csA csB a b =
-      theorem_nonpipelined_duality  (theorem_unpipeline csA a)
-                                    (theorem_unpipeline csB b)
+theorem_duality csA csB a b =
+    theorem_nonpipelined_duality  (theorem_unpipeline csA a)
+                                  (theorem_unpipeline csB b)
   \end{code}
 \end{frame}
 
