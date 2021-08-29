@@ -1,0 +1,15 @@
+%format :| = "\,:\!|\,"
+%format <|> = "<\!\!|\!\!>"
+%format <$> = "<\!\!\$\!\!>"
+%format <*> = "<\!\!*\!\!>"
+%format <<>> = "<\!\!\diamond\!\!>"
+%format ! = "\;!"
+
+%format :: = "{\color{Turquoise4}{\mathbin{::}}}"
+%format -> = "{\color{Turquoise4}{\to}}"
+%format => = "{\color{Turquoise4}{\Rightarrow}}"
+%format $  = "{\color{Turquoise4}{\mathbin{\$}}}"
+%format \  = "{\color{Turquoise4}{\lambda}}"
+%format |  = "{\color{Turquoise4}{\mid}}"
+%format =  = "{\color{Turquoise4}{\mathbin{=}}}"
+

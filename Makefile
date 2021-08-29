@@ -79,6 +79,7 @@ templates: $(templates)
 #
 
 cabal:
+	${MAKE} -C ${presentations_dir} code
 	cabal build homepage
 .PHONY: cabal
 

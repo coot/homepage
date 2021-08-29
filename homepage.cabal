@@ -23,8 +23,10 @@ library
                        free >=5.1 && <6,
                        free-algebras >=0.0.8.0 && <0.0.9.0,
                        filepath,
+                       singletons,
                        QuickCheck
   hs-source-dirs:      posts/lhs
+                     , presentations/src
   default-language:    Haskell2010
   exposed-modules:
     FiniteStateMachines
@@ -34,3 +36,14 @@ library
     Data.Functor.Monoidal
     Mask
     TypedProtocolPipelining
+    Presentation.TypedProtocolPipelining
+    Presentation.MonoidalSynchronisation
+
+  ghc-options: -Wall
+               -Wno-unticked-promoted-constructors
+               -Wcompat
+               -Wincomplete-uni-patterns
+               -Wincomplete-record-updates
+               -Wpartial-fields
+               -Widentities
+               -Wredundant-constraints

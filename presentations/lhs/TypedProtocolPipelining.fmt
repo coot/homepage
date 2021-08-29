@@ -1,0 +1,37 @@
+%format :: = "{\color{Turquoise4}{\mathbin{::}}}"
+%format -> = "{\color{Turquoise4}{\to}}"
+%format => = "{\color{Turquoise4}{\Rightarrow}}"
+%format $  = "{\color{Turquoise4}{\mathbin{\$}}}"
+%format \  = "{\color{Turquoise4}{\lambda}}"
+%format |  = "{\color{Turquoise4}{\mid}}"
+%format =  = "{\color{Turquoise4}{\mathbin{=}}}"
+
+%format <| = "{\color{DeepSkyBlue1}{\;\triangleleft\;}}"
+%format |> = "{\color{DeepSkyBlue1}{\;\triangleright\;}}"
+%format Tr = "{\color{DeepSkyBlue1}{\Conid{Tr}}}"
+%format Trans = "{\color{DeepSkyBlue1}{\Conid{Trans}}}"
+%format Cons  = "{\color{DeepSkyBlue1}{\Conid{Cons}}}"
+%format Empty = "{\color{DeepSkyBlue1}{\Conid{Empty}}}"
+
+%format Agency                = "{\color{MediumPurple4}{\Conid{Agency}}}"
+%format Relative              = "{\color{MediumPurple4}{\Conid{Relative}}}"
+%format StateAgency           = "{\color{MediumPurple4}{\Conid{StateAgency}}}"
+%format FlipAgency            = "{\color{MediumPurple4}{\Conid{FlipAgency}}}"
+%format RelativeAgency        = "{\color{MediumPurple4}{\Conid{RelativeAgency}}}"
+
+%format ClientAgency          = "{\color{MediumPurple4}{\Conid{ClientAgency}}}"
+%format ServerAgency          = "{\color{MediumPurple4}{\Conid{ServerAgency}}}"
+%format NobodyAgency          = "{\color{MediumPurple4}{\Conid{NobodyAgency}}}"
+%format WeHaveAgency          = "{\color{MediumPurple4}{\Conid{WeHaveAgency}}}"
+%format TheyHaveAgency        = "{\color{MediumPurple4}{\Conid{TheyHaveAgency}}}"
+%format NobodyHasAgency       = "{\color{MediumPurple4}{\Conid{NobodyHasAgency}}}"
+
+%format ReflRelativeAgency    = "{\color{MediumPurple4}{\Conid{ReflRelativeAgency}}}"
+%format ReflNobodyHasAgency   = "{\color{MediumPurple4}{\Conid{ReflNobodyHasAgency}}}"
+%format MkReflNobodyHasAgency = "{\color{MediumPurple2}{\Conid{ReflNobodyHasAgency}}}"
+%format MkPipelined           = "Pipelined"
+%format ReflClientAgency      = "{\color{MediumPurple2}{\Conid{ReflClientAgency}}}"
+%format ReflServerAgency      = "{\color{MediumPurple2}{\Conid{ReflServerAgency}}}"
+%format ReflNobodyAgency      = "{\color{MediumPurple2}{\Conid{ReflNobodyAgency}}}"
+
+

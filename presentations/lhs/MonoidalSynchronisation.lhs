@@ -4,17 +4,9 @@
 \arrayhs
 %include forall.fmt
 %include beamer.fmt
-%format :| = "\,:\!|\,"
-%format <|> = "<\!\!|\!\!>"
-%format <$> = "<\!\!\$\!\!>"
-%format <*> = "<\!\!*\!\!>"
-%format <<>> = "<\!\!\diamond\!\!>"
-%format ! = "\;!"
-
-%format :: = "{\color{Turquoise4}{\mathbin{::}}}"
-%format -> = "{\color{Turquoise4}{\to}}"
-%format => = "{\color{Turquoise4}{\Rightarrow}}"
-%format $  = "{\color{Turquoise4}{\mathbin{\$}}}"
+%if compile == False
+%include lhs/MonoidalSynchronisation.fmt
+%endif
 
 \useinnertheme{circles}
 \setbeamertemplate{navigation symbols}{}
@@ -46,6 +38,28 @@
     \end{flushright}
 \end{frame}
 
+\begin{frame}
+  \begin{code}
+{-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE DeriveTraversable          #-}
+{-# LANGUAGE DerivingStrategies         #-}
+{-# LANGUAGE DerivingVia                #-}
+{-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs               #-}
+{-# LANGUAGE KindSignatures             #-}
+{-# LANGUAGE RankNTypes                 #-}
+
+module Presentation.MonoidalSynchronisation where
+
+import Control.Applicative         (Alternative (..))
+import Control.Monad               (MonadPlus (..))
+import Data.Functor.Contravariant  (Contravariant (..))
+import Data.List.NonEmpty          (NonEmpty (..))
+import Data.Monoid                 (Ap (..), Alt (..))
+import GHC.Generics
+  \end{code}
+\end{frame}
+
 \part{Introduction}
 \begin{frame}
   \partpage
@@ -58,14 +72,14 @@
 
 \begin{frame}
   \frametitle{Semigroups}
-  \begin{code}
+  \begin{spec}
   class Semigroup a where
     (<>) :: a -> a -> a
-  \end{code}
+  \end{spec}
 
   \begin{examples}\small
     Free semigroup with one generator:
-    \begin{code}
+    \begin{spec}
     instance Semigroup (NonEmpty a) where
       (a :| as) <> (b :| bs) = a :| as ++ b : bs
 
@@ -76,7 +90,7 @@
       Nothing  <> a       = a
       a        <> Nothing       = a
       Just a   <> Just b  = Just (a <> b)
-    \end{code}
+    \end{spec}
   \end{examples}
 \end{frame}
 
@@ -85,13 +99,13 @@
   \small
   \(Foldable1\) type class is defined in \(semigroupoids\) package.
   \begin{code}
-  class Foldable t => Foldable1 t where
-    foldMap1    :: Semigroup m
-                => (a -> m) -> t a -> m
-    fold1       :: Semigroup m => t m -> m
-    fold1       = foldMap1 id
-    toNonEmpty  :: t a -> NonEmpty a
-    toNonEmpty  = foldMap1 (:| [])
+class Foldable t => Foldable1 t where
+  foldMap1    :: Semigroup m
+              => (a -> m) -> t a -> m
+  fold1       :: Semigroup m => t m -> m
+  fold1       = foldMap1 id
+  toNonEmpty  :: t a -> NonEmpty a
+  toNonEmpty  = foldMap1 (:| [])
   \end{code}
   \vspace{-5mm}
   \begin{examples}\footnotesize
@@ -103,10 +117,10 @@
     \vspace{-2mm}
     @NonEmpty@ is a free semigroup:
     \begin{code}
-    instance Foldable1 NonEmpty where
-      foldMap1  :: Semigroup m => (a -> m) -> NonEmpty a -> m
-      foldMap1  f (a :| (b : bs))  = f a <> foldMap1 f (b :| bs)
-      foldMap1  f (a :| [])        = f a
+instance Foldable1 NonEmpty where
+  foldMap1  :: Semigroup m => (a -> m) -> NonEmpty a -> m
+  foldMap1  f (a :| (b : bs))  = f a <> foldMap1 f (b :| bs)
+  foldMap1  f (a :| [])        = f a
     \end{code}
   \end{examples}
 \end{frame}
@@ -119,47 +133,49 @@
   \frametitle{Monoids}
   \small
   Two sided identity:
-  \begin{code}
+  \begin{spec}
   class Semigroup a => Monoid a where
     mempty :: a
-  \end{code}
+  \end{spec}
   which must obey: |a <> mempty == a == mempty <> a|
   \begin{examples}
     \vspace{-2mm}
     Free monoid in the class of left-strict monoids
-    \begin{code}
+    \begin{spec}
     instance Monoid [a] where
       mempty = []
-    \end{code}
+    \end{spec}
     Left adjoint to the forgetful functor from monoids to semigroups, i.e.
     \(Maybe\,s\,\rightarrow_{monoid}\, m\ \equiv\ s\,\rightarrow_{semigroup}\,m\)
-    \begin{code}
+    \begin{spec}
     instance Semigroup a => Semigroup (Maybe a) where
       Nothing  <> a        = a
       a        <> Nothing  = a
       Just a   <> Just b   = Just (a <> b)
     instance Semigroup a => Monoid (Maybe a) where
       mempty = Nothing
-    \end{code}
+    \end{spec}
   \end{examples}
 \end{frame}
 
 \begin{frame}
   \frametitle{Foldable type class}
-  \begin{code}
+  \begin{spec}
   class Foldable t where
     foldMap  :: Monoid m => (a -> m) -> t a -> m
     fold     :: Monoid m => t m -> m
     fold     = foldMap id
     toList   :: t a -> [a]
     toList   = foldMap (\a -> [a]) 
-  \end{code}
+  \end{spec}
 
   Advantage of \texttt{foldMap} over \texttt{foldr}:
 
-< foldMap    :: (Foldable t, Monoid m)
-<            => (a -> m) -> t a -> m
-< foldMap f  = foldr (\a m -> f a <> m) mempty
+  \begin{spec}
+  foldMap    :: (Foldable t, Monoid m)
+             => (a -> m) -> t a -> m
+  foldMap f  = foldr (\a m -> f a <> m) mempty
+  \end{spec}
 
 \end{frame}
 
@@ -173,12 +189,12 @@
   The \texttt{FreeAlgebra} type class can capture the heart of \texttt{Foldable} and
   \texttt{Foldable1} classes and can be defined for other algebras than
   semigroups (\texttt{Foldable1}) or monoids (\texttt{Foldable}).
-  \begin{code}
+  \begin{spec}
   class FreeAlgebra (m :: Type -> Type) where
     returnFree   :: a -> m a
     foldMapFree  :: forall d a. AlgebraType  m d
                  => (a -> d) -> m a -> d
-  \end{code}
+  \end{spec}
   For more details see
   \begin{itemize}
     \item \href{https://skillsmatter.com/skillscasts/13007-lightning-talk-rethinking-freeness-through-universal-algebra}{Haskell eXchange lightning talk},
@@ -222,23 +238,23 @@
   \small
   Additive semigroup of the \text{LastToFinish}, \texttt{FirstToFinish} near semi-ring.
   \begin{code}
-  newtype  FirstToFinish m a =
-           FirstToFinish { runFirstToFinish :: m a }
-    deriving  ( Generic,      Generic1
-              , Applicative,  Alternative
-              , Monad,        MonadPlus
-              , Functor,      Traversable
-              )
-    deriving  Semigroup      via (Alt m a)
-    deriving  Monoid         via (Alt m a)
-    deriving  Foldable       via (Alt m)
-    deriving  Contravariant  via (Alt m)
+newtype  FirstToFinish m a =
+         FirstToFinish { runFirstToFinish :: m a }
+  deriving  ( Generic,      Generic1
+            , Applicative,  Alternative
+            , Monad,        MonadPlus
+            , Functor,      Traversable
+            )
+  deriving  Semigroup      via (Alt m a)
+  deriving  Monoid         via (Alt m a)
+  deriving  Foldable       via (Alt m)
+  deriving  Contravariant  via (Alt m)
   \end{code}
 
   The monoid multiplication is defined via:
-  \begin{code}
+  \begin{spec}
   (<|>)  :: Alternative m => m a -> m a -> m a
-  \end{code}
+  \end{spec}
 \end{frame}
 
 \begin{frame}
@@ -246,14 +262,14 @@
   \small
   Multiplicative semigroup of the \text{LastToFinish}, \texttt{FirstToFinish} near semi-ring.
   \begin{code}
-  newtype  LastToFinish m a =
-           LastToFinish { runLastToFinish :: m a }
-    deriving  (  Generic,      Generic1
-              ,  Applicative,  Alternative
-              ,  Monad,        MonadPlus
-              ,  Functor,      Traversable
-              )
-    deriving Foldable via (Ap m)
+newtype  LastToFinish m a =
+         LastToFinish { runLastToFinish :: m a }
+  deriving  (  Generic,      Generic1
+            ,  Applicative,  Alternative
+            ,  Monad,        MonadPlus
+            ,  Functor,      Traversable
+            )
+  deriving Foldable via (Ap m)
   \end{code}
 \end{frame}
 
@@ -261,14 +277,14 @@
   \frametitle{Last-to-Finish}
   \small
   \begin{code}
-  instance MonadPlus m => Semigroup (LastToFinish m a) where
-      LastToFinish left <> LastToFinish right =
-        LastToFinish $ do
-          a  <-   Left   <$> left
-             <|>  Right  <$> right
-          case a of
-            Left   {}  -> right
-            Right  {}  -> left
+instance MonadPlus m => Semigroup (LastToFinish m a) where
+    LastToFinish left <> LastToFinish right =
+      LastToFinish $ do
+        a  <-   Left   <$> left
+           <|>  Right  <$> right
+        case a of
+          Left   {}  -> right
+          Right  {}  -> left
   \end{code}
   \begin{itemize}
     \item The |LastToFinish| operator works well for the |STM| monad.
@@ -276,9 +292,9 @@
           the result will throw it as well.  For |IO| the |<||>| operator is
           defined as:
 
-          \begin{code}
-            io <|> io' = io `catch` \ (_ :: IOError) -> io'
-          \end{code}
+          \begin{spec}
+          io <|> io' = io `catch` \ (_ :: IOError) -> io'
+          \end{spec}
 
           % An alternative |IO| instance:\\
           % {\tiny
@@ -304,23 +320,23 @@
   \frametitle{Monoidal Last-to-Finish}
   Multiplicative semigroup of the \text{LastToFinishM}, \texttt{FirstToFinish} near semi-ring.
   \begin{code}
-  newtype  LastToFinishM m a =
-           LastToFinishM { runLastToFinishM :: m a }
-    deriving  (  Generic,      Generic1
-              ,  Applicative,  Alternative
-              ,  Monad,        MonadPlus
-              ,  Functor,      Traversable
-              )
-    deriving Semigroup  via (Ap m a)
-    deriving Monoid     via (Ap m a)
-    deriving Foldable   via (Ap m)
+newtype  LastToFinishM m a =
+         LastToFinishM { runLastToFinishM :: m a }
+  deriving  (  Generic,      Generic1
+            ,  Applicative,  Alternative
+            ,  Monad,        MonadPlus
+            ,  Functor,      Traversable
+            )
+  deriving Semigroup  via (Ap m a)
+  deriving Monoid     via (Ap m a)
+  deriving Foldable   via (Ap m)
   \end{code}
 
   The monoid multiplication is given by:
   \begin{code}
-  (<<>>)  :: (Applicative m, Semigroup a)
-          => m a -> m a -> m a
-  (<<>>) ma mb = (<>) <$> ma <*> mb
+(<<>>)  :: (Applicative m, Semigroup a)
+        => m a -> m a -> m a
+(<<>>) ma mb = (<>) <$> ma <*> mb
   \end{code}
   % This works well for `IO` and `STM`!
 \end{frame}
@@ -333,24 +349,24 @@
   \begin{description}
     \item[\(\bullet\) first-to-finish]
       via |race|:
-      \begin{code}
+      \begin{spec}
         FirstToFinish io <> FirstToFinish io'
           =  withAsync  io   $ \th   ->
              withAsync  io'  $ \th'  ->
                atomically $ runFirstToFinish $
                      FirstToFinish (wait th)
                  <>  FirstToFinish (wait th')
-      \end{code}
+      \end{spec}
     \item[\(\bullet\) last-to-finish]
       via |LastToFinish| for the |STM| monad:
-      \begin{code}
+      \begin{spec}
         LastToFinish io <> LastToFinish io'
           =  withAsync  io   $ \th  ->
              withAsync  io'  $ \th'  ->
                atomically $ runLastToFinish $
                      LastToFinish (wait th)
                  <>  LastToFinish (wait th')
-      \end{code}
+      \end{spec}
   \end{description}
 \end{frame}
 
@@ -467,7 +483,7 @@
     \item thrack state of each responder mini-protocol.
   \end{itemize}
   \savesavecolumns
-  \begin{code}
+  \begin{spec}
   data InboundGovernorState muxMode peerAddr a b = InboundGovernorState
     {  igsConnections :: !(Map  (ConnectionId peerAddr)
                                 (ConnectionState muxMode peerAddr a b))
@@ -492,94 +508,94 @@
 
        ...
     }
-  \end{code}
+  \end{spec}
 \end{frame}
 
 \begin{frame}
   \tiny
-  \begin{code}
-firstConnectionToFinish
-    ::  InboundGovernorState muxMode peerAddr IO a b
-    ->  STM (ConnectionId peerAddr, Maybe SomeException)
-firstConnectionToFinish InboundGovernorState { igsConnections } =
-       runFirstToFinish
-    .  Map.foldMapWithKey
-         (\connId ConnectionState { csMux } ->
-           FirstToFinish $
-                  (connId,)
-             <$>  (Mux.muxStopped csMux
-                     :: STM (Maybe SomeException))
-         )
-    $  igsConnections
-  \end{code}
+  \begin{spec}
+  firstConnectionToFinish
+      ::  InboundGovernorState muxMode peerAddr IO a b
+      ->  STM (ConnectionId peerAddr, Maybe SomeException)
+  firstConnectionToFinish InboundGovernorState { igsConnections } =
+         runFirstToFinish
+      .  Map.foldMapWithKey
+           (\connId ConnectionState { csMux } ->
+             FirstToFinish $
+                    (connId,)
+               <$>  (Mux.muxStopped csMux
+                       :: STM (Maybe SomeException))
+           )
+      $  igsConnections
+  \end{spec}
 \end{frame}
 
 \begin{frame}
   \tiny
-  \begin{code}
-firstMiniProtocolToFinish
-    ::  InboundGovernorState muxMode peerAddr a b
-    ->  STM (Terminated muxMode peerAddr a b)
-firstMiniProtocolToFinish InboundGovernorState { igsConnections } =
-    runFirstToFinish $
-    Map.foldMapWithKey
-      (\connId ConnectionState { csMux, csMiniProtocolMap, csCompletionMap } ->
-        Map.foldMapWithKey
-          (\miniProtocolNum completionAction ->
-                (\tResult -> Terminated {
-                      tConnId           = connId,
-                      tMux              = csMux,
-                      tMiniProtocolData = csMiniProtocolMap Map.! miniProtocolNum,
-                      tResult
-                    }
-                )
-            <$> FirstToFinish completionAction
-          )
-          csCompletionMap
-      )
-      igsConnections
-  \end{code}
-\end{frame}
-
-\begin{frame}
-  \tiny
-  \begin{code}
-firstPeerDemotedToCold
-    :: MonadSTM m
-    => InboundGovernorState muxMode peerAddr m a b
-    -> STM m (Event muxMode peerAddr m a b)
-firstPeerDemotedToCold InboundGovernorState { igsConnections } = runFirstToFinish $
-    Map.foldMapWithKey
-      (\connId
-        ConnectionState {
-          csMux,
-          csRemoteState
-        } ->
-        case csRemoteState of
-          RemoteEstablished ->
-                fmap (const (WaitIdleRemote connId))
-              . lastToFirstM
-              $ (Map.foldMapWithKey
-                  (\(_, miniProtocolDir) miniProtocolStatus ->
-                    case miniProtocolDir of
-                      InitiatorDir -> mempty
-
-                      ResponderDir ->
-                        LastToFinishM $ do
-                          miniProtocolStatus >>= \case
-                            StatusIdle          -> return ()
-                            StatusStartOnDemand -> return ()
-                            StatusRunning       -> retry
+  \begin{spec}
+  firstMiniProtocolToFinish
+      ::  InboundGovernorState muxMode peerAddr a b
+      ->  STM (Terminated muxMode peerAddr a b)
+  firstMiniProtocolToFinish InboundGovernorState { igsConnections } =
+      runFirstToFinish $
+      Map.foldMapWithKey
+        (\connId ConnectionState { csMux, csMiniProtocolMap, csCompletionMap } ->
+          Map.foldMapWithKey
+            (\miniProtocolNum completionAction ->
+                  (\tResult -> Terminated {
+                        tConnId           = connId,
+                        tMux              = csMux,
+                        tMiniProtocolData = csMiniProtocolMap Map.! miniProtocolNum,
+                        tResult
+                      }
                   )
-                  (Mux.miniProtocolStateMap csMux
-                     :: Map (MiniProtocolNum, MiniProtocolDir)
-                            (STM m MiniProtocolStatus)
+              <$> FirstToFinish completionAction
+            )
+            csCompletionMap
+        )
+        igsConnections
+  \end{spec}
+\end{frame}
+
+\begin{frame}
+  \tiny
+  \begin{spec}
+  firstPeerDemotedToCold
+      :: MonadSTM m
+      => InboundGovernorState muxMode peerAddr m a b
+      -> STM m (Event muxMode peerAddr m a b)
+  firstPeerDemotedToCold InboundGovernorState { igsConnections } = runFirstToFinish $
+      Map.foldMapWithKey
+        (\connId
+          ConnectionState {
+            csMux,
+            csRemoteState
+          } ->
+          case csRemoteState of
+            RemoteEstablished ->
+                  fmap (const (WaitIdleRemote connId))
+                . lastToFirstM
+                $ (Map.foldMapWithKey
+                    (\(_, miniProtocolDir) miniProtocolStatus ->
+                      case miniProtocolDir of
+                        InitiatorDir -> mempty
+
+                        ResponderDir ->
+                          LastToFinishM $ do
+                            miniProtocolStatus >>= \case
+                              StatusIdle          -> return ()
+                              StatusStartOnDemand -> return ()
+                              StatusRunning       -> retry
+                    )
+                    (Mux.miniProtocolStateMap csMux
+                       :: Map (MiniProtocolNum, MiniProtocolDir)
+                              (STM m MiniProtocolStatus)
+                    )
                   )
-                )
-          ...
-      )
-      igsConnections
-  \end{code}
+            ...
+        )
+        igsConnections
+  \end{spec}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -610,7 +626,7 @@ firstPeerDemotedToCold InboundGovernorState { igsConnections } = runFirstToFinis
   \small
   The governor is using @Guarded stm (Decision stm peeraddr peerconn)@ where 'stm' is
   the 'STM' monad, to drive its progress.
-  \begin{code}
+  \begin{spec}
   data Guarded stm a =
        -- 'GuardedSkip' is used to instruct that there is no action to be
        -- made by the governor.
@@ -620,16 +636,16 @@ firstPeerDemotedToCold InboundGovernorState { igsConnections } = runFirstToFinis
        -- synchronisation to the governor main loop, possibly with
        -- a timeout.
     |  Guarded'   !(Maybe (Min Time)) (FirstToFinish stm a)
-  \end{code}
+  \end{spec}
 
   |Guarded| constructor which  hides the use of |FirstToFinish|
   synchronisation.
-  \begin{code}
+  \begin{spec}
   pattern Guarded :: Maybe (Min Time) -> stm a -> Guarded stm a
   pattern Guarded a b <- Guarded' a (FirstToFinish b)
     where
       Guarded a b = Guarded' a (FirstToFinish b)
-  \end{code}
+  \end{spec}
 \end{frame}
 
 \begin{frame}
@@ -647,19 +663,19 @@ firstPeerDemotedToCold InboundGovernorState { igsConnections } = runFirstToFinis
   when |stm  ~  STM|.  There is no right absorbing element since there is no
   right absorbing elemnt in |STM|.
 
-  {\footnotesize\begin{code}
+  {\footnotesize\begin{spec}
   instance Alternative stm => Semigroup (Guarded stm a) where
     Guarded'     ta  a  <> Guarded'     tb  b  = Guarded'     (ta <> tb)  (a <> b)
     Guarded'     ta  a  <> GuardedSkip  tb     = Guarded'     (ta <> tb)  a
     GuardedSkip  ta     <> Guarded'     tb  b  = Guarded'     (ta <> tb)  b
     GuardedSkip  ta     <> GuardedSkip  tb     = GuardedSkip  (ta <> tb)
-  \end{code}}
+  \end{spec}}
 \end{frame}
 
 \begin{frame}
   \frametitle{Guarded decisions}
   \small
-  \begin{code}
+  \begin{spec}
   type  TimedDecision m peeraddr peerconn
      =  Time -> Decision m peeraddr peerconn
 
@@ -676,14 +692,14 @@ firstPeerDemotedToCold InboundGovernorState { igsConnections } = runFirstToFinis
     <>  EstablishedPeers.aboveTarget  actions  policy     st
     <>  ActivePeers.belowTarget       actions  policy     st
     ...
-  \end{code}
+  \end{spec}
 \end{frame}
 
 \begin{frame}
   \frametitle{Guarded decisions}
   \footnotesize
   \vspace{-0.8em}
-  \begin{code}
+  \begin{spec}
   evalGuardedDecisions  :: Time
                         -> PeerSelectionState peeraddr peerconn
                         -> IO (TimedDecision IO peeraddr peerconn)
@@ -706,7 +722,7 @@ firstPeerDemotedToCold InboundGovernorState { igsConnections } = runFirstToFinis
       wakeupDecision st _now =
          Decision  { decisionTrace = TraceGovernorWakeup
                    , decisionState = st, decisionJobs  = [] }
-  \end{code}
+  \end{spec}
   % <> ActivePeers.aboveTarget      actions     policy st
 
   % -- All the alternative potentially-blocking decisions.

@@ -1,47 +1,12 @@
 % Document class is set in the Makefile.
 
-% To compile, comment out all the '%format' lines and all 'hide'
-% environments, then run;
-% lhs2TeX --newcode typed-protocol-pipelining.lhs > typed-protocol-pipelining.hs
-% ghc -package singletons typed-protocols-pipelining.hs
-
 %include polycode.fmt
 \arrayhs
 %include forall.fmt
 %include beamer.fmt
-
-%format :: = "{\color{Turquoise4}{\mathbin{::}}}"
-%format -> = "{\color{Turquoise4}{\to}}"
-%format => = "{\color{Turquoise4}{\Rightarrow}}"
-%format $  = "{\color{Turquoise4}{\mathbin{\$}}}"
-
-%format <| = "{\color{DeepSkyBlue1}{\;\triangleleft\;}}"
-%format |> = "{\color{DeepSkyBlue1}{\;\triangleright\;}}"
-%format Tr = "{\color{DeepSkyBlue1}{\Conid{Tr}}}"
-%format Trans = "{\color{DeepSkyBlue1}{\Conid{Trans}}}"
-%format Cons  = "{\color{DeepSkyBlue1}{\Conid{Cons}}}"
-%format Empty = "{\color{DeepSkyBlue1}{\Conid{Empty}}}"
-
-%format Agency                = "{\color{MediumPurple4}{\Conid{Agency}}}"
-%format Relative              = "{\color{MediumPurple4}{\Conid{Relative}}}"
-%format StateAgency           = "{\color{MediumPurple4}{\Conid{StateAgency}}}"
-%format FlipAgency            = "{\color{MediumPurple4}{\Conid{FlipAgency}}}"
-%format RelativeAgency        = "{\color{MediumPurple4}{\Conid{RelativeAgency}}}"
-
-%format ClientAgency          = "{\color{MediumPurple4}{\Conid{ClientAgency}}}"
-%format ServerAgency          = "{\color{MediumPurple4}{\Conid{ServerAgency}}}"
-%format NobodyAgency          = "{\color{MediumPurple4}{\Conid{NobodyAgency}}}"
-%format WeHaveAgency          = "{\color{MediumPurple4}{\Conid{WeHaveAgency}}}"
-%format TheyHaveAgency        = "{\color{MediumPurple4}{\Conid{TheyHaveAgency}}}"
-%format NobodyHasAgency       = "{\color{MediumPurple4}{\Conid{NobodyHasAgency}}}"
-
-%format ReflRelativeAgency    = "{\color{MediumPurple4}{\Conid{ReflRelativeAgency}}}"
-%format ReflNobodyHasAgency   = "{\color{MediumPurple4}{\Conid{ReflNobodyHasAgency}}}"
-%format MkReflNobodyHasAgency = "{\color{MediumPurple2}{\Conid{ReflNobodyHasAgency}}}"
-%format MkPipelined           = "Pipelined"
-%format ReflClientAgency      = "{\color{MediumPurple2}{\Conid{ReflClientAgency}}}"
-%format ReflServerAgency      = "{\color{MediumPurple2}{\Conid{ReflServerAgency}}}"
-%format ReflNobodyAgency      = "{\color{MediumPurple2}{\Conid{ReflNobodyAgency}}}"
+%if compile == False
+%include lhs/TypedProtocolPipelining.fmt
+%endif
 
 \useinnertheme{circles}
 \setbeamertemplate{navigation symbols}{}
@@ -62,9 +27,6 @@
 \author{Marcin Szamotulski}
 \institute{\insertlogo{\includegraphics[height=1cm]{iohk-logo.png}}}
 \title{Typed Protocol Pipelining}
-
-% placing a 'code' environment inside 'hide', hides it.
-\newenvironment{hide}{}{}
 
 \begin{document}
 \begin{frame}
@@ -92,7 +54,8 @@
 {-# LANGUAGE StandaloneKindSignatures  #-}
 {-# LANGUAGE TypeFamilies              #-}
 {-# LANGUAGE TypeOperators             #-}
-module X where
+
+module Presentation.TypedProtocolPipelining where
 
 import Data.Kind (Type)
 import Data.Singletons
@@ -154,7 +117,7 @@ data PingPong where
   StBusy     :: PingPong
   StDone     :: PingPong
   \end{code}
-  \begin{hide}
+%if compile == True
   \begin{code}
 data SPingPong (st :: PingPong) where
   SingIdle :: SPingPong StIdle
@@ -169,7 +132,7 @@ instance SingI StBusy where
 instance SingI StDone where
     sing = SingDone
   \end{code}
-  \end{hide}
+%endif
   \pause
   \begin{code}
 data MessageSimplePingPong (st  :: PingPong) (st' :: PingPong) where
@@ -200,14 +163,14 @@ data SimplePingPongClient (st :: PingPong) a where
     \begin{code}
 simplePingPongClient :: a -> SimplePingPongClient StIdle a
 simplePingPongClient a =
-    SendMsg  MsgSimplePing
- $  RecvMsg  $ \MsgSimplePong ->
-    SendMsg  MsgSimplePing
- $  RecvMsg  $ \MsgSimplePong ->
-    SendMsg  MsgSimplePing
- $  RecvMsg  $ \MsgSimplePong ->
-    SendMsg  MsgSimpleDone
- $  ClientDone a
+    SendMsg      MsgSimplePing
+ $  RecvMsg $ \  MsgSimplePong ->
+    SendMsg      MsgSimplePing
+ $  RecvMsg $ \  MsgSimplePong ->
+    SendMsg      MsgSimplePing
+ $  RecvMsg $ \  MsgSimplePong ->
+    SendMsg      MsgSimpleDone
+ $  ClientDone   a
     \end{code}
     \end{column}
   \end{columns}
@@ -222,20 +185,20 @@ data N = Z | S N
   \pause
   \begin{code}
 data SimplePipelinedPingPongClient (st :: PingPong) (n :: N) c a where
-  PipelinedSendMsg  :: MessageSimplePingPong StIdle st
-                    -> PingPongReceiver               StBusy StIdle  c
-                    -> SimplePipelinedPingPongClient  StIdle (S  n)  c a
-                    -> SimplePipelinedPingPongClient  StIdle     n   c a
+  PipelinedSendMsg  ::  MessageSimplePingPong StIdle st
+                    ->  PingPongReceiver               StBusy StIdle  c
+                    ->  SimplePipelinedPingPongClient  StIdle (S  n)  c a
+                    ->  SimplePipelinedPingPongClient  StIdle     n   c a
 
-  CollectResponse   :: (c -> SimplePipelinedPingPongClient  StIdle     n   c a)
-                    -> SimplePipelinedPingPongClient        StIdle (S  n)  c a
+  CollectResponse   ::  (c -> SimplePipelinedPingPongClient  StIdle     n   c a)
+                    ->  SimplePipelinedPingPongClient        StIdle (S  n)  c a
 
-  SendMsgDone       :: MessageSimplePingPong          StIdle StDone
-                    -> SimplePipelinedPingPongClient  StDone Z c a
-                    -> SimplePipelinedPingPongClient  StIdle Z c a
+  SendMsgDone       ::  MessageSimplePingPong          StIdle  StDone
+                    ->  SimplePipelinedPingPongClient  StDone  Z c a
+                    ->  SimplePipelinedPingPongClient  StIdle  Z c a
 
-  PipelinedDone     :: a
-                    -> SimplePipelinedPingPongClient StDone Z c a
+  PipelinedDone     ::  a
+                    ->  SimplePipelinedPingPongClient  StDone  Z c a
   \end{code}
   \pause
   \begin{code}
@@ -320,7 +283,7 @@ instance Protocol PingPong where
   \begin{code}
 data PeerRole = AsClient | AsServer
   \end{code}
-  \begin{hide}
+%if style ==  newcode
   \begin{code}
 type SingPeerRole :: PeerRole -> Type
 data SingPeerRole pr where
@@ -333,7 +296,7 @@ instance SingI AsClient where
 instance SingI AsServer where
     sing = SingAsServer
   \end{code}
-  \end{hide}
+%endif
   \pause
   \begin{code}
 data RelativeAgency where
@@ -613,8 +576,8 @@ data Peer   ps
   \begin{code}
 pingPongClientPipelined
     :: Peer PingPong AsClient MkPipelined Empty StIdle m ()
-pingPongClientPipelined =
-      YieldPipelined ReflClientAgency MsgPing
+pingPongClientPipelined
+   =  YieldPipelined ReflClientAgency MsgPing
    $  YieldPipelined ReflClientAgency MsgPing
    $  YieldPipelined ReflClientAgency MsgPing
    $  collect
@@ -626,9 +589,9 @@ pingPongClientPipelined =
    collect  ::  Peer  PingPong AsClient MkPipelined q StIdle m ()
             ->  Peer  PingPong AsClient MkPipelined 
                       (Tr StBusy StIdle <| q)  StIdle m ()
-   collect k =
-       Collect ReflServerAgency Nothing
-     $ \ MsgPong -> CollectDone k
+   collect k
+     =   Collect ReflServerAgency Nothing
+     $   \ MsgPong -> CollectDone k
   \end{code}
 \end{frame}
 
@@ -645,7 +608,7 @@ type StIdle2  = Wrap StIdle
 type StBusy2  = Wrap StBusy
 type StDone2  = Wrap StDone
   \end{code}
-  \begin{hide}
+%if compile == True
   \begin{code}
 data SPingPong2 (st :: PingPong2) where
     SPingPong :: SPingPong st -> SPingPong2 (Wrap st)
@@ -654,7 +617,7 @@ type instance Sing = SPingPong2
 instance SingI st => SingI (Wrap st) where
     sing = SPingPong sing
   \end{code}
-  \end{hide}
+%endif
 \end{frame}
 
 \begin{frame}
@@ -685,8 +648,8 @@ instance Protocol PingPong2 where
   \begin{code}
 pingPongClientPipeliend2
   :: Peer PingPong2 AsClient MkPipelined Empty StIdle2 m Int
-pingPongClientPipeliend2 =
-     YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
+pingPongClientPipeliend2
+  = YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
   $  YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
   $  YieldPipelined ReflClientAgency (MsgPingPong MsgPing)
   $            collect 0
@@ -695,12 +658,12 @@ pingPongClientPipeliend2 =
   $  \  n3 ->  Yield ReflClientAgency (MsgPingPong MsgDone)
   $            Done ReflNobodyAgency n3
  where
-   collect ::  Int
-           ->  (Int -> Peer PingPong2 AsClient MkPipelined q StIdle2 m Int)
-           ->  Peer  PingPong2 AsClient MkPipelined
-                     (Tr StBusy2 StIdle2 <| q) StIdle2 m Int
-   collect !n k =
-        Collect ReflServerAgency Nothing
+   collect  ::  Int
+            ->  (Int -> Peer PingPong2 AsClient MkPipelined q StIdle2 m Int)
+            ->  Peer  PingPong2 AsClient MkPipelined
+                      (Tr StBusy2 StIdle2 <| q) StIdle2 m Int
+   collect !n k
+     =  Collect ReflServerAgency Nothing
      $  \  msg -> case msg of
            MsgBusy                ->  collect (n+1) k
            (MsgPingPong MsgPong)  ->  CollectDone (k n)
@@ -728,14 +691,19 @@ data TerminalStates ps (pr :: PeerRole) where
        ->  TerminalStates ps pr
   \end{code}
   \pause[2]
-  \begin{spec}
+  \begin{code}
 theorem_nonpipelined_duality
    :: forall ps (pr :: PeerRole) (initSt :: ps) m a b.
       (Monad m,  SingI pr)
    => Peer ps (            pr)  NonPipelined Empty initSt m a
    -> Peer ps (FlipAgency  pr)  NonPipelined Empty initSt m b
    -> m (a, b, TerminalStates ps pr)
-  \end{spec}
+  \end{code}
+%if compile == True
+  \begin{code}
+theorem_nonpipelined_duality = undefined
+  \end{code}
+%endif
   Link to the
   \href{https://github.com/input-output-hk/ouroboros-network/blob/coot/typed-protocols-rewrite/typed-protocols/src/Network/TypedProtocol/Proofs.hs\#L83}{proof}.
   The proof relies on exclusion lemmas.
@@ -744,7 +712,7 @@ theorem_nonpipelined_duality
 \begin{frame}
   \frametitle{Removing pipelining}
   \small
-  \begin{spec}
+  \begin{code}
 theorem_unpipeline
     :: forall ps (pr :: PeerRole)
                  (pl :: Pipelined)
@@ -756,7 +724,12 @@ theorem_unpipeline
     -- pipelining.
     -> Peer ps pr pl            Empty initSt m a
     -> Peer ps pr NonPipelined  Empty initSt m a
- \end{spec}
+ \end{code}
+%if compile == True
+ \begin{code}
+theorem_unpipeline = undefined
+ \end{code}
+%endif
   Link to the \href{https://coot.me/posts/typed-protocol-pipelining.html\#removing-pipelining}{proof}.
 \end{frame}
 
