@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "@coot homepage",
   "dependencies": {
+    "@littlezigy/cleancss": "^1.1.0",
+    "clean-css-cli": "^5.5.0",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^3.10.0",
     "gulp-exec": "^3.0.2",

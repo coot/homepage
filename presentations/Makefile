@@ -3,6 +3,8 @@ lhs_presentations := $(patsubst %.lhs,%-presentation.pdf,$(wildcard lhs/*.lhs))
 
 hs_srcs           := $(patsubst lhs/%.lhs,src/Presentation/%.hs,$(wildcard lhs/*.lhs))
 
+pdf               := $(patsubst %.tex,%.pdf,$(wildcard *.tex))
+
 # build handouts, published on coot.me
 $(lhs_handouts): %.pdf: %.lhs
 	lhs2TeX --poly -u compile -o $(patsubst %.lhs,%.tex,$<) $<
@@ -20,6 +22,9 @@ $(lhs_presentations): %-presentation.pdf: %.lhs
 $(presentations): %.pdf: %.tex
 	latexmk -shell-escape $<
 
+$(pdf): %.pdf: %.tex
+	pdflatex -shell-escape $<
+
 $(hs_srcs): src/Presentation/%.hs: lhs/%.lhs
 	mkdir -p src/Presentation
 	lhs2TeX --newcode -s compile -o $@ $< 
@@ -27,7 +32,7 @@ $(hs_srcs): src/Presentation/%.hs: lhs/%.lhs
 code: $(hs_srcs)
 .PHONY: code
 
-all: $(presentations) $(lhs_presentations) $(lhs_handouts) $(hs_srcs)
+all: $(presentations) $(lhs_presentations) $(lhs_handouts) $(hs_srcs) $(pdf)
 
 .DEFAULT_GOAL := all
 
