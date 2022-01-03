@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>Coot's Blog</title>
+    <description>Blog on functional programming and mathematics</description>
+    <link>https://coot.me</link>
+    <atom:link href="https://coot.me/feed.rss" rel="self" type="application/rss+xml"></atom:link>
+    <pubDate>{{ pubDate }}</pubDate>
+    <lastBuildDate>{{ pubDate }}</lastBuildDate>
+    <image>
+      <url>https://coot.me/images/elf-fg-gray-no-background.png</url>
+      <title>Coot's Blog</title>
+      <link>https://coot.me</link>
+    </image>
+
+    {% for entry in entries %}
+    <item>
+      <title>{{ entry.title }}</title>
+      <link>{{ entry.url }}</link>
+      <guid isPermaLink="true">{{ entry.url }}</guid>
+      <pubDate>{{ entry.date }}</pubDate>
+      <lastBuildDate>{{ entry.lastBuildDate }}</lastBuildDate>
+      <description></description>
+    </item>
+    {% endfor %}
+  </channel>
+</rss>
+
