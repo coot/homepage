@@ -15,29 +15,29 @@ still feel a bit hacky.
 First one needs to compile haddocks of all the components, which can be done
 with either <code>cabal</code> or <code>stack</code>:
 
-<pre class="bash"><code>cabal haddock --haddock-html \
+</p>
+<pre class="bash">cabal haddock --haddock-html \
               --haddock-quickjump \
               --haddock-option="--use-index=../doc-index.html" \
               --haddock-option="--use-contents=../index.html" \
               --haddock-option="--base-url=.." \
               all
-</code></pre>
-</p>
+</pre>
 
 
 <p>
 The second step is to copy all the haddocks to a common directory, e.g.
 <code>docs</code> folder.  To compile the contents page (the haddock entry
-page), index with support of <emph>quickjump</emph> one can run:
-<pre class="bash"><code>haddock -o docs \
+page), index with support of <i>quickjump</i> one can run:
+</p>
+<pre class="bash">haddock -o docs \
         --quickjump \
         --gen-index \
         --gen-contents \
         --read-interface=package-a,docs/package-a/package-a.haddock
-</code></pre>
+</pre>
 where one needs to list each component with <code>--read-interface</code>
 pointing to the compiled <code>*.haddock</code> interface file.
-</p>
 
 <p>
 The docs directory can be served with a local http server or

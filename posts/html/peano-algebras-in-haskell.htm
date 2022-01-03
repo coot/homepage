@@ -70,9 +70,7 @@
     <a href="https://en.wikipedia.org/wiki/Peano_axioms">Peano Algebra</a>,
     for any type $a$. It’s elements are:
 </p>
-<p>
-    <pre class="haskell"><code>Unit, Maybe Unit, Maybe (Maybe Unit), ...</code></pre>
-</p>
+<pre class="haskell">Unit, Maybe Unit, Maybe (Maybe Unit), ...</pre>
 <p>
     This algebra is free, there are no relations (or equalities
     of types) among all algebras of this type. But relations
@@ -80,7 +78,7 @@
     them using monads. For example for the <code>Maybe</code>
     type we have
 </p>
-<pre class="haskell"><code>(Just (Just x) &gt;&gt;= id) == Just x</code></pre>
+<pre class="haskell">(Just (Just x) &gt;&gt;= id) == Just x</pre>
 <p>
     for every <code>x :: a</code>. Note that this equation is
     on the level of terms rather than types.
@@ -102,16 +100,16 @@
     <code>Left (Left x)</code> (for some type <code>x</code>). Then the
     <code>Either</code> monad provides only one relation:
 </p>
-<pre class="haskell"><code>(Right (Right x) &gt;&gt;= id) == Right x</code></pre>
+<pre class="haskell">(Right (Right x) &gt;&gt;= id) == Right x</pre>
 <p>
     and there is no relation for the <code>Left</code>
     constructor:
 </p>
-<pre class="haskell"><code>(Left (x :: Either a) &gt;&gt;= id) == Left x</code></pre>
+<pre class="haskell">(Left (x :: Either a) &gt;&gt;= id) == Left x</pre>
 <p>
     for every term <code>x :: a</code>. The corresponding Peano
     algebra has the form:
 </p>
 <div class="diagram">
-    <img src="/images/either-peano.png" width="450px"/>
+    <img src="/images/either-peano.png" alt="diagram" width="450"/>
 </div>
