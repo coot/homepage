@@ -24,3 +24,4 @@ presentations/_minted-*
 /presentations/lhs/*.ptb
 /presentations/lhs/*.tex
 /presentations/lhs/*.hs
+/images/*.png
