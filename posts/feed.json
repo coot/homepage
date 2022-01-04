@@ -1,5 +1,9 @@
 { "entries":
-  [ { "title": "Strictness of foldr' from containers package"
+  [ { "title": "Typed Protocols @ Haskell Love"
+    , "url":   "https://coot.me/posts/typed-protocols-at-haskell-love.html"
+    , "date":  "03 Oct 2021 00:00 GMT"
+    }
+  , { "title": "Strictness of foldr' from containers package"
     , "url":   "https://coot.me/posts/containers-strict-foldr.html"
     , "date":  "25 Jul 2021 00:00 GMT"
     }
@@ -7,9 +11,17 @@
     , "url":   "https://coot.me/posts/typed-protocol-pipelining.html"
     , "date":  "5 Jun 2021 00:00 GMT"
     }
+  , { "title": "Haddock: better support for multiple components"
+    , "url":   "https://coot.me/posts/haddock-multi-component-support.html"
+    , "date":  "17 Jun 2021 00:00 GMT"
+    }
   , { "title": "Masking Asynchronous Exceptions"
     , "url":   "https://coot.me/posts/mask.html"
     , "date":  "14 Feb 2021 00:00 GMT"
+    }
+  , { "title": "Ghc Tags Plugin"
+    , "url":   "https://coot.me/posts/ghc-tags-plugin.html"
+    , "date":  "07 Mar 2020 00:00 GMT"
     }
   , { "title": "Monoidal and Applicative Functors"
     , "url":   "https://coot.me/posts/monoidal-functors.html"
@@ -23,17 +35,41 @@
     , "url":   "https://coot.me/posts/categories-with-monadic-effects.html"
     , "date":  "01 Feb 2019 00:00 GMT"
     }
-  , { "title": "Ghc Tags Plugin"
-    , "url":   "https://coot.me/posts/ghc-tags-plugin.html"
+  , { "title": "Kleisli categories and free monads"
+    , "url":   "https://coot.me/posts/kleisli-categories-and-free-monads.html"
+    , "date":  "20 Dec 2018 00:00 GMT"
+    }
+  , { "title": "Typed Transitions, Finite State Machines and Free Categories"
+    , "url":   "https://coot.me/posts/finite-state-machines.html"
+    , "date":  "25 Jul 2018 00:00 GMT"
+    }
+  , { "title": "Composing cofree interpreters"
+    , "url":   "https://youtu.be/klpKIs84_bU"
+    , "date":  "30 Aug 2018 00:00 GMT"
+    }
+  , { "title": "Monadicity"
+    , "url":   "https://coot.me/posts/monadicity.html"
     , "date":  "09 Aug 2018 00:00 GMT"
+    }
+  , { "title": "Free algebras"
+    , "url":   "https://hackage.haskell.org/package/free-algebras"
+    , "date":  "30 Jul 2018 00:00 GMT"
     }
   , { "title": "From free algebras to free monads"
     , "url":   "https://coot.me/posts/free-monads.html"
     , "date":  "30 Jul 2018 00:00 GMT"
     }
-  , { "title": "Typed Transitions, Finite State Machines and Free Categories"
-    , "url":   "https://coot.me/posts/finite-state-machines.html"
-    , "date":  "25 Jul 2018 00:00 GMT"
+  , { "title": "Workshop on Category Theory"
+    , "url":   "https://youtu.be/-WdBFLyTHGw"
+    , "date":  "12 Jun 2018 00:00 GMT"
+    }
+  , { "title": "Routing with cofree comonad"
+    , "url":   "https://youtu.be/O78UOsKAXsc"
+    , "date":  "14 Oct 2017 00:00 GMT"
+    }
+  , { "title": "Peano Algebras in Haskell"
+    , "url":   "https://coot.me/posts/peano-algebras-in-haskell.html"
+    , "date":  "24 Jun 2017 00:00 GMT"
     }
   ]
 }
