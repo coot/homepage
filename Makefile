@@ -194,10 +194,6 @@ dist/feed.rss: posts/feed.json $(pandoc_outputs)
 	cabal run -v0 exe:rssbuilder -- $< - | j2 -f json templates/feed.rss -o $@
 .PHONY: dist/feed.rss
 
-dist/titles.rss: posts/feed.json $(pandoc_outputs)
-	cabal run -v0 exe:rssbuilder -- $< - | j2 -f json templates/titles.rss -o $@
-.PHONY: dist/feed.rss
-
 presentations:
 	${MAKE} -C $(presentations_dir); 
 	mkdir -p dist/presentations
@@ -209,7 +205,7 @@ presentations:
 # All, Clean & Deploy
 #
 
-all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js dist/feed.rss dist/titles.rss $(agda_html) presentations
+all: posts $(html) assets latex latex_clean images templates dist/manifest.json dist/sw.js dist/feed.rss $(agda_html) presentations
 .PHONY: all
 
 clean:
