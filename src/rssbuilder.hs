@@ -17,39 +17,34 @@ import           Data.Aeson
 import qualified Data.ByteString.Lazy as BS
 import           Data.Text (Text)
 import qualified Data.Text as Text
-import qualified Data.Text.IO as Text
 import qualified Data.Time as Time
 import           GHC.Generics (Generic (..))
 
 
-data Entry d = Entry {
+data Entry = Entry {
     eTitle     :: Text,
     eUrl       :: Text,
     eDate      :: Text,
-    eData      :: d,
     eBuildDate :: Text
   }
-  deriving (Generic, Functor)
+  deriving Generic
 
-instance FromJSON a => FromJSON (Entry a) where
+instance FromJSON Entry where
     parseJSON = withObject "Entry" $ \v ->
       Entry <$> v .: "title"
             <*> v .: "url"
             <*> v .: "date"
-            <*> v .: "data"
             <*> pure mempty
 
-instance ToJSON a => ToJSON (Entry a) where
+instance ToJSON Entry where
     toEncoding Entry { eTitle
                      , eUrl
                      , eDate
-                     , eData
                      , eBuildDate
                      } =
       pairs $ "title"         .= eTitle
            <> "url"           .= eUrl
            <> "date"          .= eDate
-           <> "data"          .= eData
            <> "lastBuildDate" .= eBuildDate
 
 data Entries a = Entries {
@@ -79,7 +74,7 @@ main = do
         [_]         -> putStrLn "rssbuilder intput output"
                     >> exitFailure
         (a : b : _) -> return (a, b)
-    (mbFeed :: Either String (Entries (Entry String)))
+    (mbFeed :: Either String (Entries Entry))
       <- eitherDecodeFileStrict' inputFile
     feed <- case mbFeed of
       Left err   -> putStrLn ("json parse error: " ++ err)
@@ -87,28 +82,13 @@ main = do
       Right feed -> return feed
     t <- Time.getCurrentTime
     let eBuildDate = Text.pack $ Time.formatTime Time.defaultTimeLocale Time.rfc822DateFormat t
-
-    (entries' :: [Entry Text]) <-
-      traverse (\e -> updateEntry e eBuildDate <$> Text.readFile (eData e))
-               (entries feed)
-    let feed' = Entries { entries = entries'
-                        , pubDate = eBuildDate
-                        }
+        feed'      = Entries { entries = updateEntry eBuildDate <$> entries feed
+                             , pubDate = eBuildDate
+                             }
     case outputFile of
       "-" -> BS.putStr $ encode feed'
       _   -> encodeFile outputFile feed'
   where
-    updateEntry :: Entry String -> Text -> Text -> Entry Text
-    updateEntry Entry { eTitle
-                      , eUrl
-                      , eDate
-                      }
-                eBuildDate
-                eData =
-                Entry { eTitle
-                      , eUrl
-                      , eDate
-                      , eData
-                      , eBuildDate
-                      }
+    updateEntry :: Text -> Entry -> Entry
+    updateEntry eBuildDate e = e { eBuildDate }
 

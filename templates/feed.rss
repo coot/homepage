@@ -20,9 +20,6 @@
     <guid isPermaLink="true">{{ entry.url }}</guid>
     <pubDate>{{ entry.date }}</pubDate>
     <lastBuildDate>{{ entry.lastBuildDate }}</lastBuildDate>
-    <description>
-{{ entry.data }}
-    </description>
   </item>
   {% endfor %}
 </channel>
