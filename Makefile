@@ -190,7 +190,7 @@ images_dir:
 images: images_dir $(images)
 .PHONY: images
 
-dist/feed.rss: posts/feed.json $(pandoc_outputs)
+dist/feed.rss: posts/feed.json $(pandoc_outputs) templates/feed.rss
 	cabal run -v0 exe:rssbuilder -- $< - | j2 -f json templates/feed.rss -o $@
 .PHONY: dist/feed.rss
 
