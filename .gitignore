@@ -26,3 +26,4 @@ presentations/_minted-*
 /presentations/lhs/*.hs
 /presentations/src
 /images/*.png
+/IDEAS.md
