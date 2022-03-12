@@ -1,0 +1,165 @@
+<header>
+  <h1 class"section_h" id="lazy-st">A remark on Lazy ST monad and MonadFix
+  instance for <a href="https://input-output-hk.github.io/ouroboros-network/io-sim/Control-Monad-IOSim.html#t:IOSim">IOSim</a></h1>
+</header>
+
+
+Consider the following two bindings:
+<pre class="haskell">
+{-# LANGUAGE BangPatterns #-}
+
+module Test where
+
+import qualified Control.Monad.ST.Lazy as Lazy
+import qualified Control.Monad.ST.Lazy.Unsafe as Lazy
+import qualified Data.STRef.Lazy as Lazy
+
+import qualified Control.Monad.ST as Strict
+import qualified Control.Monad.ST.Unsafe as Strict
+import qualified Data.STRef as Strict
+import qualified Debug.Trace as Debug
+
+
+a :: Int
+a = Strict.runST $ do 
+  v <- Strict.newSTRef (0 :: Int)
+  x <- Strict.unsafeInterleaveST (Strict.readSTRef v)
+  _ <- Debug.trace "modifySTRef" (Strict.modifySTRef v (+1))
+  return x
+
+
+b :: Int
+b = Lazy.runST $ do 
+  v <- Lazy.newSTRef (0 :: Int)
+  x <- Lazy.unsafeInterleaveST   (Lazy.readSTRef v)
+  _ <- Debug.trace "modifySTRef" (Lazy.modifySTRef v (+1))
+  return x
+</pre>
+
+The question is what is the output if you force <code>a</code> and/or
+<code>b</code>?
+
+<h2>The Strict case</h2>
+
+The strict <code>ST</code> monad will run each step of the computation. In
+particular it will force the <code>modifySTRef</code> before returning.  Since
+<code>readSTRef</code> is wrapped in <code>unsafeInterleaveST</code>, it will
+be executed once <code>x</code> is forced.  This means that it will be executed
+after <code>modifySTRef</code>.  By forcing <code>a</code>, we will print
+<code>"modifySTRef"</code> on <code>stdout</code> and the value of
+<code>a</code> will evaluate to <code>1</code>.
+
+
+<h2>The lazy case</h2>
+
+The expression bound to <code>b</code> however evaluates to <code>0</code> and
+nothing is printed on stdout.  This is due to the laziness of the monad
+instance of lazy <code>ST</code>:
+<pre>
+-- | @since 2.01
+instance Monad (ST s) where
+    (>>) = (*>)
+
+    m >>= k = ST $ \ s ->
+       let
+         -- See Note [Lazy ST and multithreading]
+         {-# NOINLINE res #-}
+         res = noDup (unST m s)
+         (r,new_s) = res
+       in
+         unST (k r) new_s
+</pre>
+while
+<pre>
+unsafeInterleaveST :: ST s a -> ST s a
+unsafeInterleaveST (ST m) = ST $ \s -> case m s of
+                                         (# _, a #) -> (# a, s #)
+</pre>
+
+The binding <code>res</code> is a thunk.  Haskell <code>let</code> (and
+<code>where</code>) bindings are lazy, so the binding <code>(r,new_s)
+= res</code> does not force anything, it's equivalent to two bindings: <code>r
+= fst res</code>, and <code>new_s = snd res</code>.  Note that in the case
+<code>m = unsafeInterleaveST (Lazy.readSTRef v)</code> <code>new_s</code>
+evaluates to <code>s</code> without forcing <code>r</code>,  which fulfils the
+promise of <code>unsafeInterleaveST</code>: to evaluate an <code>ST</code>
+action only once its result is forced.
+
+In the case <code>m = Debug.trace "modifySTRef" (Lazy.modifySTRef
+  v (+1))</code>, neither <code>r</code> nor <code>new_s</code> is forced,
+hence the action is never performed.  This is why we don't see "modifySTRef" on
+stdout, and this is why the returned value is equal to <code>0</code>
+
+
+To write code which is equivalent to the strict case we need to demand the return value, e.g.
+
+<pre class="haskell">
+b :: Int
+b = Lazy.runST $ do 
+  v  <- Lazy.newSTRef (0 :: Int)
+  x  <- Lazy.unsafeInterleaveST   (Lazy.readSTRef v)
+  !_ <- Debug.trace "modifySTRef" (Lazy.modifySTRef v (+1))
+  return x
+</pre>
+
+In this case the binding <code>r</code> will be forced, which will run the
+action: printing <code>"modifySTRef"</code> on stdout and modifying the value
+of <code>v</code>.
+
+
+<h3>IOSim MonadFix instance</h3>
+The above realisation was very helpful in writing a <code>MonadFix</code>
+instance for the free
+<a
+    href="https://input-output-hk.github.io/ouroboros-network/io-sim/Control-Monad-IOSim.html#t:IOSim"><code>IOSim</code></a>
+monad which we are using at <a href="https://iog.io">IOG</a>.
+<code>IOSim</code> is a free monad written in continuation passing style which
+is executed in lazy <code>ST</code>.  It is a drop in replacement for
+<code>IO</code>: it can execute multiple threads, allows to run
+<code>stm</code> transactions, do synchronous and asynchronous exceptions, has
+a multi domain simulated time and also allows to do schedule exploration and
+dynamic partial order reduction.  The core of <code>IOSim</code>, as for any
+free monad, is its interpretation, which is a function which drives execution
+of a single thread:
+
+<pre class="haskell">
+schedule :: Thread s a -> SimState s a -> Lazy.ST s (SimTrace a).
+    ...
+
+    -- Fix :: (x -> IOSim s x)
+    --     -> (x -> SimA s r)  -- ^ the continuation
+    --     -> SimA s r
+    Fix f k -> do
+      r <- newSTRef (throw NonTermination)
+      x <- unsafeInterleaveST $ readSTRef r
+      let k' = unIOSim (f x) $ \x' ->
+                  LiftST (lazyToStrictST (writeSTRef r x'))
+                         (\() -> k x')
+          thread' = thread { threadControl = ThreadControl k' ctl }
+      schedule thread' simstate
+
+    -- LiftST :: Strict.ST s a
+    --        -> (a -> SimA s b) -- ^ the continuation
+    --        -> SimA s b
+    LiftST st k -> do
+      x <- strictToLazyST st
+      let thread' = thread { threadControl = ThreadControl (k x)
+                                                           ctl
+                           }
+      schedule thread' simstate
+
+    ...
+</pre>
+
+The <code>LiftST :: Strict.ST s a -> (a -> SimA s b) -> SimA s b</code>
+constructor allows to embed any strict <code>ST</code> computations inside
+<code>IOSim</code>.  For the interpretation of <code>Fix</code> constructor to
+work, we need to force the result of <code>lazyToStrictST (writeSTRef
+  r x')</code>, otherwise this action will not be executed as we have just
+seen.  This is done by making the continuation <code>\() -> k x'</code> strict
+- pattern matching on a constructor demands the result.
+
+
+<h2>Final remarks</h2>
+Just recently Philipp Kant gave a very nice presentation on <code>IOSim</code>
+at the <a href="https://youtu.be/e74TE0b4xEM?t=13662">BOBConf 2022</code>.
