@@ -1,5 +1,9 @@
 { "entries":
-  [ { "title": "A remark on lazy ST monad and MonadFix instance for IOSim"
+  [ { "title": "Build haddock documentation of a cabal project"
+    , "url":   "https://coot.me/posts/cabal-haddock-project.html"
+    , "date":  "12 Jun 2022 11:00 GMT"
+    }
+  , { "title": "A remark on lazy ST monad and MonadFix instance for IOSim"
     , "url":   "https://coot.me/posts/lazy-st.html"
     , "date":  "12 Mar 2022 00:00 GMT"
     }

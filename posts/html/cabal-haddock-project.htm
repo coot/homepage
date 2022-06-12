@@ -1,0 +1,116 @@
+<header>
+    <h1 class="section_h" id="cabal-haddock-project">Build haddock documentation of a cabal project</h1>
+</header>
+
+I've been working on a new <code>cabal</code> command:
+<code>haddock-project</code> which allows to build cabal documentation of
+a cabal project which possibly consists of multiple packages.  This is often
+useful when you are working on a larger project which contains multiple
+packages and you either don't want to or you cannot publish them on hackage.
+
+<p>
+Currently the final <a href="https://github.com/haskell/cabal/pull/8162">pull</a>
+request is under review.  The line of work which lead to this started with many
+changes to the <code>haddock</code> command:
+
+<ul>
+  <li><a href="https://github.com/haskell/haddock/pull/1277">Better support for multiple packages</a></li>
+  <li><a href="https://github.com/haskell/haddock/pull/1379">Document multi component support</a></li>
+  <li><a href="https://github.com/haskell/haddock/pull/1418">multiple packages support</a></li>
+  <li><a href="https://github.com/haskell/haddock/pull/1487">Allow to hide interfaces when rendering multiple components</a></li>
+  <li><a href="https://github.com/haskell/haddock/pull/1488">Check if doc-index.json exists before reading it</a></li>
+  <li><a href="https://github.com/haskell/haddock/pull/1489">Version bump 2.26.1</a></li>
+  <li><a href="https://github.com/haskell/haddock/pull/1490">Use visibility to decide which interfaces are included in quickjump</a></li>
+  <li><a href="https://github.com/haskell/haddock/pull/1492">Render module tree per package in the content page</a></li>
+</ul>
+</p>
+
+<p>
+  <code>haddock</code> has two modes of operation.  It is used to build
+  documentation and render it either as <code>html</code> or
+  <code>latex</code>, and secondly it can be used build content page together
+  with a html and <i>quickjump</i> indexes.  The content page contains can
+  include a custom prologue followed by a tree of modules.  That's not the same
+  page as the landing page on hackage, but it will look familiar for you, for
+  example here is <code>base</code> package
+  <a href="https://hackage.haskell.org/package/base-4.16.1.0/docs/index.html">content page</a>.
+</p>
+
+<p>
+  <code>haddock</code> can now build the content page with a consistent html and
+  <i>quickjump</i> index of all local packages, where all header links point to the top
+  level page / index and probably most important where all the links can be
+  resolved either locally or to <code>hackage</code>.
+
+  If there are multiple packages, the content page will contain a module tree
+  per package, and haddock allows to control which packages are visible.
+  <code>cabal haddock-project</code> uses this to only show trees of local
+  packages, without listing module trees of dependencies (e.g. base
+  package).
+  See <a href="https://github.com/haskell/haddock/pull/1492">here</a>
+  for a sample.
+</p>
+
+<p>
+  The <code>cabal haddock-project</code> requires <code>haddock-2.26.1</code>,
+  which isn't yet published.  However, the
+  <a href="https://github.com/haskell/cabal/pull/8162">pull request</a> fixes the <code>--with-haddock</code> option
+  which allows to configure which <code>haddock</code> command to use.  If you
+  want to try it, you will also need to pass <code>--lib</code> option which
+  points to the
+  <a href="https://github.com/haskell/haddock/tree/ghc-9.2/haddock-api/resources">haddock-api/resources</a>
+  directory (once <code>haddock-2.26.1</code> is distributed with one of the
+  future versions of <code>ghc</code>, neither <code>--with-haddock</code> nor
+  <code>--lib</code> will be necessary).
+</p>
+
+<p>
+  <code>cabal haddock-project</code> can either build a self contained
+  directory or a directory which links to <code>hackage</code>.   In the first
+  case you will need to run:
+  <pre>
+cabal haddock-project     \
+  --with-haddock=$HADDOCK \ # point to haddock-2.26.1
+  --lib=$HADDOCK_LIB      \ # point to haddock-api/resources
+  --local
+  </pre>
+  This command will build <code>./haddocks</code> directory which you can serve
+  with a http server.  It will contain documentation of all the local packages
+  and its dependencies.  You can even control which dependencies should be
+  included via
+  <a href="https://cabal.readthedocs.io/en/3.4/cabal-project.html#cfg-field-documentation"><code>documentation</code>
+  option</a>.  A self contained directory can be useful when you need or want
+  to work offline.  In the future, we could also add a flag which would allow
+  to build <i>quickjump</i> index which contains references to all the
+  dependencies not just local packages.
+
+  If you want to link to documentation published on <code>hackage</code> then you can use:
+  <pre>
+ cabal haddock-project     \
+   --with-haddock=$HADDOCK \ # point to haddock-2.26.1
+   --lib=$HADDOCK_LIB      \ # point to haddock-api/resources
+   --hackage
+  </pre>
+
+  Both <code>--local</code> and <code>--hackage</code> are meta-options.  They
+  imply <code>--gen-content</code>, <code>--gen-index</code>,
+  <code>--quickjump</code> and <code>--hyperlinked-source</code>, the
+  <code>--hackage</code> flag also implies a correct value for
+  </code>--html-location</code>.  If you have custom needs you could avoid
+  using either <code>--local</code> or <code>--hackage</code> and provide the
+  exact flags you need.
+</p>
+
+<p>
+  I hope this will be also useful to you as it is for the excellent Haskell
+  team I am working with at
+  <a href="https://github.com/input-output-hk/?q=&type=all&language=haskell&sort=stargazers">IOG</a>.
+  We have some <code>Haskell</code> positions open to work on various parts of
+  the <code>cardano</code> project:
+  <ul>
+    <li><a href="https://wrkbl.ink/4NZeYaq">Consensus Job</a>, <a href="https://github.com/input-output-hk/ouroboros-network/"><code>ouroboros-network</code> repository</a></li>
+    <li><a href="https://wrkbl.ink/eWNXwNx">Ledger Job</a>, <a href="https://github.com/input-output-hk/cardano-ledger"><code>cardano-ledger</code> repository</a></li>
+    <li><a href="https://wrkbl.ink/5ztmsMX">Plutus Apps Job</a> <small>senior Haskell position</small>, <a href="https://github.com/input-output-hk/plutus-apps"><code>plutus-apps</code> repository<a></li>
+    <li><a href="https://wrkbl.ink/b0KJ7od">Node CLI/API Job</a>, <a href="https://github.com/input-output-hk/cardano-node"><code>cardano-node</code> repository</a></li>
+  </ul>
+</p>

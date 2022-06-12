@@ -1,0 +1,5 @@
+{ "wrapperClass": "post",
+  "title": "Build haddock documentation of a cabal project",
+  "description": "New cabal command which allows to build haddock documentation of a cabal project"
+}
+
