@@ -1,7 +1,7 @@
 {% extends "templates/base.html" %}
 
 {% block header %}
-    {% include "templates/header.html" %}
+    {% include "templates/about_header.html" with context %}
     <div class="contents">
       <h3>Contents</h3>
       <ol>
@@ -17,40 +17,45 @@
 <section class="bio">
     <h2 class="section_h" id="intro">Intro</h2>
     <p>
-        I am an experienced full stack web developer and I have proven myself
-        across a variety of challenges involving designs, implementations, and
-        minimum viable products. 
+        I am an experienced developer and I have proven myself across a variety
+        of challenges involving designs, implementations, and minimum viable
+        products. 
     </p>
 
+<!--
     <p>
 	I understand what business needs are and can translate
-	these into prototypes, frameworks and, well, code ;)
+	these into prototypes, frameworks or libraries.
     </p>
+-->
 
     <p>
 	<h4>code quality</h4>
 	I am as much curious, open, and learn quickly as I am
 	collaborative. I combine all this with an abstract
 	thinking skill worthy of my academic background, which is
-	PhD in maths. This means my code is neat, and therefore
-	scales easily and is easy to maintain. More importantly
-	however, my code is easily comprehensible for others
-	who join the team. This is super important in agile
-	development with teams that (may) rotate quickly. 
+        PhD in maths.  I put effort so that code is comprehensible for others
+        who join the team. This is important in agile development with teams
+        that (may) rotate quickly or when complexity and size becomes a factor. 
     </p>
 
     <p>
-	<h4>maintaince, testability and deadlines</h4>
-	When designing code, I think forward and craft my code in
-	a way that others can pick it up easily. This also means
-	other components can be added on at little effort. 
+	<h4>maintenance, testability and deadlines</h4>
+	When designing code, I think forward and craft solutions in
+        a way that others can pick it up easily.  Simplicity is not easy to
+        achieve, especially in large and complex systems, but it's a good
+        aspirational goal.
+<!--
+        This also means other components can be added on at
+        little effort. 
+-->
     </p>
     <p>
 	Testing code early is paramount. On tight deadlines
 	there’s often not enough time to write thorough tests.
-	If that’s the case, I go back and write the necessary
-	test, resolve compromises done to meet deadlines. In the
-	long run, wise code reviews always pay back.
+        If that’s the case, recognizing which tests are essential and which can
+        be postponed is a useful skill. In the long run, wise code reviews
+        always pay back.
     </p>
 
     <p>
@@ -62,9 +67,32 @@
 
     <p>
 	<h4>functional programming</h4>
-	I am an advocate for functional programming.  It often
+	I am an advocate of functional programming.  It often
 	brings clarity, projects become easier to comprehend and
 	allow for a reasonable way of managing side effects.
+    </p>
+
+    <p>
+      I am an active member of the Haskell ecosystem.  I am contributor of various
+      key libraries including <a href="https://hackage.haskell.org/package/base"><code>base</code></a>, <a
+                                 href="https://hackage.haskell.org/package/containers"><code>containers</code></a>, <a
+                                 href="https://github.com/haskell/haddock"><code>haddock</code></a> and <a
+                                 href="https://github.com/haskell/cabal"><code>cabal</code></a>.
+      I speak at engineering conferences and workshops, or encourage my team
+      mates to do so.  A few my recent talks:
+        <ul>
+          <li>Typed Protocol Pipelining at Haskell.Love 2020</li>
+          <li>Categories and State Machines at <a
+                                                   href="https://skillsmatter.com/skillscasts/14325-categories-and-state-machines">Haskell
+                                                   eXchange 2019</a></li>
+          <li>Workshop on Typed-Protocols at <a href="https://2019.monadic.party/">Monadic Party 2019</a></li>
+          <li>Rethinking Freeness through Universal Algebra (<small>lightning talk</small>) at
+            <a
+                href="https://skillsmatter.com/skillscasts/13007-lightning-talk-rethinking-freeness-through-universal-algebra">Haskell
+                eXchange 2018</a></li>
+          <li>Workshop on Category Theory at <a href="https://2018.monadic.party/">Monadic Party 2018</a></li>
+        </ul>
+
     </p>
 
     <div class="badges langs">
@@ -113,63 +141,75 @@
     <p>Some of the most recent projects I worked for or trainings I took part
 	of:</p>
     <article>
-	<h3><a class="title" id="iohk" href="https://iohk.io" target="_blank">IOHK</a></h3>
+	<h3><a class="title" id="iohk" href="https://iohk.io" target="_blank">IOG</a></h3>
 	<p>
-            Currently I work at <a href="https://iohk.io">IOHK</a> as the team
+            Currently I work at <a href="https://iohk.io">IOG</a> as the team
             lead for the Haskell networking team.  I also held a teaching
-            assistance position for <a href="https://iohk.io">IOHK</a> / <a
+            assistance position for <a href="https://iohk.io">IOG</a> / <a
 		href="https://www.well-typed.com">Well-Typed's</a> Haskell
-	    course which took place in Barbados.
+	    course which took place in Barbados in 2018.
 	</p>
         <p>
-            Majority of my work at <a href="https://iohk.io">IOHK</a> is
-            available as open source.  I mostly contributed to <a
+            Majority of my work at <a href="https://iohk.io">IOG</a> is
+            available as open source.  I mostly work on <a
               href="https://github.com/input-output-hk/ouroboros-network">ouroboros-network</a>
-            repository.  I contributed to the <a
+            repository.  I contributed both to the <a
               href="https://hydra.iohk.io/job/Cardano/ouroboros-network/native.docs.x86_64-linux/latest/download/1">design
-              document</a> and <a href="https://hydra.iohk.io/job/Cardano/ouroboros-network/native.docs.x86_64-linux/latest/download/2">technical documentation</a>
+            </a> as well as implementation, which is documented in a <a
+                         href="https://hydra.iohk.io/job/Cardano/ouroboros-network/native.docs.x86_64-linux/latest/download/2">technical
+                         report</a>.
 
-            Here are some main achievements:
+        </p>
+        <p>
+            Here are my main achievements:
             <ul>
               <li>
-                I contributed to session type framework <a href="https://input-output-hk.github.io/ouroboros-network/typed-protocols/Network-TypedProtocol.html">typed-protocols</a>.
+                I contributed to the session type framework
+                <a href="https://input-output-hk.github.io/ouroboros-network/typed-protocols/Network-TypedProtocol.html">typed-protocols</a>.
 
                 Using type level description of a protocol not only turned
                 protocol errors into type errors but also made it much easier
                 to share and discuss ideas:  using <code>typed-protocols</code>
-                protocol state machines become the primiary focus point.  It
+                protocol state machines became the primary focus point.  It
                 allowed us to reason about protocol behaviour, especially about 
-                adversarial behaviour.  The novelity of
+                adversarial behaviour.  The novelty of
                 <code>typed-protocols</code> is using 
-                <a
-                                 href="https://www.wikiwand.com/en/Protocol_pipelining">
+                <a href="https://www.wikiwand.com/en/Protocol_pipelining">
                   protocol pipelining</a> in the context of session types.
+
+                I am currently finishing a <a
+                                               href="https://github.com/input-output-hk/typed-protocols/pull/3">redesign</a>
+                of the library, which allows to reduce the number of threads
+                required by pipelining, provide simpler and more functional
+                api.
               </li>
               <li>
                 <p>
-                  I authored <a href="https://github.com/input-output-hk/ouroboros-network/tree/master/Win32-network">Win32-network</a>
-                library.
+                  I authored <a
+                                 href="https://github.com/input-output-hk/ouroboros-network/tree/master/Win32-network">Win32-network</a>
+                  library.
                 <p>
 
                 <p>
-                One of IOHK's products the <a
-                  href="https://daedaluswallet.io/">Deadalus wallet</a> is
+                One of IOG's products the <a
+                  href="https://daedaluswallet.io/">Daedalus wallet</a> is
                 a primary Windows application, with thousands of users.  This
                 library, together with a small abstraction layer allowed us to
                 write platform independent code (which runs primarily on Linux,
                 Windows and MacOs).  With <code>Win32-network</code> we ware
-                able to achieve throuput comparable to what Linux does and we
-                never heard back complains from Windows users regarding
+                able to achieve a similar throughput to one observed on Linux and
+                we never heard back complains from Windows users regarding
                 networking!
                 </p>
 
+<!--
                 <small>
                   <p>
                   <code>Win32-network</code> is a low level library which solves some
                   outstanding problems when writing Haskell networking code on
                   Windows.  The original Haskell <code>IO</code> calls on Windows
                   can block when one tries to kill a thread which executes them,
-                  which can lead to leaking resrouces (sockets) or unresponsive
+                  which can lead to leaking resources (sockets) or unresponsive
                   behaviour when a user is trying to shut down application.   We
                   also discovered that IO calls on Windows can deadlock without
                   making progress when done concurrently.
@@ -182,33 +222,60 @@
                                                                      href="https://hackage.haskell.org/package/winio">winio</a>
                   library.  Unlike the original, it uses very little
                   <code>C</code> code (just a single header file).  It
-                  implemented an asynchronous <code>IO</code> manager using
+                  provides an asynchronous <code>IO</code> manager using
                   <a
                     href="https://docs.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports">IO
-                    completion ports</a>.  Very similar design was picked by
+                    completion ports</a>.  Very similar design was picked by the
                   <code>GHC</code> team for the <code>GHC</code> implementation
                   of <code>IO manager</code> on Windows which will be available
-                  in one of future versions of <code>GHC</code>.
+                  in one of the future versions of <code>GHC</code>.
                   </p>
                 </small>
+-->
               </li>
               <li>
-                I contributed to <a href="https://input-output-hk.github.io/ouroboros-network/io-sim/Control-Monad-IOSim.html">io-sim</a> a simulator and a drop
+                I am one of the primary contributors to
+                <a href="https://github.com/input-output-hk/io-sim">io-sim</a>:
+
+                an <code>IO</code> simulator and a drop
                 in replacement for <code>IO</code> monad.  <code>IOSim</code>
-                is a pure monad (free monad) which supports: <ul>
+                is a pure monad (free monad) which supports:
+                <ul>
                   <li><code>Haskell</code> thread interface</li>
                   <li><code>Haskell</code> synchronous and asynchronous exceptions</li>
                   <li><a href="https://hackage.haskell.org/package/async"><code>async</code></a> interface</li>
                   <li><a href="https://hackage.haskell.org/package/stm"><code>stm</code></a> (software transaction memory) interface</li>
                   <li>time primitives, which are important for writing network simulations</li>
+                  <li>it has been extended by prof. John Hughes to explore
+                    different thread schedules (using approach similar to one
+                    described in <a
+                                     href="https://www.researchgate.net/publication/262352623_Optimal_Dynamic_Partial_Order_Reduction">Optimal
+                                     Partial Order Reduction</a></li>
                   <li>and more ...</li>
                 </ul>
-                It allows us to write production components that can run both
-                in real <code>IO</code> and in simulation.  Testing components
-                in simulation using property testing proved to be a very
-                efficient way of checking correctness and discovering possible
-                bugs that could only surface in very specific scenarios.  This
-                allows to test internal state changes.
+                It allows to write production components that can run both in
+                real <code>IO</code> and in simulation.  Testing components
+                in simulation using property testing proved to be a thorough
+                and efficient way of checking correctness.
+
+                We combined simulation testing together with contravariant
+                tracing, which gave us insight how internal state evolves
+                during the simulation and verify that it behaves as specified.
+                We applied this approach to multiple complex components.
+              </li>
+              <li>
+                I wrote a <a
+                              href="https://input-output-hk.github.io/ouroboros-network/ouroboros-network-framework/Simulation-Network-Snocket.html#v:withSnocket">network
+                              simulator</a>
+                using the <code>io-sim</code> library, which allowed us to test
+                <code>cardano-node</code> diffusion layer.  The simulator
+                allows to:
+                <ul>
+                  <li>simulate communication between multiple components in a distributed system</li>
+                  <li>do error injection, and simulation of network attenuation</li>
+                  <li>simulate a TCP simultaneous open, which as observed by us,
+                    is not a rare event on Cardano mainnet</li>
+                </ul>
               </li>
               <li>
                 I wrote and maintained several <a
@@ -218,7 +285,22 @@
                 package.
               </li>
               <li>
-                I also helpped to mainain CI using <code>github-actions</code>,
+                I have been one of the main contributors to the
+                <it>Stake-Driven Peer Selection with Robust Peer
+                Discovery</it>, also known as <code>peer-2-peer</code> of the
+                <code>ouroboros-network</code>.  This layer automates creation
+                of the overlay network.  It was designed specifically to be able to
+                <ul>
+                  <li>connect across NATs</li>
+                  <li>utilise full-duplex connections, to save the number of
+                    file descriptors used by the diffusion layer and punch holes in NATs</li>
+                  <li>be able to respond and adapt to changing network conditions</li>
+                  <li>be robust, in particular protect against resource
+                    exhausting attacks</li>
+                </ul>
+              </li>
+              <li>
+                I also helped to maintain CI using <code>github-actions</code>,
                 and an early version of CI using <a
                 href="https://nix.dev/index.html">nix</a>.
               </li>
@@ -242,7 +324,7 @@
 	    The training covered low level data representation used by Haskell
 	    runtime system, lazy evaluation, Haskell intermediate
 	    representation, insides into Haskell optimisations
-	    strategies (stricktness analysis, inlining).  With examples based
+	    strategies (strictness analysis, inlining).  With examples based
 	    on real bugs found by Well-Typed engineers while doing Haskell
 	    consulting around the world.
 	</p>
@@ -257,7 +339,7 @@
 		Training</i> delivered by prof. John Hughes (one of
 	    Haskell founders and the original author of QuickCheck library), <a
 		href="https://www.well-typed.com">Well-Typed</a> and <a
-		href="https://iohk.io">IOHK</a>.
+		href="https://iohk.io">IOG</a>.
 	</p>
 	<p>
 	    The training covered advanced usage of QuickCheck and property based
@@ -274,24 +356,25 @@
 	I worked at Gravicus where we used
 	<a href="http://purescript.org">PureScript</a> and
 	<a href="https://facebook.github.io/react/">React</a>.
-	I setup various projects using <a
-	    href="https://github.com/coot/react-redox">Redox</a>,
-	my PureScript implementation of redux architecture
-	(using free monads paired cofree comonads).
+	I set up various projects using <a
+	    href="https://github.com/coot/react-redox">Redox</a>.
 	</p>
 	<p>
-	I've been also responsible for implementing pixel
-	perfect designs closely working with our designer.
-	Writing complex ui elements using pseudo-elements and
-	well designed modern css.  I've decided to try
+        I was also responsible for implementing pixel perfect designs closely
+        working with our designer.  Writing complex UI elements using
+        pseudo-elements and well designed modern css.
+<!--
+        I used
 	<a href="https://github.com/postcss/postcss"
-	    target="_blank">postcss</a>.  It introduces proper
-	scoping of css which avoids problems in the long run.
+            target="_blank">postcss</a> to introduce proper scoping of css
+          which avoids problems in the long run.
 	It fits well into functional programming paradigm with
 	its composition of css classes (it tames side effects
 	of globally scoped css and introduces composition of
 	css classes which is obeys the laws of a semigroup).
+-->
 	</p>
+<!--
 	<p>
 	I setup unittest which runs both in node with <a
 	    href="http://pursuit.purescript.org/packages/purescript-test-unit"
@@ -317,6 +400,7 @@
 	target="_blank"
 	href="https://github.com/coot/purescript-cofree-react-router"><code>cofree-react-router</code></a>.
 	</p>
+-->
 	<div class="badges">
           <span class="badge fr">Progressive Web App</span>
           <span class="badge fr">PureScript</span>
@@ -351,11 +435,14 @@
     <article>
 	<h3><a class="title" id="purescript-ecosystem" href="http://purescript.org">PureScript</a></h3>
 	<p>
-	I am an active member of the <a href="http://purescript.org" target="_blank">PuresScript</a> community,
-	I have contributed to the <a target="_blank"
-	href="https://github.com/purescript/purescript">PureScript</a>
-	compiler and I authored and maintain various libraries.  My noticeable original libraries:
-	<ul>
+        I used to be an active member of the <a href="http://purescript.org"
+                                                target="_blank">PuresScript</a>
+        community, I contributed to the <a target="_blank"
+                                           href="https://github.com/purescript/purescript">PureScript</a>
+        compiler and I authored and maintained various libraries.
+<!--
+        My noticeable original libraries:
+        <ul>
 	    <li>
 	    <a href="https://pursuit.purescript.org/packages/purescript-redox" target="_blank">purescript-redox</a>
 	    <section>
@@ -413,7 +500,9 @@
 	    </section>
 	    </li>
 	</ul>
-	I did non trivial contributions to more than a few core purescript libraries, just to mention a few:
+-->
+        I also did non trivial contributions to more than a few core libraries,
+        just to mention a few:
 	<ul>
 	    <li>
 		<a href="https://github.com/purescript/purescript-free" target="_blank">purescript-free</a>
@@ -448,6 +537,7 @@
 	platform, documentation proofreading in close
 	cooperation with our CTO.
 	</p>
+<!--
 	<p>
 	One of the challenges up front was to tame a legacy
 	code. I have done this by introducing flow - the type
@@ -471,6 +561,7 @@
 	it using websockets for instant communication using
 	ReactJS.
 	</p>
+-->
 	<div class="badges">
 	<span class="badge">Flask <small>(Python)</small></span>
 	<span class="badge">Flask-Restful <small>(Python)</small></span>
@@ -494,6 +585,7 @@
 	<span class="badge fr">WebPack</span>
 	</div>
     </article>
+<!--
     <article>
 	<h3><a class="title" id="quantifiedcode" href="http://www.quantifiedcode.com" target="_blank"><small></small> QuantifiedCode</a></h3>
 	Static code analysis platform for Python. 
@@ -651,10 +743,11 @@
 	    <span class="badge fr">Twitter Bootstrap</span>
 	</div>
     </article>
+-->
 </section>
 <section class="papers" id="papers">
     <h2 class="section_h">Scientific Publications</h2>
-    <p>Some papers and preprints that I authored or coauthored:</p>
+    <p>Some papers and preprints that I authored or co-authored:</p>
     <ul>
     <li>
       <a href="https://link.springer.com/chapter/10.1007/978-3-030-57761-2_5">Flexible Formality Practical Experience with Agile Formal Methods</a>

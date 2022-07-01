@@ -43,6 +43,12 @@ footer {
     margin-bottom: 0px;
 }
 
+.info-hdr #name .subtitle {
+  font-size: 0.5em;
+  width: 50%;
+  margin: 0 auto;
+}
+
 #name span {
     position: relative;
     right: 0px;
