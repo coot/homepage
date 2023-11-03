@@ -1,5 +1,6 @@
 *.nav
 *.snm
 *.vrb
+*.out
 
 _minted-*
