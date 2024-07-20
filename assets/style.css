@@ -653,10 +653,6 @@ section {
     color: inherit;
 }
 
-.portfolio h3 a:visited {
-    color: #444;
-}
-
 .portfolio h3 a i.fa {
     color: #888;
 }
