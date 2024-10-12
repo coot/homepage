@@ -167,18 +167,18 @@ data Step = Step {
 \begin{frame}
   \frametitle{Execution Step}
   \framesubtitle{Life cycle of a \texttt{Step}}
+  Step is a unit of execution of a thread, which boundary is marked by
+  descheduling a thread.  A thread is descheduled when:
   \begin{itemize}
-    \item when a thread is descheduled:
-      \begin{itemize}
-        \item forking a new thread
-        \item thread termination
-        \item setting the masking state to interruptible
-        \item popping masking frame (which resets masking state)
-        \item thread delays
-        \item execution of an STM transaction
-        \item blocking \texttt{throwTo}
-      \end{itemize}
-    \item throw an exception when there's a corresponding catch frame (i.e. catch handler)
+    \item forking a new thread
+    \item thread termination
+    \item setting the masking state to interruptible
+    \item popping masking frame (which resets masking state)
+    \item starting or cancelling a timeout
+    \item thread delays
+    \item execution of an STM transaction
+    \item blocking or non-blocking \texttt{throwTo}
+    \item unhandled exceptions in (non-main) thread
   \end{itemize}
 \end{frame}
 
