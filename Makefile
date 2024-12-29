@@ -111,6 +111,7 @@ jinja: $(lhs_posts)
 $(htm):
 
 $(html_posts): dist/posts/%: posts/html/% $(htm) posts/base.html $(templates)
+	# pip install j2-cli
 	j2 -f json -o $@ $< $(basename $<).json
 
 html_posts: posts_dir $(html_posts)
