@@ -1,8 +1,12 @@
 <div id="img_container">
     <h1 id="name">
-    Coot's Functional Programming Blog
-    <div class="subtitle">
-    </div>
+	{% block title %}
+	Coot's Functional Programming Blog
+	{% endblock %}
+	<div class="subtitle">
+	{% block subtitle %}
+	{% endblock %}
+	</div>
     </h1>
 </div>
 <ul class="links">
